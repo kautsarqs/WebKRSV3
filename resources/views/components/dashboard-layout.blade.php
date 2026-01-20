@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Kebun Raya Sambas') }}</title>
+
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|space-grotesk:500,700" rel="stylesheet" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="bg-zinc-50 text-zinc-900 font-inter antialiased" x-data="{ sidebarOpen: false }">
+
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-150 h-150 bg-green-200/40 rounded-full blur-[120px] mix-blend-multiply opacity-70"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-150 h-150 bg-zinc-300/40 rounded-full blur-[120px] mix-blend-multiply opacity-70"></div>
+    </div>
+
+    <div class="relative z-10 flex h-screen overflow-hidden">
+
+        <aside class="hidden md:flex w-64 flex-col border-r border-zinc-200/80 bg-white/70 backdrop-blur-xl h-full shadow-sm relative z-20">
+            <div class="h-16 flex items-center px-6 border-b border-zinc-200/80">
+                <span class="font-bold text-xl tracking-tight font-space text-zinc-900">
+                    Kebun Raya Sambas
+                </span>
+            </div>
+
+            <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                {{ $sidebar ?? '' }}
+                
+                @if(!isset($sidebar))
+                    <a href="#" class="flex items-center px-3 py-2.5 bg-zinc-900 text-white rounded-xl text-sm font-medium transition-all shadow-lg shadow-zinc-900/20">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        Dashboard
+                    </a>
+                @endif
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-full relative overflow-hidden">
+
+            <header class="h-16 flex items-center justify-between gap-4 border-b border-zinc-200/80 bg-white/70 backdrop-blur-xl px-6 sticky top-0 z-30 shadow-sm">
+                
+                <div class="font-medium text-sm text-zinc-500">
+                    Dashboard / <span class="text-zinc-900 font-bold font-space text-lg ml-1">{{ $title ?? 'Overview' }}</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center gap-2.5 transition-all hover:opacity-80 focus:outline-none">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-bold text-zinc-900 font-space leading-none">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-zinc-500 font-medium">{{ Auth::user()->role=="admin"?"Administrator":"User" }}</p>
+                            </div>
+                            
+                            @if (Auth::user()->avatar)
+                                <img src="{{ Auth::user()->avatar }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
+                            @else
+                                <div class="w-9 h-9 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-600 font-bold font-space">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                            @endif
+                        </button>
+
+                        <div x-show="open" @click.away="open = false" 
+                             class="absolute right-0 mt-3 w-48 bg-white border border-zinc-200 rounded-xl shadow-xl py-1 z-50 overflow-hidden"
+                             style="display: none;">
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">
+                                    Log Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+                {{ $slot }}
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>
