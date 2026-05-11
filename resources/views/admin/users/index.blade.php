@@ -57,6 +57,7 @@
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Pengguna</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Email</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Role</th>
+                            <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Verifikasi</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Tanggal Daftar</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide text-right">Aksi</th>
                         </tr>
@@ -80,6 +81,19 @@
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-zinc-100 text-zinc-600 border border-zinc-200 font-space">
                                             User
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($user->email_verified_at)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200 font-space">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                            Terverifikasi
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 font-space">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Pending
                                         </span>
                                     @endif
                                 </td>
