@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -48,32 +49,30 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    // Proses Register
     public function storeRegister(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'confirmed', 'min:8'],
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => 'user', // Default
-            'password' => Hash::make($request->password),
-        ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'role' => 'user',
+        'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+    ]);
 
-        Auth::login($user);
+    // Login user terlebih dahulu
+    \Illuminate\Support\Facades\Auth::login($user);
 
-        // Panggil fungsi kirim email langsung tanpa melalui Event Listener
-        $user->sendEmailVerificationNotification();
+    // Kirim email secara manual langsung ke objek $user
+    // Ini lebih pasti daripada mengandalkan Event jika listener bermasalah
+    $user->sendEmailVerificationNotification();
 
-        // Redirect ke halaman pemberitahuan verifikasi
-        return redirect()->route('verification.notice');
-    }
-
-    // Proses Logout
+    return redirect()->route('verification.notice');
+}    // Proses Logout
     public function destroy(Request $request)
     {
         Auth::logout();
