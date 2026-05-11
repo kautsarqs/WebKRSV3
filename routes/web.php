@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\KoleksiController;
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
 use App\Models\Category;
@@ -42,6 +43,10 @@ Route::get('/peta', function () {
 Route::get('/kontak', function () {
     return view('landing.kontak');
 })->name('kontak');
+
+// Pendaftaran Routes (Bisa diakses Guest/Auth)
+Route::get('/pendaftaran/pengunjung', [PendaftaranController::class, 'createPengunjung'])->name('pendaftaran.pengunjung');
+Route::post('/pendaftaran/pengunjung', [PendaftaranController::class, 'storePengunjung'])->name('pendaftaran.pengunjung.store');
 
 // =========================================================================
 // 1. GUEST ROUTES (Belum Login)

@@ -29,34 +29,48 @@
 
     <x-landing.navbar />
 
-    <main class="relative z-10 pt-32">
+    <main class="relative z-10">
 
-        <div id="home" class="max-w-7xl mx-auto px-6 text-center mb-16 scroll-mt-32">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 bg-zinc-50 text-xs text-zinc-500 mb-6">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse"></span>
-                Digitalisasi Konservasi Alam
-            </div>
-
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-zinc-900">
-                Sambas Botanical <br>
-                <span class="text-transparent bg-clip-text bg-linear-to-b from-zinc-500 to-zinc-900">
-                    Garden & Research
-                </span>
-            </h1>
-
-            <p class="text-lg text-zinc-500 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-                Pusat konservasi tumbuhan, penelitian, dan edukasi lingkungan.
-                Menjaga keanekaragaman hayati Kalimantan untuk masa depan yang lestari.
-            </p>
-
-            <div class="flex justify-center gap-4">
-                <a href="#gallery" class="px-8 py-3 rounded-full bg-zinc-900 text-white font-semibold hover:bg-zinc-800 transition shadow-xl shadow-zinc-200">
-                    Jelajahi Koleksi
-                </a>
+        <div id="home" class="relative h-screen w-full flex items-center justify-center text-center overflow-hidden">
+            <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
+                <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        
+            <div class="absolute inset-0 bg-black/30"></div>
+            {{-- Gradient Putih di Bawah Hero --}}
+            <div class="absolute bottom-0 w-full h-32 bg-linear-to-t from-white to-transparent"></div>
+        
+            <div class="relative z-10 max-w-4xl mx-auto px-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200/50 bg-white/10 text-xs text-white mb-6 backdrop-blur-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                    Digitalisasi Konservasi Alam
+                </div>
+        
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-white">
+                    Sambas Botanical <br>
+                    <span class="text-transparent bg-clip-text bg-linear-to-b from-zinc-200 to-white">
+                        Garden & Research
+                    </span>
+                </h1>
+        
+                <p class="text-lg text-zinc-200 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                    Pusat konservasi tumbuhan, penelitian, dan edukasi lingkungan.
+                    Menjaga keanekaragaman hayati Kalimantan untuk masa depan yang lestari.
+                </p>
+        
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="{{ route('register') }}" class="px-8 py-3 rounded-full bg-white text-zinc-900 font-semibold hover:bg-zinc-100 transition shadow-xl shadow-zinc-200/10">
+                        Pendaftaran Pengunjung
+                    </a>
+                    <a href="{{ route('register') }}" class="px-8 py-3 rounded-full bg-white/10 text-white font-semibold border border-white/50 hover:bg-white/20 backdrop-blur-md transition shadow-lg">
+                        Pendaftaran Penelitian
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div id="gallery" class="max-w-7xl mx-auto px-6 scroll-mt-32">
+        <div id="gallery" class="max-w-7xl mx-auto px-6 scroll-mt-32 mt-24">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[300px]">
 
                 <div class="group relative md:col-span-2 row-span-2 overflow-hidden rounded-3xl bg-zinc-100">
