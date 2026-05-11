@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Auth\Events\Registered; // Import event verify email
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,10 +64,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // GANTI DENGAN INI (Kirim Langsung):
-        $user->sendEmailVerificationNotification();
-
         Auth::login($user);
+
+        // Panggil fungsi kirim email langsung tanpa melalui Event Listener
+        $user->sendEmailVerificationNotification();
 
         // Redirect ke halaman pemberitahuan verifikasi
         return redirect()->route('verification.notice');
