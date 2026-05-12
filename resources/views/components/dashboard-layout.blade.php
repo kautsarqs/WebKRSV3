@@ -14,14 +14,27 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-zinc-50 text-zinc-900 font-inter antialiased" x-data="{ sidebarOpen: false }">
+<body class="bg-zinc-50 text-zinc-900 font-inter antialiased overflow-x-hidden" 
+      x-data="{ isLoading: true, sidebarOpen: false }" 
+      x-init="window.onload = () => { setTimeout(() => { isLoading = false }, 400) }">
+
+    <!-- Global Skeleton Loading Overlay -->
+    <template x-if="isLoading">
+        <x-dashboard.skeleton-shell />
+    </template>
 
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+
         <div class="absolute top-[-10%] left-[-10%] w-150 h-150 bg-green-200/40 rounded-full blur-[120px] mix-blend-multiply opacity-70"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-150 h-150 bg-zinc-300/40 rounded-full blur-[120px] mix-blend-multiply opacity-70"></div>
     </div>
 
-    <div class="relative z-10 flex h-screen overflow-hidden">
+    <div class="relative z-10 flex h-screen overflow-hidden" 
+         x-show="!isLoading" 
+         x-cloak 
+         x-transition:enter="transition ease-out duration-500" 
+         x-transition:enter-start="opacity-0" 
+         x-transition:enter-end="opacity-100">
 
         <aside class="hidden md:flex w-64 flex-col border-r border-zinc-200/80 bg-white/70 backdrop-blur-xl h-full shadow-sm relative z-20">
             <div class="h-16 flex items-center px-6 border-b border-zinc-200/80">

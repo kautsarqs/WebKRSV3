@@ -20,7 +20,13 @@
     @stack('styles')
 </head>
 
-<body class="bg-white text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white">
+<body x-data="{ isLoading: true }" 
+      x-init="window.onload = () => { setTimeout(() => { isLoading = false }, 500) }"
+      class="bg-white text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white overflow-x-hidden"
+      :class="{ 'overflow-hidden': isLoading }">
+
+    {{-- Skeleton Loading Overlay --}}
+    <x-landing.skeleton-shell />
 
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-white"></div>
@@ -28,14 +34,16 @@
         <div class="absolute inset-0 bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
     </div>
 
-    <x-landing.navbar />
+    <div x-show="!isLoading" x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+        <x-landing.navbar />
 
-    <main class="relative z-10 pt-32">
-        @yield('content')
-        <x-landing.footer />
-    </main>
-    
+        <main class="relative z-10 pt-32">
+            @yield('content')
+            <x-landing.footer />
+        </main>
+    </div>
 
     @stack('scripts')
 </body>
 </html>
+

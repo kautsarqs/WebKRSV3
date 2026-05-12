@@ -58,4 +58,21 @@
         mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
         -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
     }
+
+    .skeleton {
+        @apply bg-zinc-200 animate-pulse rounded-md;
+    }
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% {
+        background-color: rgb(228 228 231); /* zinc-200 */
+    }
+    50% {
+        background-color: rgb(244 244 245); /* zinc-100 */
+    }
+}
+
+.animate-skeleton {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

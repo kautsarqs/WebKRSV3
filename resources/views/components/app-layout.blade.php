@@ -10,7 +10,14 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-white text-zinc-900 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30">
+<body class="font-sans antialiased bg-white text-zinc-900 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30" 
+      x-data="{ isLoading: true }" 
+      x-init="window.onload = () => { setTimeout(() => { isLoading = false }, 400) }">
+
+    <!-- Global Skeleton Loading Overlay -->
+    <template x-if="isLoading">
+        <x-auth.skeleton-shell />
+    </template>
 
     <div class="fixed inset-0 z-0 pointer-events-none">
         <div class="absolute inset-0 bg-white"></div>
@@ -22,7 +29,12 @@
         <div class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-125 h-125 bg-indigo-500/10 blur-[100px] rounded-full"></div>
     </div>
 
-    <main class="relative z-10 flex-1 container mx-auto px-4 py-8 flex flex-col justify-center">
+    <main class="relative z-10 flex-1 container mx-auto px-4 py-8 flex flex-col justify-center" 
+          x-show="!isLoading" 
+          x-cloak 
+          x-transition:enter="transition ease-out duration-500" 
+          x-transition:enter-start="opacity-0" 
+          x-transition:enter-end="opacity-100">
         {{ $slot }}
     </main>
 
