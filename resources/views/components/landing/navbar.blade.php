@@ -1,17 +1,21 @@
+@php
+    $isHome = request()->routeIs('home') || request()->is('/');
+@endphp
+
 <nav x-data="{ 
     mobileMenuOpen: false, 
-    scrolled: @if(request()->routeIs('home')) false @else true @endif
+    scrolled: @if($isHome) false @else true @endif
 }" 
-@if(request()->routeIs('home'))
+@if($isHome)
     x-init="scrolled = window.pageYOffset > 20"
     @scroll.window="scrolled = window.pageYOffset > 20"
 @endif
-class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request()->routeIs('home') ? 'bg-transparent border-transparent' : 'bg-white border-zinc-200 shadow-md' }}"
+class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ $isHome ? 'bg-transparent border-transparent' : 'bg-white border-zinc-200 shadow-md' }}"
 :class="(scrolled || mobileMenuOpen) ? 'bg-white border-zinc-200 shadow-md' : 'bg-transparent border-transparent'">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
         <a href="/" 
-           class="flex items-center gap-2 sm:gap-3 font-heading font-bold text-sm sm:text-base lg:text-xl tracking-wider shrink-0 transition-colors duration-300 {{ request()->routeIs('home') ? 'text-white' : 'text-zinc-900' }}"
+           class="flex items-center gap-2 sm:gap-3 font-heading font-bold text-sm sm:text-base lg:text-xl tracking-wider shrink-0 transition-colors duration-300 {{ $isHome ? 'text-white' : 'text-zinc-900' }}"
            :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900' : 'text-white'">
             <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-8 sm:h-10 lg:h-12 w-auto">
             <span class="pt-1 lg:pt-2">KEBUN RAYA SAMBAS</span>
@@ -20,27 +24,26 @@ class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request
         {{-- Tampilkan menu desktop hanya di ukuran Large (lg) ke atas agar di tablet tidak berantakan --}}
         <div class="hidden lg:flex items-center gap-8">
             <a href="{{ route('home') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-white font-bold' : (request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : 'text-zinc-900 font-bold') }}"
-                :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('home') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('home') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Beranda</a>
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-white font-bold' : 'text-zinc-900 font-bold' }}"
+                :class="(scrolled || mobileMenuOpen) ? '{{ $isHome ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ $isHome ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Beranda</a>
             <a href="{{ route('profil') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : (request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('profil') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Profil</a>
             <a href="{{ route('koleksi') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : (request()->routeIs('koleksi') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('koleksi') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('koleksi') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('koleksi') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Koleksi</a>
             <a href="{{ route('peta') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : (request()->routeIs('peta') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('peta') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('peta') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('peta') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Peta</a>
             <a href="{{ route('penelitian') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : (request()->routeIs('penelitian') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('penelitian') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('penelitian') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('penelitian') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Penelitian</a>
             
-            {{-- Dropdown Pendaftaran --}}
             <div class="relative group">
-                <button class="flex items-center gap-1 text-sm font-medium transition duration-300 focus:outline-none {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : 'text-zinc-600 hover:text-zinc-900' }}"
+                <button class="flex items-center gap-1 text-sm font-medium transition duration-300 focus:outline-none {{ $isHome ? 'text-zinc-200 hover:text-white' : 'text-zinc-600 hover:text-zinc-900' }}"
                     :class="(scrolled || mobileMenuOpen) ? 'text-zinc-600 hover:text-zinc-900' : 'text-zinc-200 hover:text-white'">
                     Pendaftaran
-                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 {{ request()->routeIs('home') ? 'text-zinc-300 group-hover:text-white' : 'text-zinc-400 group-hover:text-zinc-900' }}" 
+                    <svg class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180 {{ $isHome ? 'text-zinc-300 group-hover:text-white' : 'text-zinc-400 group-hover:text-zinc-900' }}" 
                         :class="(scrolled || mobileMenuOpen) ? 'text-zinc-400 group-hover:text-zinc-900' : 'text-zinc-300 group-hover:text-white'"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -59,7 +62,7 @@ class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request
             </div>
 
             <a href="{{ route('kontak') }}"
-                class="text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : (request()->routeIs('kontak') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
+                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('kontak') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('kontak') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('kontak') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Kontak</a>
         </div>
 
@@ -70,16 +73,16 @@ class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center gap-2.5 transition-all hover:opacity-80 focus:outline-none">
                             <div class="text-right hidden sm:block">
-                                <p class="text-sm font-bold font-space leading-none transition-colors duration-300 {{ request()->routeIs('home') ? 'text-white' : 'text-zinc-900' }}"
+                                <p class="text-sm font-bold font-space leading-none transition-colors duration-300 {{ $isHome ? 'text-white' : 'text-zinc-900' }}"
                                    :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900' : 'text-white'">{{ Auth::user()->name }}</p>
-                                <p class="text-xs font-medium transition-colors duration-300 {{ request()->routeIs('home') ? 'text-zinc-200' : 'text-zinc-600' }}"
+                                <p class="text-xs font-medium transition-colors duration-300 {{ $isHome ? 'text-zinc-200' : 'text-zinc-600' }}"
                                    :class="(scrolled || mobileMenuOpen) ? 'text-zinc-600' : 'text-zinc-200'">{{ Auth::user()->role=="admin"?"Administrator":"User" }}</p>
                             </div>
                             
                             @if (Auth::user()->avatar)
                                 <img src="{{ Auth::user()->avatar }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
                             @else
-                                <div class="w-9 h-9 rounded-full transition-colors duration-300 flex items-center justify-center font-bold font-space border {{ request()->routeIs('home') ? 'bg-white/20 border-white/30 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900' }}"
+                                <div class="w-9 h-9 rounded-full transition-colors duration-300 flex items-center justify-center font-bold font-space border {{ $isHome ? 'bg-white/20 border-white/30 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900' }}"
                                     :class="(scrolled || mobileMenuOpen) ? 'bg-zinc-100 border-zinc-200 text-zinc-900' : 'bg-white/20 border-white/30 text-white'">
                                     {{ substr(Auth::user()->name, 0, 1) }}
                                 </div>
@@ -105,7 +108,7 @@ class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request
                     </div>
                 @else
                     <a href="{{ route('login') }}" 
-                       class="hidden lg:block text-sm font-medium transition duration-300 {{ request()->routeIs('home') ? 'text-zinc-200 hover:text-white' : 'text-zinc-600 hover:text-zinc-900' }}"
+                       class="hidden lg:block text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : 'text-zinc-600 hover:text-zinc-900' }}"
                        :class="(scrolled || mobileMenuOpen) ? 'text-zinc-600 hover:text-zinc-900' : 'text-zinc-200 hover:text-white'">
                         Log in
                     </a>
@@ -120,7 +123,7 @@ class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ request
             
             {{-- Tombol Menu Hamburger (Khusus Mobile) --}}
             <div class="lg:hidden flex items-center">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="transition-colors duration-300 focus:outline-none {{ request()->routeIs('home') ? 'text-white hover:text-zinc-200' : 'text-zinc-900 hover:text-zinc-600' }}" 
+                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="transition-colors duration-300 focus:outline-none {{ $isHome ? 'text-white hover:text-zinc-200' : 'text-zinc-900 hover:text-zinc-600' }}" 
                     :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900 hover:text-zinc-600' : 'text-white hover:text-zinc-200'"
                     aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Buka menu utama</span>
