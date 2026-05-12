@@ -1,9 +1,11 @@
 <nav x-data="{ 
     mobileMenuOpen: false, 
-    scrolled: false 
+    scrolled: @if(request()->routeIs('home')) false @else true @endif
 }" 
-x-init="scrolled = window.pageYOffset > 20"
-@scroll.window="scrolled = window.pageYOffset > 20"
+@if(request()->routeIs('home'))
+    x-init="scrolled = window.pageYOffset > 20"
+    @scroll.window="scrolled = window.pageYOffset > 20"
+@endif
 class="fixed top-0 w-full z-9999 transition-all duration-500 border-b"
 :class="(scrolled || mobileMenuOpen) ? 'bg-white border-zinc-200 shadow-md' : 'bg-transparent border-transparent'">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
