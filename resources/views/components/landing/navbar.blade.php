@@ -7,10 +7,10 @@
     scrolled: @if($isHome) false @else true @endif
 }" 
 @if($isHome)
-    x-init="scrolled = window.pageYOffset > 20"
-    @scroll.window="scrolled = window.pageYOffset > 20"
+    x-init="scrolled = window.scrollY > 20"
+    @scroll.window="scrolled = window.scrollY > 20"
 @endif
-class="fixed top-0 w-full z-9999 transition-all duration-500 border-b {{ $isHome ? 'bg-transparent border-transparent' : 'bg-white border-zinc-200 shadow-md' }}"
+class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ? 'bg-transparent border-transparent' : 'bg-white border-zinc-200 shadow-md' }}"
 :class="(scrolled || mobileMenuOpen) ? 'bg-white border-zinc-200 shadow-md' : 'bg-transparent border-transparent'">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
