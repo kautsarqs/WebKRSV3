@@ -3,7 +3,7 @@
 @section('title', 'Kebun Raya Sambas')
 
 @section('content')
-<div id="home" class=" h-screen w-full flex items-center justify-center text-center overflow-hidden">
+<div id="home" class="relative h-screen w-full flex items-center justify-center text-center overflow-hidden">
     <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
         <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4" />
         Your browser does not support the video tag.
