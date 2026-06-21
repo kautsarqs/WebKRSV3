@@ -41,7 +41,7 @@
     <div x-show="!isLoading" x-transition:enter="transition ease-out duration-700" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         <x-landing.navbar />
 
-        <main class="relative z-10 {{ $isHome ? '' : 'pt-20' }}">
+        <main class="relative z-10 {{ $isHome ? '' : 'pt-28' }}">
             @yield('content')
             <x-landing.footer />
         </main>
