@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MapMarker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ImageOptimizer;
 
 class MapController extends Controller
 {
@@ -48,18 +49,20 @@ class MapController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'latitude' => ['required', 'numeric', 'between:-90,90'],
-            'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'geometry_type' => ['required', 'in:point,polyline,polygon'],
+            'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
+            'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
             'type' => ['required', 'in:area_koleksi,fasilitas_umum,kantor_pengelola,pos_keamanan'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('map_markers', 'public');
+            $data['photo'] = ImageOptimizer::convertToAvif($request->file('photo'), 'map_markers');
         }
 
         MapMarker::create($data);
@@ -90,12 +93,14 @@ class MapController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'latitude' => ['required', 'numeric', 'between:-90,90'],
-            'longitude' => ['required', 'numeric', 'between:-180,180'],
+            'geometry_type' => ['required', 'in:point,polyline,polygon'],
+            'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
+            'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
             'type' => ['required', 'in:area_koleksi,fasilitas_umum,kantor_pengelola,pos_keamanan'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
         ]);
 
         $data = $request->except(['photo']);
@@ -105,7 +110,15 @@ class MapController extends Controller
             if ($map->photo && Storage::disk('public')->exists($map->photo)) {
                 Storage::disk('public')->delete($map->photo);
             }
-            $data['photo'] = $request->file('photo')->store('map_markers', 'public');
+            $data['photo'] = ImageOptimizer::convertToAvif($request->file('photo'), 'map_markers');
+        }
+
+        // Jika geometry tipe berubah ke polyline/polygon, kosongkan lat/long
+        if ($request->geometry_type !== 'point') {
+            $data['latitude'] = null;
+            $data['longitude'] = null;
+        } else {
+            $data['geojson'] = null;
         }
 
         $map->update($data);

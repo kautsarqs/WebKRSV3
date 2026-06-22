@@ -1,70 +1,131 @@
 @extends('layouts.landing')
 
-@section('title', $koleksi->title)
-
-@push('styles')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <style>
-        #map { height: 400px; width: 100%; z-index: 10; border-radius: 1.5rem; }
-        .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 16px; border: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); background: white; }
-        .leaflet-popup-content { margin: 0 !important; width: 280px !important; line-height: 1.5; }
-        .leaflet-popup-tip { background: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); }
-        .leaflet-container a.leaflet-popup-close-button { top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: #3f3f46; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; font-size: 16px; text-decoration: none; transition: all 0.2s; }
-        .leaflet-container a.leaflet-popup-close-button:hover { background: #fff; color: #ef4444; }
-    </style>
-@endpush
+@section('title', $koleksi->title . ' - Kebun Raya Sambas')
 
 @section('content')
-    <div class="max-w-4xl mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6 py-8">
         
+        <!-- Back Button -->
         <div class="mb-8">
-            <a href="{{ route('koleksi') }}" class="inline-flex items-center text-sm font-semibold text-zinc-600 hover:text-blue-600">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Kembali ke Koleksi
+            <a href="{{ route('koleksi') }}" class="inline-flex items-center text-sm font-semibold text-zinc-500 hover:text-emerald-700 transition-colors duration-250 font-space group">
+                <div class="w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center mr-2 shadow-xs group-hover:bg-emerald-50 group-hover:border-emerald-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </div>
+                Kembali ke Eksplorasi
             </a>
         </div>
 
-        <div class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
-                {{ $koleksi->title }}
-            </h1>
-        </div>
-
-        <div class="relative overflow-hidden rounded-3xl bg-zinc-100 h-96 mb-10 shadow-lg">
-            @if ($koleksi->photo)
-                <img src="{{ Storage::url($koleksi->photo) }}" alt="{{ $koleksi->title }}" class="h-full w-full object-cover">
-            @else
-                <div class="h-full w-full bg-zinc-200 flex items-center justify-center">
-                    <svg class="w-16 h-16 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.01.01"></path></svg>
-                </div>
-            @endif
-        </div>
-
-        <div class="prose prose-lg max-w-none mx-auto text-zinc-700 leading-relaxed font-light">
-            {!! nl2br(e($koleksi->description)) !!}
-        </div>
-
-        @if($koleksi->locations->isNotEmpty())
-            <div class="mt-16">
-                <h2 class="text-2xl font-bold font-heading text-zinc-900 mb-6">Lokasi di Peta</h2>
+        <!-- Split Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
-                <div class="mt-4 space-y-2">
-                    <p class="text-sm text-zinc-600">Koleksi ini dapat ditemukan di lokasi berikut:</p>
-                    <ul class="list-disc list-inside space-y-1">
-                        @foreach($koleksi->locations as $location)
-                            <li class="text-zinc-700 font-medium">{{ $location->name }}</li>
-                        @endforeach
-                    </ul>
-                    <div class="mt-4">
-                        <a href="{{ route('koleksi.peta', $koleksi) }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            Lihat di Peta Penuh
-                        </a>
+            <!-- Left Column: Media & Gallery Preview -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-zinc-50 shadow-lg group">
+                    @if ($koleksi->photo)
+                        <img src="{{ Storage::url($koleksi->photo) }}" alt="{{ $koleksi->title }}" class="w-full object-cover aspect-[4/5] img-zoom">
+                    @else
+                        <div class="w-full aspect-[4/5] bg-emerald-50/20 flex flex-col items-center justify-center p-8 text-zinc-400">
+                            <svg class="w-20 h-20 text-emerald-800/10 mb-4 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                            </svg>
+                            <span class="text-xs font-bold font-space uppercase tracking-wider text-zinc-400/80">Foto tidak tersedia</span>
+                        </div>
+                    @endif
+
+                    <!-- Famili Float Tag -->
+                    @if ($koleksi->famili)
+                    <div class="absolute bottom-4 left-4 z-10">
+                        <span class="px-3.5 py-1.5 bg-black/60 backdrop-blur-md text-[10px] font-bold text-white rounded-full shadow-sm uppercase tracking-wider font-space">
+                            {{ $koleksi->famili }}
+                        </span>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Styled Thumbnail/Botanical Specimen Badges -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col items-center justify-center p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-2xl text-center space-y-1">
+                        <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-space">Spesimen</span>
+                        <span class="text-xs font-bold text-zinc-700 font-inter">{{ $koleksi->spesies ? 'Teridentifikasi' : 'General' }}</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-2xl text-center space-y-1">
+                        <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-space">Famili</span>
+                        <span class="text-xs font-bold text-zinc-700 font-inter">{{ $koleksi->famili ?: '-' }}</span>
                     </div>
                 </div>
             </div>
-        @endif
 
+            <!-- Right Column: Detail Information -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- Main Titles -->
+                <div class="space-y-2">
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950 font-heading leading-tight">
+                        {{ $koleksi->title }}
+                    </h1>
+                    @if ($koleksi->genus || $koleksi->spesies)
+                        <div class="flex items-center gap-2">
+                            <span class="text-base md:text-lg font-serif italic text-emerald-800 font-medium">
+                                {{ implode(' ', array_filter([$koleksi->genus, $koleksi->spesies])) }}
+                            </span>
+                            <span class="text-xs text-zinc-400 font-inter font-normal">Nama Ilmiah / Botani</span>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Description Card -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-zinc-900 uppercase tracking-wider font-space">Deskripsi & Karakteristik</h3>
+                    <div class="text-zinc-600 font-inter leading-relaxed font-light text-base text-justify whitespace-pre-line bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-xs">
+                        {!! nl2br(e($koleksi->description)) !!}
+                    </div>
+                </div>
+
+                <!-- Scientific Taxonomy Grid (Important Section) -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-bold text-zinc-900 uppercase tracking-wider font-space">Klasifikasi Taksonomi (Scientific)</h3>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Kerajaan</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->kerajaan ?: 'Plantae' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Divisi</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->divisi ?: '-' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Kelas</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->kelas ?: '-' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Order / Ordo</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->order ?: '-' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Famili</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->famili ?: '-' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Genus</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter italic">{{ $koleksi->genus ?: '-' }}</div>
+                        </div>
+
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250 col-span-2 sm:col-span-4 lg:col-span-2 xl:col-span-3">
+                            <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Spesies</div>
+                            <div class="text-sm font-bold text-emerald-800 font-inter italic">{{ $koleksi->spesies ?: '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
     </div>
-
 @endsection

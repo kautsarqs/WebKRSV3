@@ -28,18 +28,61 @@
                     @error('title') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="space-y-2">
-                    <label for="category_id" class="block text-sm font-bold text-zinc-700 font-space ml-1">Genus</label>
-                    <select id="category_id" name="category_id" required
-                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm">
-                        <option value="">Pilih Genus</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id', $koleksi->category_id) == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('category_id') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+
+
+                <!-- Klasifikasi Taksonomi -->
+                <div class="p-6 border border-zinc-200 rounded-2xl bg-zinc-50/50 space-y-4">
+                    <h4 class="text-sm font-bold text-zinc-800 font-space border-b border-zinc-200 pb-2">Klasifikasi Taksonomi Tumbuhan</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label for="kerajaan" class="block text-xs font-bold text-zinc-600 font-space ml-1">Kerajaan (Kingdom)</label>
+                            <input id="kerajaan" type="text" name="kerajaan" value="{{ old('kerajaan', $koleksi->kerajaan) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Plantae" />
+                            @error('kerajaan') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="divisi" class="block text-xs font-bold text-zinc-600 font-space ml-1">Divisi</label>
+                            <input id="divisi" type="text" name="divisi" value="{{ old('divisi', $koleksi->divisi) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Streptophyta" />
+                            @error('divisi') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="kelas" class="block text-xs font-bold text-zinc-600 font-space ml-1">Kelas</label>
+                            <input id="kelas" type="text" name="kelas" value="{{ old('kelas', $koleksi->kelas) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Equisetopsida" />
+                            @error('kelas') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="order" class="block text-xs font-bold text-zinc-600 font-space ml-1">Order / Ordo</label>
+                            <input id="order" type="text" name="order" value="{{ old('order', $koleksi->order) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Fagales" />
+                            @error('order') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="famili" class="block text-xs font-bold text-zinc-600 font-space ml-1">Famili</label>
+                            <input id="famili" type="text" name="famili" value="{{ old('famili', $koleksi->famili) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Casuarinaceae" />
+                            @error('famili') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="genus" class="block text-xs font-bold text-zinc-600 font-space ml-1">Genus</label>
+                            <input id="genus" type="text" name="genus" value="{{ old('genus', $koleksi->genus) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Gymnostoma" />
+                            @error('genus') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1 md:col-span-2">
+                            <label for="spesies" class="block text-xs font-bold text-zinc-600 font-space ml-1">Spesies</label>
+                            <input id="spesies" type="text" name="spesies" value="{{ old('spesies', $koleksi->spesies) }}" 
+                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Gymnostoma Sumatranum" />
+                            @error('spesies') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <div class="space-y-2">
@@ -62,107 +105,7 @@
                     @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                     <p class="text-xs text-zinc-400 ml-1">Kosongkan jika tidak ingin mengubah foto. Format: JPEG, PNG, JPG, GIF (maks. 10MB)</p>
                 </div>
-
-                                                                <div class="space-y-4" x-data='{ 
-
-                                                                    locations: {{ old('locations') ? json_encode(old('locations')) : $koleksi->locations->toJson() }}.map(l => ({...l, coordinate: (l.latitude && l.longitude) ? l.latitude + ", " + l.longitude : ""})),
-
-                                                                    addLocation() {
-
-                                                                        this.locations.push({ name: "", latitude: "", longitude: "", coordinate: "" });
-
-                                                                    },
-
-                                                                    removeLocation(index) {
-
-                                                                        this.locations.splice(index, 1);
-
-                                                                    },
-
-                                                                    updateCoordinates(index) {
-                                                                        let coord = this.locations[index].coordinate;
-                                                                        if (coord.includes(",")) {
-                                                                            let parts = coord.split(",");
-                                                                            this.locations[index].latitude = parts[0].trim();
-                                                                            this.locations[index].longitude = parts[1].trim();
-                                                                        }
-                                                                    },
-
-                                                                    formatId(index) {
-                                                                        return "#" + (index + 1).toString().padStart(4, "0");
-                                                                    }
-
-                                                                }'>
-
-                                                                    <label class="block text-sm font-bold text-zinc-700 font-space ml-1">Lokasi Peta (Opsional)</label>
-
-                                                                    
-
-                                                                    <div class="space-y-4">
-
-                                                                        <template x-for="(location, index) in locations" :key="index">
-
-                                                                            <div class="p-4 border border-zinc-200 rounded-xl bg-zinc-50/50 space-y-3 relative">
-
-                                                                                <button type="button" @click="removeLocation(index)" class="absolute top-3 right-3 text-zinc-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50">
-
-                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-
-                                                                                </button>
-
-                                                
-
-                                                                                <div class="space-y-1">
-
-                                                                                    <label :for="'location_name_' + index" class="text-xs font-bold text-zinc-600">Nama Lokasi</label>
-
-                                                                                    <input :id="'location_name_' + index" type="text" x-model="location.name" :name="'locations[' + index + '][name]'" class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 text-sm" placeholder="Contoh: Area Anggrek">
-
-                                                                                </div>
-
-                                                                                <div class="grid grid-cols-2 gap-3">
-
-                                                                                    <div class="space-y-1">
-
-                                                                                        <label :for="'location_lat_' + index" class="text-xs font-bold text-zinc-600">Latitude</label>
-
-                                                                                        <input :id="'location_lat_' + index" type="text" x-model="location.latitude" :name="'locations[' + index + '][latitude]'" class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 text-sm" placeholder="-0.123">
-
-                                                                                    </div>
-
-                                                                                    <div class="space-y-1">
-
-                                                                                        <label :for="'location_lon_' + index" class="text-xs font-bold text-zinc-600">Longitude</label>
-
-                                                                                        <input :id="'location_lon_' + index" type="text" x-model="location.longitude" :name="'locations[' + index + '][longitude]'" class="w-full px-3 py-2 bg-white border border-zinc-300 rounded-lg focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 text-sm" placeholder="109.123">
-
-                                                                                    </div>
-
-                                                                                </div>
-
-                                                                            </div>
-
-                                                                        </template>
-
-                                                                    </div>
-
-                                                
-
-                                                                    <button type="button" @click="addLocation" class="inline-flex items-center justify-center px-4 py-2 border border-zinc-300 bg-white text-zinc-700 text-sm font-bold rounded-lg hover:bg-zinc-50 transition-all shadow-sm">
-
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-
-                                                                        Tambah Lokasi
-
-                                                                    </button>
-
-                                                
-
-                                                                    @error('locations') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-
-                                                                    @error('locations.*') <span class="text-xs text-red-500 font-medium ml-1">Pastikan semua field lokasi terisi dengan benar.</span> @enderror
-
-                                                                </div>                <div class="pt-6 flex justify-end">
+                <div class="pt-6 flex justify-end">
                     <button type="submit" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
                         Update Koleksi
                     </button>
@@ -170,4 +113,17 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.taxonomy-input').forEach(input => {
+            input.addEventListener('input', function(e) {
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                let words = this.value.split(' ');
+                let capitalized = words.map(w => w.charAt(0).toUpperCase() + w.slice(1));
+                this.value = capitalized.join(' ');
+                this.setSelectionRange(start, end);
+            });
+        });
+    </script>
 </x-dashboard-layout>

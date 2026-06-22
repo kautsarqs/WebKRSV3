@@ -8,6 +8,7 @@ use App\Models\MapMarker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\ImageOptimizer;
 
 class KoleksiController extends Controller
 {
@@ -43,34 +44,35 @@ class KoleksiController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
-            'category_id' => 'required|integer|exists:categories,id',
-            'locations' => 'nullable|array',
-            'locations.*.name' => 'required|string|max:255',
-            'locations.*.latitude' => 'required|numeric|between:-90,90',
-            'locations.*.longitude' => 'required|numeric|between:-180,180',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'kerajaan' => 'nullable|string|max:255',
+            'divisi' => 'nullable|string|max:255',
+            'kelas' => 'nullable|string|max:255',
+            'order' => 'nullable|string|max:255',
+            'famili' => 'nullable|string|max:255',
+            'genus' => 'nullable|string|max:255',
+            'spesies' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
         try {
             $path = null;
             if ($request->hasFile('photo')) {
-                $path = $request->file('photo')->store('koleksi', 'public');
+                $path = ImageOptimizer::convertToAvif($request->file('photo'), 'koleksi');
             }
 
             $koleksi = Koleksi::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'photo' => $path,
-                'category_id' => $validated['category_id'],
+                'kerajaan' => $validated['kerajaan'] ?? null,
+                'divisi' => $validated['divisi'] ?? null,
+                'kelas' => $validated['kelas'] ?? null,
+                'order' => $validated['order'] ?? null,
+                'famili' => $validated['famili'] ?? null,
+                'genus' => $validated['genus'] ?? null,
+                'spesies' => $validated['spesies'] ?? null,
             ]);
-
-            if (isset($validated['locations'])) {
-                foreach ($validated['locations'] as $locationData) {
-                    $koleksi->locations()->create($locationData);
-                }
-            }
             
             DB::commit();
 
@@ -87,18 +89,7 @@ class KoleksiController extends Controller
      */
     public function show(Koleksi $koleksi)
     {
-        $koleksi->load('locations');
         return view('koleksi.show', compact('koleksi'));
-    }
-
-    /**
-     * Display the map for a specified resource.
-     */
-    public function showMap(Koleksi $koleksi)
-    {
-        $koleksi->load('locations');
-        $markers = MapMarker::all();
-        return view('koleksi.peta', compact('koleksi', 'markers'));
     }
 
     /**
@@ -106,9 +97,7 @@ class KoleksiController extends Controller
      */
     public function edit(Koleksi $koleksi)
     {
-        $koleksi->load('locations');
-        $categories = \App\Models\Category::all();
-        return view('admin.koleksi.edit', compact('koleksi', 'categories'));
+        return view('admin.koleksi.edit', compact('koleksi'));
     }
 
     /**
@@ -119,12 +108,14 @@ class KoleksiController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'category_id' => 'required|integer|exists:categories,id',
-            'locations' => 'nullable|array',
-            'locations.*.name' => 'required|string|max:255',
-            'locations.*.latitude' => 'required|numeric|between:-90,90',
-            'locations.*.longitude' => 'required|numeric|between:-180,180',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:2048',
+            'kerajaan' => 'nullable|string|max:255',
+            'divisi' => 'nullable|string|max:255',
+            'kelas' => 'nullable|string|max:255',
+            'order' => 'nullable|string|max:255',
+            'famili' => 'nullable|string|max:255',
+            'genus' => 'nullable|string|max:255',
+            'spesies' => 'nullable|string|max:255',
         ]);
         
         DB::beginTransaction();
@@ -134,23 +125,21 @@ class KoleksiController extends Controller
                 if ($path) {
                     Storage::disk('public')->delete($path);
                 }
-                $path = $request->file('photo')->store('koleksi', 'public');
+                $path = ImageOptimizer::convertToAvif($request->file('photo'), 'koleksi');
             }
 
             $koleksi->update([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'photo' => $path,
-                'category_id' => $validated['category_id'],
+                'kerajaan' => $validated['kerajaan'] ?? null,
+                'divisi' => $validated['divisi'] ?? null,
+                'kelas' => $validated['kelas'] ?? null,
+                'order' => $validated['order'] ?? null,
+                'famili' => $validated['famili'] ?? null,
+                'genus' => $validated['genus'] ?? null,
+                'spesies' => $validated['spesies'] ?? null,
             ]);
-
-            // Delete old locations and create new ones
-            $koleksi->locations()->delete();
-            if (isset($validated['locations'])) {
-                foreach ($validated['locations'] as $locationData) {
-                    $koleksi->locations()->create($locationData);
-                }
-            }
 
             DB::commit();
 
@@ -179,11 +168,22 @@ class KoleksiController extends Controller
     /**
      * Display a listing of the resource for public.
      */
-    public function publicIndex()
+    public function publicIndex(Request $request)
     {
-        $categories = \App\Models\Category::with(['koleksis' => function ($query) {
-            $query->orderBy('title', 'asc');
-        }, 'koleksis.locations'])->orderBy('name', 'asc')->get();
-        return view('koleksi.index', compact('categories'));
+        $query = Koleksi::query()->with(['locations']);
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%')
+                  ->orWhere('genus', 'like', '%' . $search . '%')
+                  ->orWhere('spesies', 'like', '%' . $search . '%');
+            });
+        }
+
+        $koleksis = $query->orderBy('title', 'asc')->get();
+
+        return view('koleksi.index', compact('koleksis'));
     }
 }

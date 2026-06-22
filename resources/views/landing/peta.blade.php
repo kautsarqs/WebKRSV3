@@ -15,6 +15,16 @@
         flex-direction: column;
         gap: 0.5rem;
     }
+    .map-left-controls {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 200px;
+    }
     .map-control-btn {
         background: white;
         border: 1px solid #e4e4e7;
@@ -49,6 +59,43 @@
     .leaflet-popup-tip { background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
     .leaflet-container a.leaflet-popup-close-button { top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); color: #3f3f46; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; transition: all 0.2s; font-weight: bold; padding-bottom: 2px; }
     .leaflet-container a.leaflet-popup-close-button:hover { background: #ffffff; color: #ef4444; transform: scale(1.1); }
+
+    /* Custom GPS User location marker styles */
+    .user-location-marker {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .blue-dot {
+        width: 12px;
+        height: 12px;
+        background-color: #3b82f6;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        z-index: 2;
+    }
+    .pulse-ring {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border: 2.5px solid #3b82f6;
+        border-radius: 50%;
+        background-color: rgba(59, 130, 246, 0.15);
+        animation: pulse-animation 1.6s infinite ease-out;
+        z-index: 1;
+    }
+    @keyframes pulse-animation {
+        0% {
+            transform: scale(0.5);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2.0);
+            opacity: 0;
+        }
+    }
 </style>
 @endpush
 
@@ -62,6 +109,37 @@
     <div class="p-2 bg-white border border-zinc-200 rounded-4xl shadow-xl shadow-zinc-200/50">
         <div class="map-wrapper">
             <div id="map" class="bg-zinc-100"></div>
+            
+            <!-- Left Controls: GPS & Offline Caching -->
+            <div class="map-left-controls">
+                <!-- GPS status -->
+                <div class="bg-white/95 backdrop-blur-xs border border-zinc-200 rounded-xl p-2.5 shadow-sm flex flex-col gap-1">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Status GPS</span>
+                    <div id="gps-status">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-100 text-zinc-600">
+                            GPS Menghubungkan...
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Cache Map offline -->
+                <div class="bg-white/95 backdrop-blur-xs border border-zinc-200 rounded-xl p-2.5 shadow-sm flex flex-col gap-1.5">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Peta Offline</span>
+                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-1 px-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-[10px] font-semibold transition">
+                        Unduh Area Peta
+                    </button>
+                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-1 px-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-semibold transition">
+                        Hapus Cache Peta
+                    </button>
+                    
+                    <div id="download-progress" class="hidden">
+                        <div class="w-full bg-zinc-100 rounded-full h-1 mt-1 overflow-hidden">
+                            <div id="progress-bar" class="bg-green-500 h-1 w-0 transition-all duration-150"></div>
+                        </div>
+                        <p id="progress-text" class="text-[9px] text-zinc-500 mt-1 text-center font-medium"></p>
+                    </div>
+                </div>
+            </div>
             
             <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false">
                 <div class="relative">
@@ -99,17 +177,84 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- LocalForage library for IndexedDB caching -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script>
-    var map = L.map('map', { zoomControl: false }).setView([1.2699364219071683, 109.48515704081744], 13); 
+    // Custom Tile Layer to cache map tiles in IndexedDB via localForage
+    L.TileLayer.Offline = L.TileLayer.extend({
+        getTileKey: function(coords) {
+            // Bersihkan URL dari karakter non-alfanumerik untuk menjadikannya prefix unik per layer
+            var cleanUrl = (this._url || "").replace(/[^a-zA-Z0-9]/g, "").substring(0, 20);
+            return `${cleanUrl}_tile_${coords.z}_${coords.x}_${coords.y}`;
+        },
+        createTile: function(coords, done) {
+            var tile = document.createElement('img');
+            var url = this.getTileUrl(coords);
+            var key = this.getTileKey(coords);
+
+            // Cek data cache di IndexedDB
+            localforage.getItem(key).then(function(blob) {
+                if (blob) {
+                    var objectUrl = URL.createObjectURL(blob);
+                    tile.src = objectUrl;
+                    tile.onload = function() {
+                        URL.revokeObjectURL(objectUrl);
+                        done(null, tile);
+                    };
+                    tile.onerror = function() {
+                        done(new Error("Gagal render blob tile"), tile);
+                    };
+                } else {
+                    // Coba unduh jika tidak ada di cache
+                    fetch(url)
+                        .then(function(res) {
+                            if (!res.ok) throw new Error("Gagal mengambil tile");
+                            return res.blob();
+                        })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob);
+                            var objectUrl = URL.createObjectURL(blob);
+                            tile.src = objectUrl;
+                            tile.onload = function() {
+                                URL.revokeObjectURL(objectUrl);
+                                done(null, tile);
+                            };
+                            tile.onerror = function() {
+                                done(new Error("Gagal render downloaded tile"), tile);
+                            };
+                        })
+                        .catch(function(err) {
+                            console.warn("Offline fallback ke normal image src:", url);
+                            tile.src = url;
+                            done(err, tile);
+                        });
+                }
+            }).catch(function(err) {
+                console.error(err);
+                tile.src = url;
+                done(err, tile);
+            });
+
+            return tile;
+        }
+    });
+
+    L.tileLayer.offline = function(urlTemplate, options) {
+        return new L.TileLayer.Offline(urlTemplate, options);
+    };
+
+    var map = L.map('map', { zoomControl: false }).setView([1.2706202914994014, 109.48517276551188], 14); 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap' });
-    var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 18, attribution: '&copy; Esri' });
-    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
+    // Gunakan Offline Layer untuk melayani tile dengan offline support
+    var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+    var satelliteLayer = L.tileLayer.offline('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 18, attribution: '&copy; Esri', crossOrigin: true });
+    var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
         maxNativeZoom: 17, 
         maxZoom: 17, 
         attribution: 'Map data: &copy; OpenStreetMap contributors',
-        subdomains: 'abc'
+        subdomains: 'abc',
+        crossOrigin: true
     });
 
     var currentLayer = roadLayer.addTo(map);
@@ -122,18 +267,241 @@
         currentLayer.addTo(map);
     }
 
+
+
+    // --- Jalur Rekaman Perjalanan User (Linestring Navigasi Real-Time) ---
+    var userPathCoords = [];
+    var userPolyline = L.polyline(userPathCoords, {
+        color: '#3b82f6', // Biru untuk navigasi aktif
+        weight: 4.5,
+        opacity: 0.9,
+        dashArray: '5, 8'
+    }).addTo(map);
+
+    // --- Real-time User tracking logic ---
+    var userMarker = null;
+    var userAccuracyCircle = null;
+    var firstLocationCheck = true;
+
+    if ('geolocation' in navigator) {
+        navigator.geolocation.watchPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var accuracy = position.coords.accuracy;
+                var latlng = L.latLng(lat, lng);
+
+                if (userMarker) {
+                    userMarker.setLatLng(latlng);
+                    userAccuracyCircle.setLatLng(latlng);
+                    userAccuracyCircle.setRadius(accuracy);
+                } else {
+                    var userIcon = L.divIcon({
+                        className: 'user-location-marker',
+                        html: '<div class="pulse-ring"></div><div class="blue-dot"></div>',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+                    userMarker = L.marker(latlng, { icon: userIcon }).addTo(map);
+                    userAccuracyCircle = L.circle(latlng, {
+                        radius: accuracy,
+                        color: '#3b82f6',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.12,
+                        weight: 1
+                    }).addTo(map);
+                }
+
+                // Tambahkan koordinat ke riwayat rute user dan perbarui linestring
+                userPathCoords.push(latlng);
+                userPolyline.setLatLngs(userPathCoords);
+
+                if (firstLocationCheck) {
+                    map.setView(latlng, 16);
+                    firstLocationCheck = false;
+                }
+
+                document.getElementById('gps-status').innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-green-50 text-green-700 border border-green-100">
+                        GPS Aktif (${accuracy.toFixed(1)}m)
+                    </span>
+                `;
+            },
+            function(error) {
+                console.warn("GPS error:", error);
+                var text = "GPS Error";
+                if (error.code === error.PERMISSION_DENIED) text = "Akses Ditolak";
+                else if (error.code === error.POSITION_UNAVAILABLE) text = "Lokasi Hilang";
+                else if (error.code === error.TIMEOUT) text = "GPS Timeout";
+
+                document.getElementById('gps-status').innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                        ${text}
+                    </span>
+                `;
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        document.getElementById('gps-status').innerHTML = `
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                Tak Didukung
+            </span>
+        `;
+    }
+
+    // --- Offline map seeding logic ---
+    function getTileCoordsForBounds(bounds, zoom) {
+        var tileSize = 256;
+        var nw = bounds.getNorthWest();
+        var se = bounds.getSouthEast();
+        var nwPoint = map.project(nw, zoom);
+        var sePoint = map.project(se, zoom);
+
+        var minX = Math.floor(nwPoint.x / tileSize);
+        var minY = Math.floor(nwPoint.y / tileSize);
+        var maxX = Math.floor(sePoint.x / tileSize);
+        var maxY = Math.floor(sePoint.y / tileSize);
+
+        var tiles = [];
+        for (var x = minX; x <= maxX; x++) {
+            for (var y = minY; y <= maxY; y++) {
+                tiles.push({ z: zoom, x: x, y: y });
+            }
+        }
+        return tiles;
+    }
+
+    function downloadVisibleArea() {
+        var bounds = map.getBounds();
+        var currentZoom = map.getZoom();
+        var zoomsToDownload = [currentZoom - 1, currentZoom, currentZoom + 1];
+        var tiles = [];
+
+        zoomsToDownload.forEach(function(z) {
+            if (z >= map.getMinZoom() && z <= map.getMaxZoom()) {
+                tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
+            }
+        });
+
+        if (tiles.length === 0) return;
+
+        if (tiles.length > 250) {
+            var confirmDl = confirm(`Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`);
+            if (!confirmDl) return;
+        }
+
+        var downloaded = 0;
+        var progressDiv = document.getElementById('download-progress');
+        var bar = document.getElementById('progress-bar');
+        var text = document.getElementById('progress-text');
+        var btn = document.getElementById('download-btn');
+
+        progressDiv.classList.remove('hidden');
+        btn.disabled = true;
+        btn.innerText = "Mengunduh...";
+
+        function updateProgress() {
+            var percentage = Math.round((downloaded / tiles.length) * 100);
+            bar.style.width = percentage + '%';
+            text.innerText = `Mengunduh: ${downloaded}/${tiles.length} (${percentage}%)`;
+
+            if (downloaded === tiles.length) {
+                setTimeout(function() {
+                    progressDiv.classList.add('hidden');
+                    btn.disabled = false;
+                    btn.innerText = "Unduh Area Peta";
+                    alert("Selesai! Peta berhasil disimpan secara offline.");
+                }, 1000);
+            }
+        }
+
+        tiles.forEach(function(tile) {
+            var url = currentLayer.getTileUrl(tile);
+            var key = currentLayer.getTileKey(tile);
+
+            localforage.getItem(key).then(function(val) {
+                if (val) {
+                    downloaded++;
+                    updateProgress();
+                } else {
+                    fetch(url)
+                        .then(function(r) { return r.blob(); })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob).then(function() {
+                                downloaded++;
+                                updateProgress();
+                            });
+                        })
+                        .catch(function(e) {
+                            downloaded++;
+                            updateProgress();
+                        });
+                }
+            });
+        });
+    }
+
+    function clearCachedMap() {
+        if (confirm("Hapus semua peta offline yang tersimpan di browser ini?")) {
+            var btn = document.getElementById('clear-btn');
+            btn.disabled = true;
+            btn.innerText = "Menghapus...";
+
+            localforage.clear().then(function() {
+                alert("Cache dibersihkan.");
+                btn.disabled = false;
+                btn.innerText = "Hapus Cache Peta";
+                currentLayer.redraw();
+            }).catch(function(err) {
+                btn.disabled = false;
+                btn.innerText = "Hapus Cache Peta";
+            });
+        }
+    }
+
+    // --- Auto-download Kebun Raya Sambas tiles on page load (background) ---
+    function autoDownloadKRS() {
+        if (!navigator.onLine) return; // Jangan download jika offline
+        
+        var bounds = L.latLngBounds([1.2599, 109.4751], [1.2799, 109.4951]);
+        var zooms = [13, 14, 15, 16, 17];
+        var tiles = [];
+
+        zooms.forEach(function(z) {
+            tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
+        });
+
+        tiles.forEach(function(tile) {
+            var url = roadLayer.getTileUrl(tile);
+            var key = roadLayer.getTileKey(tile);
+
+            localforage.getItem(key).then(function(val) {
+                if (!val) {
+                    fetch(url)
+                        .then(function(r) { return r.blob(); })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob);
+                        })
+                        .catch(function(e) {
+                            // Abaikan error
+                        });
+                }
+            });
+        });
+    }
+
+    // Jalankan otomatis 3 detik setelah halaman termuat
+    setTimeout(autoDownloadKRS, 3000);
+
     var markers = @json($markers);
     var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
 
     markers.forEach(function(marker) {
-        var customIcon = L.divIcon({
-            className: 'custom-marker',
-            html: '<div style="background-color: ' + marker.color + '; width: 22px; height: 22px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-            iconSize: [22, 22],
-            iconAnchor: [11, 11],
-            popupAnchor: [0, -10]
-        });
-
         var typeLabel = 'Lokasi';
         var badgeClass = 'bg-zinc-100 text-zinc-600';
         switch(marker.type) {
@@ -149,9 +517,42 @@
 
         var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass} mb-2">${typeLabel}</span><h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100"><a href="#" class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">LIHAT DETAIL</a></div></div></div>`;
 
-        L.marker([marker.latitude, marker.longitude], { icon: customIcon })
-            .addTo(map)
-            .bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+        // Render berdasarkan tipe geometri dari database
+        var geomType = marker.geometry_type || 'point';
+
+        if (geomType === 'point' && marker.latitude && marker.longitude) {
+            var customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<div style="background-color: ' + marker.color + '; width: 22px; height: 22px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                popupAnchor: [0, -10]
+            });
+            L.marker([marker.latitude, marker.longitude], { icon: customIcon })
+                .addTo(map)
+                .bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+        } else if (marker.geojson) {
+            try {
+                var coordinates = JSON.parse(marker.geojson);
+                if (coordinates.length > 0) {
+                    if (geomType === 'polyline') {
+                        L.polyline(coordinates, { 
+                            color: marker.color, 
+                            weight: 4.5 
+                        }).addTo(map).bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+                    } else if (geomType === 'polygon') {
+                        L.polygon(coordinates, { 
+                            color: marker.color, 
+                            fillColor: marker.color, 
+                            fillOpacity: 0.12, 
+                            weight: 3 
+                        }).addTo(map).bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+                    }
+                }
+            } catch(e) {
+                console.error("Gagal menggambar fitur spasial:", e);
+            }
+        }
     });
 </script>
 @endpush

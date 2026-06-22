@@ -28,16 +28,13 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                 :class="(scrolled || mobileMenuOpen) ? '{{ $isHome ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ $isHome ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Beranda</a>
             <a href="{{ route('profil') }}"
                 class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
-                :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('profil') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Profil</a>
+                :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('profil') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('profil') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Tentang Kami</a>
             <a href="{{ route('koleksi') }}"
                 class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('koleksi') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('koleksi') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('koleksi') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Koleksi</a>
             <a href="{{ route('peta') }}"
                 class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('peta') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
                 :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('peta') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('peta') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Peta</a>
-            <a href="{{ route('penelitian') }}"
-                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('penelitian') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
-                :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('penelitian') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('penelitian') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Penelitian</a>
             
             <div class="relative group">
                 <button class="flex items-center gap-1 text-sm font-medium transition duration-300 focus:outline-none {{ $isHome ? 'text-zinc-200 hover:text-white' : 'text-zinc-600 hover:text-zinc-900' }}"
@@ -60,11 +57,7 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                     </div>
                 </div>
             </div>
-
-            <a href="{{ route('kontak') }}"
-                class="text-sm font-medium transition duration-300 {{ $isHome ? 'text-zinc-200 hover:text-white' : (request()->routeIs('kontak') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900') }}"
-                :class="(scrolled || mobileMenuOpen) ? '{{ request()->routeIs('kontak') ? 'text-zinc-900 font-bold' : 'text-zinc-600 hover:text-zinc-900' }}' : '{{ request()->routeIs('kontak') ? 'text-white font-bold' : 'text-zinc-200 hover:text-white' }}'">Kontak</a>
-        </div>
+            </div>
 
 
         <div class="flex items-center gap-4 sm:gap-6">
@@ -153,10 +146,9 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
          id="mobile-menu">
         <div class="px-6 pt-2 pb-6 flex flex-col gap-2">
             <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('home') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Beranda</a>
-            <a href="{{ route('profil') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('profil') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Profil</a>
+            <a href="{{ route('profil') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('profil') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Tentang Kami</a>
             <a href="{{ route('koleksi') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('koleksi') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Koleksi</a>
             <a href="{{ route('peta') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('peta') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Peta</a>
-            <a href="{{ route('penelitian') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('penelitian') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Penelitian</a>
             
             <div x-data="{ mobilePendaftaranOpen: false }" class="block">
                 <button @click="mobilePendaftaranOpen = !mobilePendaftaranOpen" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 focus:outline-none">
@@ -169,7 +161,6 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                 </div>
             </div>
 
-            <a href="{{ route('kontak') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('kontak') ? 'text-zinc-900 font-bold bg-zinc-50' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50' }}">Kontak</a>
 
             {{-- Tombol Login/Register untuk Mobile --}}
             @guest

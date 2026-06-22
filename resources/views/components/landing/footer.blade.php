@@ -26,24 +26,22 @@
             <div class="lg:col-span-2">
                 <h3 class="font-heading font-bold text-zinc-900 mb-6">Jelajahi</h3>
                 <ul class="space-y-4 text-sm text-zinc-500">
-                    <li><a href="#" class="hover:text-zinc-900 transition">Tentang Kami</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Koleksi Flora</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Fasilitas</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Peta Kawasan</a></li>
+                    <li><a href="{{ route('home') }}" class="hover:text-zinc-900 transition">Beranda</a></li>
+                    <li><a href="{{ route('profil') }}" class="hover:text-zinc-900 transition">Tentang Kami</a></li>
+                    <li><a href="{{ route('koleksi') }}" class="hover:text-zinc-900 transition">Koleksi Flora</a></li>
+                    <li><a href="{{ route('peta') }}" class="hover:text-zinc-900 transition">Peta Kawasan</a></li>
                 </ul>
             </div>
 
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-3">
                 <h3 class="font-heading font-bold text-zinc-900 mb-6">Layanan</h3>
                 <ul class="space-y-4 text-sm text-zinc-500">
-                    <li><a href="#" class="hover:text-zinc-900 transition">Tiket Masuk</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Sewa Tempat</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Kunjungan Sekolah</a></li>
-                    <li><a href="#" class="hover:text-zinc-900 transition">Penelitian</a></li>
+                    <li><a href="{{ route('pendaftaran.pengunjung') }}" class="hover:text-zinc-900 transition">Pendaftaran Pengunjung</a></li>
+                    <li><a href="{{ route('register') }}" class="hover:text-zinc-900 transition">Pendaftaran Penelitian</a></li>
                 </ul>
             </div>
 
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-3">
                 <h3 class="font-heading font-bold text-zinc-900 mb-6">Hubungi Kami</h3>
                 <ul class="space-y-4 text-sm text-zinc-500">
                     <li class="flex items-start gap-3">
@@ -53,6 +51,10 @@
                     <li class="flex items-center gap-3">
                         <svg class="w-5 h-5 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         <a href="mailto:info@krsambas.go.id" class="hover:text-zinc-900 transition">info@krsambas.go.id</a>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                        <a href="tel:+6281234567890" class="hover:text-zinc-900 transition">+62 812-3456-7890</a>
                     </li>
                 </ul>
             </div>

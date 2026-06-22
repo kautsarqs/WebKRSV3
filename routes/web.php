@@ -23,26 +23,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('beranda');
+    $markers = \App\Models\MapMarker::all();
+    $koleksis = \App\Models\Koleksi::latest()->take(4)->get();
+    return view('beranda', compact('markers', 'koleksis'));
 })->name('home');
 
 // Halaman-halaman Menu
-Route::get('/profil', function () {
+Route::get('/tentang-kami', function () {
     return view('landing.profil');
 })->name('profil');
 Route::get('/koleksi', [KoleksiController::class, 'publicIndex'])->name('koleksi');
 Route::get('/koleksi/{koleksi}', [KoleksiController::class, 'show'])->name('koleksi.show');
-Route::get('/koleksi/{koleksi}/peta', [KoleksiController::class, 'showMap'])->name('koleksi.peta');
-Route::get('/penelitian', function () {
-    return view('landing.penelitian');
-})->name('penelitian');
 Route::get('/peta', function () {
     $markers = MapMarker::all();
     return view('landing.peta', compact('markers'));
 })->name('peta');
-Route::get('/kontak', function () {
-    return view('landing.kontak');
-})->name('kontak');
 
 // Pendaftaran Routes (Bisa diakses Guest/Auth)
 Route::get('/pendaftaran/pengunjung', [PendaftaranController::class, 'createPengunjung'])->name('pendaftaran.pengunjung');
@@ -112,10 +107,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', function () {
             $totalUsers = User::count();
             $totalKoleksi = Koleksi::count();
-            $totalCategories = Category::count();
             $totalMapMarkers = MapMarker::count();
 
-            return view('admin.dashboard', compact('totalUsers', 'totalKoleksi', 'totalCategories', 'totalMapMarkers'));
+            return view('admin.dashboard', compact('totalUsers', 'totalKoleksi', 'totalMapMarkers'));
         })->name('admin.dashboard');
 
         // CRUD User
@@ -126,9 +120,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // CRUD Koleksi
         Route::resource('koleksi', KoleksiController::class)->names('admin.koleksi');
-
-        // CRUD Kategori
-        Route::resource('categories', CategoryController::class)->names('admin.categories');
     });
 
     // --- Profile Routes ---

@@ -20,10 +20,6 @@
             Kelola Koleksi
         </x-ui.nav-link>
 
-        <x-ui.nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7.5h18"/><path d="M3 16.5h18"/></svg>
-            Kelola Kategori
-        </x-ui.nav-link>
     @else
         <x-ui.nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>

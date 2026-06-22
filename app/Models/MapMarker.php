@@ -17,6 +17,8 @@ class MapMarker extends Model
         'description',
         'color',
         'photo',
+        'geometry_type',
+        'geojson',
     ];
 
     protected $casts = [
