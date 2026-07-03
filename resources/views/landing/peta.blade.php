@@ -300,14 +300,27 @@
                 @endphp
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-zinc-200 shadow-xs">
                     @if($firstGeomType === 'point')
-                        <span class="w-3 h-3 rounded-full" style="background-color: {{ $color }}; box-shadow: 0 0 0 3px {{ $color }}22;"></span>
+                        {{-- Point: filled circle with glow ring --}}
+                        <span class="w-3 h-3 rounded-full shrink-0" style="background-color: {{ $color }}; box-shadow: 0 0 0 3px {{ $color }}22;"></span>
+                    @elseif($firstGeomType === 'polygon')
+                        {{-- Polygon: dashed curved closed shape with transparent fill --}}
+                        <svg class="w-7 h-5 shrink-0" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 18 C5 12, 8 5, 18 4 C28 3, 32 10, 31 17 C30 22, 22 22, 18 22 C12 22, 7 24, 6 18 Z"
+                                  stroke="{{ $color }}" stroke-width="2" stroke-dasharray="4 2.5" stroke-linecap="round" stroke-linejoin="round"
+                                  fill="{{ $color }}" fill-opacity="0.15"/>
+                        </svg>
                     @else
-                        <span class="w-7 h-1.5 border-b-2 border-dashed shrink-0" style="border-color: {{ $color }};"></span>
+                        {{-- LineString: solid curved wavy line --}}
+                        <svg class="w-7 h-5 shrink-0" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 18 C8 12, 12 5, 18 10 C24 15, 28 6, 33 8"
+                                  stroke="{{ $color }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                     @endif
                     <span class="text-zinc-700">{{ Str::of($type)->replace('_', ' ')->title() }}</span>
                     <span class="bg-zinc-100 text-zinc-500 rounded-full px-1.5 py-0.2 text-[10px] font-bold">{{ $markersOfType->count() }}</span>
                 </div>
             @endforeach
+
         </div>
     </div>
 

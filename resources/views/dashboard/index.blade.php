@@ -181,11 +181,11 @@
 
                                         @if($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
-                                                <a href="{{ route('dashboard.pengunjungs.edit', $reg->id) }}" 
+                                                <a href="{{ route('dashboard.pengunjung.edit', $reg->id) }}" 
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
                                                     Edit
                                                 </a>
-                                                <form action="{{ route('dashboard.pengunjungs.destroy', $reg->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pendaftaran kunjungan ini?');" style="display:inline;">
+                                                <form action="{{ route('dashboard.pengunjung.destroy', $reg->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pendaftaran kunjungan ini?');" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-650 hover:text-white text-red-650 rounded-lg text-xs font-bold transition-all">
@@ -239,11 +239,11 @@
 
                                         @if($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
-                                                <a href="{{ route('dashboard.penelitis.edit', $reg->id) }}" 
+                                                <a href="{{ route('dashboard.peneliti.edit', $reg->id) }}" 
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
                                                     Edit
                                                 </a>
-                                                <form action="{{ route('dashboard.penelitis.destroy', $reg->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan permohonan penelitian ini?');" style="display:inline;">
+                                                <form action="{{ route('dashboard.peneliti.destroy', $reg->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan permohonan penelitian ini?');" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-650 hover:text-white text-red-650 rounded-lg text-xs font-bold transition-all">

@@ -6,11 +6,7 @@
     <div class="max-w-7xl mx-auto px-6 py-8">
         
         <!-- Header Section -->
-        <div class="text-center mb-16 relative">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-700 text-xs font-bold font-space mb-4 tracking-wider uppercase animate-fade-in">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 0 8a7 7 0 0 1-8 10Z"/><path d="M9 22v-4h4v4"/></svg>
-                Spesies & Taksonomi Flora
-            </div>
+        <div class="text-center mb-8 relative">
             <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
                 Eksplorasi Tumbuhan
             </h1>
@@ -19,8 +15,9 @@
             </p>
         </div>
 
+
         <!-- Search & Filter Controls -->
-        <div class="max-w-3xl mx-auto mb-16 space-y-6">
+        <div class="max-w-3xl mx-auto mb-8 space-y-6">
             <form method="GET" action="{{ route('koleksi') }}" class="relative group">
                 <div class="flex items-center bg-white border border-zinc-200 focus-within:border-emerald-500 rounded-full p-2 pl-6 shadow-md shadow-zinc-100 hover:shadow-lg focus-within:shadow-emerald-100/40 transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-zinc-400 group-focus-within:text-emerald-600 transition-colors mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

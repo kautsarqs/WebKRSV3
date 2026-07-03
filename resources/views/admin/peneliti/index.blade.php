@@ -11,7 +11,7 @@
             
             <div class="flex items-center gap-3 flex-wrap">
                 {{-- Bulk Delete Button --}}
-                <form id="bulk-delete-form-peneliti" method="POST" action="{{ route('admin.penelitis.bulk-delete') }}" style="display:none;">
+                <form id="bulk-delete-form-peneliti" method="POST" action="{{ route('admin.peneliti.bulk-delete') }}" style="display:none;">
                     @csrf
                     <input type="hidden" id="bulk-ids-json-peneliti" name="ids_json" value="">
                     <button type="button" id="btn-bulk-delete-peneliti" onclick="confirmBulkDeletePeneliti()"
@@ -21,7 +21,7 @@
                     </button>
                 </form>
 
-                <a href="{{ route('admin.penelitis.export', ['format' => 'pdf']) }}" target="_blank"
+                <a href="{{ route('admin.peneliti.export', ['format' => 'pdf']) }}" target="_blank"
                    class="px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-zinc-900/10">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                     Cetak PDF
@@ -45,12 +45,12 @@
 
         {{-- Status Filters --}}
         <div class="flex items-center gap-2 overflow-x-auto pb-2">
-            <a href="{{ route('admin.penelitis.index') }}" 
+            <a href="{{ route('admin.peneliti.index') }}" 
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ !request('status') ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                 Semua
             </a>
             @foreach(['pending' => 'Pending', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $val => $label)
-                <a href="{{ route('admin.penelitis.index', ['status' => $val]) }}" 
+                <a href="{{ route('admin.peneliti.index', ['status' => $val]) }}" 
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request('status') === $val ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                     {{ $label }}
                 </a>
@@ -139,14 +139,14 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2 flex-wrap">
                                         @if($row->status === 'pending')
-                                            <form method="POST" action="{{ route('admin.penelitis.status', $row->id) }}" style="display:inline;">
+                                            <form method="POST" action="{{ route('admin.peneliti.status', $row->id) }}" style="display:inline;">
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="disetujui">
                                                 <button type="submit" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-xs font-bold rounded-lg transition-all">Setujui</button>
                                             </form>
                                             <button type="button"
-                                                    onclick="openTolakModal('{{ route('admin.penelitis.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
+                                                    onclick="openTolakModal('{{ route('admin.peneliti.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
                                                     class="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-xs font-bold rounded-lg transition-all">
                                                 Tolak
                                             </button>
@@ -157,7 +157,7 @@
                                                 class="px-2.5 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-xs font-bold rounded-lg transition-all">
                                             Hapus
                                         </button>
-                                        <form id="delete-form-peneliti-{{ $row->id }}" method="POST" action="{{ route('admin.penelitis.destroy', $row->id) }}" style="display:none;">
+                                        <form id="delete-form-peneliti-{{ $row->id }}" method="POST" action="{{ route('admin.peneliti.destroy', $row->id) }}" style="display:none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>

@@ -68,7 +68,7 @@ class PendaftaranController extends Controller
         PendaftaranPengunjung::create([
             'user_id'           => Auth::id(),
             'nama_lengkap'      => $request->nama_lengkap,
-            'no_identitas'      => '0000000000000000', // Default dummy value
+            'no_identitas'      => '0000000000000000', 
             'nomor_hp'          => $request->nomor_hp,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
             'jumlah_rombongan'  => $jumlahRombongan,
@@ -220,7 +220,7 @@ class PendaftaranController extends Controller
         $pendaftaran = PendaftaranPeneliti::create([
             'user_id'           => Auth::id(),
             'nama_lengkap'      => $request->nama_lengkap,
-            'no_identitas'      => '0000000000000000', // Default dummy value
+            'no_identitas'      => '0000000000000000',
             'nomor_hp'          => $request->nomor_hp,
             'institusi'         => $request->institusi,
             'program_studi'     => $request->program_studi,

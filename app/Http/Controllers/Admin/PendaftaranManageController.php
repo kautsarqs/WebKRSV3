@@ -22,7 +22,7 @@ class PendaftaranManageController extends Controller
         }
 
         $pengunjungs = $query->paginate(15);
-        return view('admin.pengunjungs.index', compact('pengunjungs'));
+        return view('admin.pengunjung.index', compact('pengunjungs'));
     }
 
     public function updatePengunjungStatus(Request $request, $id)
@@ -51,7 +51,7 @@ class PendaftaranManageController extends Controller
         }
 
         $penelitis = $query->paginate(15);
-        return view('admin.penelitis.index', compact('penelitis'));
+        return view('admin.peneliti.index', compact('penelitis'));
     }
 
     public function updatePenelitiStatus(Request $request, $id)
@@ -112,7 +112,7 @@ class PendaftaranManageController extends Controller
         }
 
         // Cetak PDF (Print View)
-        return view('admin.pengunjungs.print', compact('pengunjungs'));
+        return view('admin.pengunjung.print', compact('pengunjungs'));
     }
 
     public function exportPeneliti(Request $request, $format)
@@ -169,7 +169,7 @@ class PendaftaranManageController extends Controller
         }
 
         // Cetak PDF (Print View)
-        return view('admin.penelitis.print', compact('penelitis'));
+        return view('admin.peneliti.print', compact('penelitis'));
     }
 
     public function destroyPengunjung($id)

@@ -153,25 +153,50 @@
     <div class="absolute bottom-0 left-0 w-full h-36 bg-linear-to-t from-white via-white/40 to-transparent z-2"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto px-6 mt-8">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-xs text-white mb-6 backdrop-blur-md animate-fade-in">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Digitalisasi Konservasi Alam
+
+        <!-- Botanical leaf accent -->
+        <div class="flex items-center justify-center gap-3 mb-5">
+            <span class="block h-px w-10 bg-white/30 rounded-full"></span>
+            <svg class="w-5 h-5 text-emerald-400 opacity-80" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 8C8 10 5.9 16.17 3.82 19.34L5.71 21C8.15 17.4 10.55 14.32 17 8Z"/>
+                <path d="M21 3C21 3 8 5 7 18L9 20C9.2 15.97 11.5 9.35 21 3Z" opacity="0.6"/>
+            </svg>
+            <span class="block h-px w-10 bg-white/30 rounded-full"></span>
         </div>
 
-        <h1 class="text-4xl md:text-7xl font-bold tracking-tight mb-6 text-white font-heading leading-tight drop-shadow-sm">
-            Sambas Botanical <br>
-            <span class="text-transparent bg-clip-text bg-linear-to-b from-emerald-250 to-emerald-400">
-                Garden & Research
+        <h1 class="font-heading leading-none mb-8 text-center">
+            <!-- Prefix line: "Kebun Raya" - lighter, smaller -->
+            <span class="block text-2xl md:text-4xl font-medium text-white/80 tracking-[0.18em] uppercase mb-2 drop-shadow-sm">
+                Kebun Raya
+            </span>
+
+            <!-- Focal word: "Sambas" - massive, gradient, with SVG underline -->
+            <span class="relative inline-block">
+                <span class="text-6xl md:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-linear-to-b from-emerald-500 to-emerald-800 drop-shadow-[0_0_60px_rgba(6,95,70,0.35)]">
+                    Sambas
+                </span>
+                <!-- Decorative hand-drawn wave underline -->
+                <svg class="absolute -bottom-2 md:-bottom-3 left-0 w-full overflow-visible" viewBox="0 0 420 14" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M4 10C40 4 80 2 130 7C180 12 220 10 270 6C310 3 360 5 416 9"
+                          stroke="url(#wave-gradient)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="wave-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#065f46" stop-opacity="0.3"/>
+                            <stop offset="40%" stop-color="#047857"/>
+                            <stop offset="100%" stop-color="#064e3b" stop-opacity="0.5"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
             </span>
         </h1>
 
-        <p class="text-base md:text-lg text-zinc-200 max-w-2xl mx-auto mb-10 leading-relaxed font-light font-inter">
+        <p class="text-base md:text-lg text-zinc-200/90 max-w-2xl mx-auto mb-10 leading-relaxed font-light font-inter text-center">
             Pusat konservasi tumbuhan, penelitian, dan edukasi lingkungan.
             Menjaga keanekaragaman hayati Kalimantan untuk masa depan yang lestari.
         </p>
 
         <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="{{ route('pendaftaran.pengunjung') }}" class="px-8 py-3.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-950/20 text-sm">
+            <a href="{{ route('pendaftaran.pengunjung') }}" class="px-8 py-3.5 rounded-full bg-emerald-800 text-white font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-950/30 text-sm">
                 Pendaftaran Pengunjung
             </a>
             <a href="{{ route('register') }}" class="px-8 py-3.5 rounded-full bg-white/10 text-white font-semibold border border-white/30 hover:bg-white/20 backdrop-blur-md transition shadow-md text-sm">
@@ -179,6 +204,7 @@
             </a>
         </div>
     </div>
+
 
     {{-- Down arrow navigation indicator --}}
     <a href="#penelitian" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white hover:text-emerald-400 transition-colors duration-300 animate-bounce">
@@ -189,12 +215,8 @@
 </div>
 
 {{-- 2. Penelitian Section --}}
-<div id="penelitian" class="max-w-7xl mx-auto px-6 py-28 scroll-mt-20">
-    <div class="text-center mb-16 relative">
-        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-700 text-xs font-bold font-space mb-4 tracking-wider uppercase">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M4.5 16.5c-1.5 1.26-2 2.5-2 3.5 0 1 1 2 2 2s2-1 2-2c0-1-.5-2.24-2-3.5Z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 2.2.72 4.22 1.94 5.86L18.14 3.94C16.5 2.72 14.48 2 12 2Z"/><path d="M22 12c0 5.5-4.5 10-10 10-2.2 0-4.22-.72-5.86-1.94l14.2-14.2c1.22 1.64 1.94 3.66 1.94 5.86Z"/></svg>
-            Penelitian & Edukasi
-        </div>
+<div id="penelitian" class="max-w-7xl mx-auto px-6 py-16 scroll-mt-20">
+    <div class="text-center mb-10 relative">
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
             Pusat Riset & Sains
         </h2>
@@ -250,7 +272,7 @@
         </div>
     </div>
 
-    <div class="mt-14 flex justify-center">
+    <div class="mt-8 flex justify-center">
         <a href="{{ route('profil') }}#penelitian" class="px-8 py-3 border border-zinc-200 hover:border-zinc-900 text-zinc-700 hover:text-zinc-900 rounded-full font-bold font-space text-xs tracking-wider transition">
             SELENGKAPNYA TENTANG PENELITIAN
         </a>
@@ -258,13 +280,9 @@
 </div>
 
 {{-- 3. Koleksi Section --}}
-<div id="koleksi" class="bg-zinc-50/50 border-y border-zinc-100 py-28 scroll-mt-20">
+<div id="koleksi" class="bg-zinc-50/50 border-y border-zinc-100 py-16 scroll-mt-20">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16 relative">
-            <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-700 text-xs font-bold font-space mb-4 tracking-wider uppercase">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                Koleksi Flora
-            </div>
+        <div class="text-center mb-10 relative">
             <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
                 Eksplorasi Keanekaragaman Flora
             </h2>
@@ -344,7 +362,7 @@
             @endforelse
         </div>
 
-        <div class="mt-14 flex justify-center">
+        <div class="mt-8 flex justify-center">
             <a href="{{ route('koleksi') }}" class="px-8 py-3 border border-zinc-200 hover:border-zinc-900 text-zinc-700 hover:text-zinc-900 rounded-full font-bold font-space text-xs tracking-wider transition">
                 JELAJAHI SEMUA KOLEKSI FLORA
             </a>
@@ -353,12 +371,8 @@
 </div>
 
 {{-- 4. Peta Section --}}
-<div id="peta" class="max-w-7xl mx-auto px-6 py-28 scroll-mt-20">
-    <div class="text-center mb-16 relative">
-        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-700 text-xs font-bold font-space mb-4 tracking-wider uppercase">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            Peta Digital & WebGIS
-        </div>
+<div id="peta" class="max-w-7xl mx-auto px-6 py-16 scroll-mt-20">
+    <div class="text-center mb-10 relative">
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
             Peta Kawasan Interaktif
         </h2>
@@ -502,19 +516,19 @@
         </div>
     </div>
 
-    <div class="mt-14 flex flex-col sm:flex-row items-center justify-between gap-6 p-8 bg-zinc-50 rounded-3xl border border-zinc-200/70">
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 p-6 bg-zinc-50 rounded-3xl border border-zinc-200">
         <div>
             <h4 class="font-heading text-lg font-bold text-zinc-950 mb-1">Butuh Sistem Navigasi Penuh?</h4>
             <p class="text-sm text-zinc-500 font-inter font-light">Buka peta utama untuk menikmati fitur GPS Real-Time, pengunduhan peta offline, dan filter per kategori wilayah.</p>
         </div>
-        <a href="{{ route('peta') }}" class="px-7 py-3.5 bg-zinc-950 hover:bg-emerald-800 text-white rounded-full font-bold font-space text-xs tracking-wider transition-colors shrink-0">
+        <a href="{{ route('peta') }}" class="px-7 py-3.5 bg-zinc-950 hover:bg-emerald-700 text-white rounded-full font-bold font-space text-xs tracking-wider transition-colors shrink-0">
             BUKA PETA INTERAKTIF
         </a>
     </div>
 </div>
 
 {{-- 5. CTA Akhir Section --}}
-<div class="bg-zinc-950 text-white py-24 relative overflow-hidden">
+<div class="bg-zinc-950 text-white py-16 relative overflow-hidden">
     <div class="absolute inset-0 bg-grid-white/[0.02] pointer-events-none"></div>
     {{-- Glow effect decoration --}}
     <div class="absolute -top-40 left-1/3 w-96 h-96 bg-emerald-700/25 rounded-full filter blur-3xl pointer-events-none"></div>
@@ -525,22 +539,20 @@
             Hutan Tropis Kalimantan
         </h2>
         <p class="text-base md:text-lg text-zinc-450 max-w-2xl mx-auto mb-12 font-inter font-light">
-            Dukung program digitalisasi konservasi botani kami. Anda dapat berkunjung langsung untuk edukasi alam atau mendaftar sebagai peneliti mitra riset.
+            Anda dapat berkunjung langsung untuk edukasi alam atau mendaftar sebagai peneliti mitra riset Kebun Raya Sambas.
         </p>
 
         <div class="flex flex-col sm:flex-row justify-center items-center gap-5">
-            <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-750 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg transition duration-300">
-                DAFTAR KUNJUNGAN PENGUNJUNG
+            <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg transition duration-300">
+                PENDAFTARAN KUNJUNGAN
             </a>
             <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold font-space text-xs tracking-wider rounded-full border border-white/20 backdrop-blur-xs transition duration-300">
-                DAFTAR PENELITIAN MITRA RISET
-            </a>
-            <a href="#contact" class="w-full sm:w-auto px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-zinc-350 hover:text-white font-bold font-space text-xs tracking-wider rounded-full transition duration-300">
-                HUBUNGI KAMI
+                PENDAFTARAN PENELITI
             </a>
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('scripts')

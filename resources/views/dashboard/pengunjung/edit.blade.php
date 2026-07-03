@@ -15,7 +15,7 @@
     </div>
 
     <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden p-8">
-        <form id="form-pendaftaran" action="{{ route('dashboard.pengunjungs.update', $pengunjung->id) }}" method="POST" class="space-y-6">
+        <form id="form-pendaftaran" action="{{ route('dashboard.pengunjung.update', $pengunjung->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('PATCH')
 

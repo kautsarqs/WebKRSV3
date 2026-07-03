@@ -20,8 +20,8 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email,' . $request->user()->id],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
         ], [
             'avatar.image' => 'File harus berupa gambar.',
@@ -60,7 +60,7 @@ class ProfileController extends Controller
         return back()->with('status', 'profile-updated');
     }
 
-    // Tambahkan method ini
+    // Tampilkan Profil
     public function show(Request $request)
     {
         return view('profile.show', [

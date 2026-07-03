@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Koleksi;
-use App\Models\KoleksiLocation;
-use App\Models\MapMarker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +15,7 @@ class KoleksiController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Koleksi::query()->with('locations');
+        $query = Koleksi::query();
 
         if ($request->has('search') && $request->search != '') {
             $query->where('title', 'like', '%' . $request->search . '%');
@@ -170,7 +168,7 @@ class KoleksiController extends Controller
      */
     public function publicIndex(Request $request)
     {
-        $query = Koleksi::query()->with(['locations']);
+        $query = Koleksi::query();
 
         if ($request->filled('search')) {
             $search = $request->input('search');

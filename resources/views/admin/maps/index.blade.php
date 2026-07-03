@@ -66,7 +66,24 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($marker->photo)
+                                    @if($marker->geometry_type === 'polygon')
+                                        <div class="w-16 h-16 bg-zinc-50 rounded-lg border border-zinc-200 flex items-center justify-center overflow-hidden shadow-xs" title="Polygon">
+                                            <svg class="w-11 h-11" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12 42 C10 28, 16 10, 32 9 C48 8, 56 22, 54 38 C52 50, 40 54, 32 54 C22 54, 14 52, 12 42 Z"
+                                                      stroke="{{ $marker->color ?? '#3b82f6' }}" stroke-width="3.5"
+                                                      stroke-dasharray="6 3.5" stroke-linecap="round" stroke-linejoin="round"
+                                                      fill="{{ $marker->color ?? '#3b82f6' }}" fill-opacity="0.12"/>
+                                            </svg>
+                                        </div>
+                                    @elseif($marker->geometry_type === 'linestring' || $marker->geometry_type === 'polyline')
+                                        <div class="w-16 h-16 bg-zinc-50 rounded-lg border border-zinc-200 flex items-center justify-center overflow-hidden shadow-xs" title="LineString">
+                                            <svg class="w-11 h-11" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8 50 C16 36, 20 18, 32 28 C42 37, 46 14, 56 12"
+                                                      stroke="{{ $marker->color ?? '#3b82f6' }}" stroke-width="4.5"
+                                                      stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
+                                    @elseif($marker->photo)
                                         <img src="{{ \Illuminate\Support\Facades\Storage::url($marker->photo) }}" alt="{{ $marker->name }}" class="w-16 h-16 object-cover rounded-lg border border-zinc-200 shadow-sm">
                                     @else
                                         <div class="w-16 h-16 bg-zinc-100 rounded-lg border border-zinc-200 flex items-center justify-center">
@@ -75,9 +92,10 @@
                                             </svg>
                                         </div>
                                     @endif
+
                                 </td>
                                 <td class="px-6 py-4 font-medium text-zinc-500 text-xs">
-                                    {{ number_format($marker->latitude, 6) }}, {{ number_format($marker->longitude, 6) }}
+                                    {{ number_format($marker->center_latitude, 6) }}, {{ number_format($marker->center_longitude, 6) }}
                                 </td>
                                 <td class="px-6 py-4">
                                     @php

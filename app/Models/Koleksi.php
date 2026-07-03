@@ -38,9 +38,4 @@ class Koleksi extends Model
     {
         return $this->belongsTo(Category::class);
     }
-
-    public function locations()
-    {
-        return $this->hasMany(KoleksiLocation::class);
-    }
 }

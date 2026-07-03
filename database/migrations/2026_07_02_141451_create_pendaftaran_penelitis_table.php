@@ -13,6 +13,22 @@ return new class extends Migration
     {
         Schema::create('pendaftaran_penelitis', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('nama_lengkap');
+            $table->string('no_identitas')->default('0000000000000000');
+            $table->string('nomor_hp');
+            $table->string('institusi');
+            $table->string('program_studi')->nullable();
+            $table->string('jenjang');
+            $table->string('judul_penelitian', 500);
+            $table->string('bidang_penelitian', 500);
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_selesai');
+            $table->integer('jumlah_anggota')->default(1);
+            $table->text('tujuan_penelitian');
+            $table->text('surat_pengantar');
+            $table->string('status')->default('pending');
+            $table->text('catatan_admin')->nullable();
             $table->timestamps();
         });
     }

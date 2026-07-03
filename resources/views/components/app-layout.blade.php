@@ -12,7 +12,7 @@
 </head>
 <body class="font-sans antialiased bg-white text-zinc-900 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30" 
       x-data="{ isLoading: true }" 
-      x-init="window.onload = () => { setTimeout(() => { isLoading = false }, 400) }">
+      x-init="if (document.readyState === 'complete') { setTimeout(() => { isLoading = false }, 400); } else { window.addEventListener('load', () => { setTimeout(() => { isLoading = false }, 400); }); }">
 
     <!-- Global Skeleton Loading Overlay -->
     <template x-if="isLoading">

@@ -52,8 +52,8 @@ class AuthController extends Controller
     public function storeRegister(Request $request)
 {
     $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'name' => ['required', 'string', 'max:100'],
+        'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
         'password' => ['required', 'confirmed', 'min:8'],
     ]);
 
@@ -68,11 +68,12 @@ class AuthController extends Controller
     \Illuminate\Support\Facades\Auth::login($user);
 
     // Kirim email secara manual langsung ke objek $user
-    // Ini lebih pasti daripada mengandalkan Event jika listener bermasalah
     $user->sendEmailVerificationNotification();
 
     return redirect()->route('verification.notice');
-}    // Proses Logout
+}
+
+    // Proses Logout
     public function destroy(Request $request)
     {
         Auth::logout();

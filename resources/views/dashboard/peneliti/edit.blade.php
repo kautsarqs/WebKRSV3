@@ -18,7 +18,7 @@
         </p>
     </div>
 
-    <form id="form-peneliti" action="{{ route('dashboard.penelitis.update', $peneliti->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form id="form-peneliti" action="{{ route('dashboard.peneliti.update', $peneliti->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
         @method('PATCH')
 

@@ -25,7 +25,7 @@
 @endphp
 
 <body x-data="{ isLoading: true }" 
-      x-init="window.onload = () => { setTimeout(() => { isLoading = false }, 500) };"
+      x-init="if (document.readyState === 'complete') { setTimeout(() => { isLoading = false }, 500); } else { window.addEventListener('load', () => { setTimeout(() => { isLoading = false }, 500); }); }"
       class="bg-white text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white overflow-x-hidden"
       :class="{ 'overflow-hidden': isLoading }">
 

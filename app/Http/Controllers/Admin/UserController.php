@@ -41,8 +41,8 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:150', 'unique:'.User::class],
             'role' => ['required', 'in:admin,user'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -67,8 +67,8 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id], // Ignore email sendiri saat cek unik
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email,'.$user->id], // Ignore email sendiri saat cek unik
             'role' => ['required', 'in:admin,user'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()], // Password boleh kosong (nullable) jika tidak ingin diganti
         ]);

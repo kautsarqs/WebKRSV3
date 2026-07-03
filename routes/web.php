@@ -4,12 +4,10 @@ use App\Http\Controllers\Admin\MapController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PendaftaranManageController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
-use App\Models\Category;
 use App\Models\Koleksi;
 use App\Models\MapMarker;
 use App\Models\User;
@@ -110,17 +108,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $pengunjungRegistrations = \App\Models\PendaftaranPengunjung::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
         $penelitiRegistrations = \App\Models\PendaftaranPeneliti::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
 
-        return view('dashboard', compact('pengunjungRegistrations', 'penelitiRegistrations'));
+        return view('dashboard.index', compact('pengunjungRegistrations', 'penelitiRegistrations'));
     })->name('dashboard');
 
     // --- Edit/Batal Pendaftaran (User) ---
-    Route::get('/dashboard/pengunjungs/{id}/edit', [PendaftaranController::class, 'editPengunjung'])->name('dashboard.pengunjungs.edit');
-    Route::patch('/dashboard/pengunjungs/{id}', [PendaftaranController::class, 'updatePengunjung'])->name('dashboard.pengunjungs.update');
-    Route::delete('/dashboard/pengunjungs/{id}', [PendaftaranController::class, 'destroyPengunjungUser'])->name('dashboard.pengunjungs.destroy');
+    Route::get('/dashboard/pengunjung/{id}/edit', [PendaftaranController::class, 'editPengunjung'])->name('dashboard.pengunjung.edit');
+    Route::patch('/dashboard/pengunjung/{id}', [PendaftaranController::class, 'updatePengunjung'])->name('dashboard.pengunjung.update');
+    Route::delete('/dashboard/pengunjung/{id}', [PendaftaranController::class, 'destroyPengunjungUser'])->name('dashboard.pengunjung.destroy');
 
-    Route::get('/dashboard/penelitis/{id}/edit', [PendaftaranController::class, 'editPeneliti'])->name('dashboard.penelitis.edit');
-    Route::patch('/dashboard/penelitis/{id}', [PendaftaranController::class, 'updatePeneliti'])->name('dashboard.penelitis.update');
-    Route::delete('/dashboard/penelitis/{id}', [PendaftaranController::class, 'destroyPenelitiUser'])->name('dashboard.penelitis.destroy');
+    Route::get('/dashboard/peneliti/{id}/edit', [PendaftaranController::class, 'editPeneliti'])->name('dashboard.peneliti.edit');
+    Route::patch('/dashboard/peneliti/{id}', [PendaftaranController::class, 'updatePeneliti'])->name('dashboard.peneliti.update');
+    Route::delete('/dashboard/peneliti/{id}', [PendaftaranController::class, 'destroyPenelitiUser'])->name('dashboard.peneliti.destroy');
 
     // --- Area Admin (Harus Verified + Role Admin) ---
     Route::middleware('admin')->prefix('admin')->group(function () {
@@ -147,17 +145,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Kelola Pengunjung & Peneliti
         // IMPORTANT: specific/static routes must come before wildcard {id} routes
-        Route::get('/pengunjungs', [PendaftaranManageController::class, 'indexPengunjung'])->name('admin.pengunjungs.index');
-        Route::post('/pengunjungs/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPengunjung'])->name('admin.pengunjungs.bulk-delete');
-        Route::get('/pengunjungs/export/{format}', [PendaftaranManageController::class, 'exportPengunjung'])->name('admin.pengunjungs.export');
-        Route::patch('/pengunjungs/{id}/status', [PendaftaranManageController::class, 'updatePengunjungStatus'])->name('admin.pengunjungs.status');
-        Route::delete('/pengunjungs/{id}', [PendaftaranManageController::class, 'destroyPengunjung'])->name('admin.pengunjungs.destroy');
+        Route::get('/pengunjung', [PendaftaranManageController::class, 'indexPengunjung'])->name('admin.pengunjung.index');
+        Route::post('/pengunjung/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPengunjung'])->name('admin.pengunjung.bulk-delete');
+        Route::get('/pengunjung/export/{format}', [PendaftaranManageController::class, 'exportPengunjung'])->name('admin.pengunjung.export');
+        Route::patch('/pengunjung/{id}/status', [PendaftaranManageController::class, 'updatePengunjungStatus'])->name('admin.pengunjung.status');
+        Route::delete('/pengunjung/{id}', [PendaftaranManageController::class, 'destroyPengunjung'])->name('admin.pengunjung.destroy');
 
-        Route::get('/penelitis', [PendaftaranManageController::class, 'indexPeneliti'])->name('admin.penelitis.index');
-        Route::post('/penelitis/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPeneliti'])->name('admin.penelitis.bulk-delete');
-        Route::get('/penelitis/export/{format}', [PendaftaranManageController::class, 'exportPeneliti'])->name('admin.penelitis.export');
-        Route::patch('/penelitis/{id}/status', [PendaftaranManageController::class, 'updatePenelitiStatus'])->name('admin.penelitis.status');
-        Route::delete('/penelitis/{id}', [PendaftaranManageController::class, 'destroyPeneliti'])->name('admin.penelitis.destroy');
+        Route::get('/peneliti', [PendaftaranManageController::class, 'indexPeneliti'])->name('admin.peneliti.index');
+        Route::post('/peneliti/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPeneliti'])->name('admin.peneliti.bulk-delete');
+        Route::get('/peneliti/export/{format}', [PendaftaranManageController::class, 'exportPeneliti'])->name('admin.peneliti.export');
+        Route::patch('/peneliti/{id}/status', [PendaftaranManageController::class, 'updatePenelitiStatus'])->name('admin.peneliti.status');
+        Route::delete('/peneliti/{id}', [PendaftaranManageController::class, 'destroyPeneliti'])->name('admin.peneliti.destroy');
     });
 });
 
