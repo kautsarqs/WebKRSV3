@@ -33,7 +33,7 @@
                     <div class="relative">
                         <select name="geometry_type" id="geometry_type" onchange="changeGeometryType(this.value)" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
                             <option value="point" {{ old('geometry_type') === 'point' ? 'selected' : '' }}>Point (Marker Lokasi Bangunan)</option>
-                            <option value="polyline" {{ old('geometry_type') === 'polyline' ? 'selected' : '' }}>LineString (Garis Jalan/Jalur Navigasi)</option>
+                            <option value="linestring" {{ old('geometry_type') === 'linestring' || old('geometry_type') === 'polyline' ? 'selected' : '' }}>LineString (Garis Jalan/Jalur Navigasi)</option>
                             <option value="polygon" {{ old('geometry_type') === 'polygon' ? 'selected' : '' }}>Polygon (Batas Wilayah)</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
@@ -106,18 +106,14 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label for="type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Tipe Marker</label>
-                    <div class="relative">
-                        <select name="type" id="type" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
-                            <option value="area_koleksi" {{ old('type') === 'area_koleksi' ? 'selected' : '' }}>Area Koleksi</option>
-                            <option value="fasilitas_umum" {{ old('type') === 'fasilitas_umum' ? 'selected' : '' }}>Fasilitas Umum</option>
-                            <option value="kantor_pengelola" {{ old('type') === 'kantor_pengelola' ? 'selected' : '' }}>Kantor Pengelola</option>
-                            <option value="pos_keamanan" {{ old('type') === 'pos_keamanan' ? 'selected' : '' }}>Pos Keamanan</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
+                    <label for="type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Kategori/Tipe Marker</label>
+                    <input id="type" type="text" name="type" list="types-list" value="{{ old('type') }}" required 
+                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Ketik atau pilih kategori (misal: Area Koleksi, Spot Foto, dll.)" />
+                    <datalist id="types-list">
+                        @foreach($existingTypes ?? ['area_koleksi', 'fasilitas_umum', 'kantor_pengelola', 'pos_keamanan'] as $t)
+                            <option value="{{ $t }}"></option>
+                        @endforeach
+                    </datalist>
                     @error('type') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
@@ -330,16 +326,39 @@
             
             var coordsInputContainer = document.getElementById('coords-input-container');
             var drawInfo = document.getElementById('draw-info');
+            
+            var descEl = document.getElementById('description');
+            var photoEl = document.getElementById('photo');
 
             if (type === 'point') {
                 if(coordsInputContainer) coordsInputContainer.classList.remove('hidden');
                 drawInfo.innerText = "Klik pada peta untuk menempatkan titik marker (seret pin untuk menyesuaikan).";
+                
+                if (descEl) {
+                    descEl.removeAttribute('disabled');
+                    descEl.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-zinc-100/60');
+                }
+                if (photoEl) {
+                    photoEl.removeAttribute('disabled');
+                    photoEl.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-zinc-100/60');
+                }
             } else {
                 if(coordsInputContainer) coordsInputContainer.classList.add('hidden');
-                if (type === 'polyline') {
+                if (type === 'polyline' || type === 'linestring') {
                     drawInfo.innerText = "Klik peta berulang kali (seperti pen tool) untuk menggambar garis rute/jalan.";
                 } else {
                     drawInfo.innerText = "Klik peta berulang kali (seperti pen tool) untuk menggambar poligon wilayah.";
+                }
+                
+                if (descEl) {
+                    descEl.setAttribute('disabled', 'true');
+                    descEl.value = '';
+                    descEl.classList.add('opacity-50', 'cursor-not-allowed', 'bg-zinc-100/60');
+                }
+                if (photoEl) {
+                    photoEl.setAttribute('disabled', 'true');
+                    photoEl.value = '';
+                    photoEl.classList.add('opacity-50', 'cursor-not-allowed', 'bg-zinc-100/60');
                 }
             }
         }
@@ -378,7 +397,7 @@
 
             var colorVal = document.getElementById('color').value || '#3b82f6';
 
-            if (currentGeomType === 'polyline') {
+            if (currentGeomType === 'polyline' || currentGeomType === 'linestring') {
                 if (clickedCoords.length >= 2) {
                     tempPolyline = L.polyline(clickedCoords, { color: colorVal, weight: 4.5 }).addTo(drawnItems);
                 }

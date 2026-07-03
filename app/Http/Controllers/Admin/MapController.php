@@ -39,7 +39,8 @@ class MapController extends Controller
      */
     public function create()
     {
-        return view('admin.maps.create');
+        $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
+        return view('admin.maps.create', compact('existingTypes'));
     }
 
     /**
@@ -49,11 +50,11 @@ class MapController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'geometry_type' => ['required', 'in:point,polyline,polygon'],
+            'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
             'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
             'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
-            'type' => ['required', 'in:area_koleksi,fasilitas_umum,kantor_pengelola,pos_keamanan'],
+            'type' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
@@ -83,7 +84,8 @@ class MapController extends Controller
      */
     public function edit(MapMarker $map)
     {
-        return view('admin.maps.edit', compact('map'));
+        $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
+        return view('admin.maps.edit', compact('map', 'existingTypes'));
     }
 
     /**
@@ -93,11 +95,11 @@ class MapController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'geometry_type' => ['required', 'in:point,polyline,polygon'],
+            'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
             'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
             'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
-            'type' => ['required', 'in:area_koleksi,fasilitas_umum,kantor_pengelola,pos_keamanan'],
+            'type' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
@@ -139,5 +141,10 @@ class MapController extends Controller
         $map->delete();
 
         return redirect()->route('admin.maps.index')->with('success', 'Marker peta berhasil dihapus.');
+    }
+
+    public function publicShow(MapMarker $map)
+    {
+        return view('landing.peta_show', compact('map'));
     }
 }

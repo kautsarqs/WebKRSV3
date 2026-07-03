@@ -29,7 +29,7 @@
 
                 <div class="flex items-center gap-4 mb-8 bg-white/40 p-3 rounded-2xl border border-zinc-100">
                     <img 
-                        src="{{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=18181b&color=fff&bold=true' }}" 
+                        src="{{ Auth::user()->avatar_url }}" 
                         alt="{{ Auth::user()->name }}" 
                         class="h-14 w-14 rounded-full border-2 border-white object-cover shadow-md"
                     >
@@ -41,9 +41,16 @@
                     </div>
                 </div>
 
-                <form method="post" action="{{ route('profile.update') }}" class="space-y-5">
+                <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-5">
                     @csrf
                     @method('patch')
+
+                    <div class="space-y-2">
+                        <label for="avatar" class="block text-sm font-bold text-zinc-700 font-space ml-1">Foto Profil</label>
+                        <input id="avatar" name="avatar" type="file" accept="image/*"
+                            class="w-full px-4 py-2 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 cursor-pointer" />
+                        @error('avatar') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
+                    </div>
 
                     <div class="space-y-2">
                         <label for="name" class="block text-sm font-bold text-zinc-700 font-space ml-1">Nama Lengkap</label>

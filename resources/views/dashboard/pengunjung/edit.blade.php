@@ -10,50 +10,27 @@
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-12">
     <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold tracking-tight text-zinc-950 font-space mb-2">Formulir Pendaftaran Pengunjung</h2>
-        <p class="text-zinc-650 text-sm max-w-lg mx-auto">Silakan lengkapi data kunjungan rombongan Anda ke Kebun Raya Sambas di bawah ini.</p>
+        <h2 class="text-3xl font-bold tracking-tight text-zinc-950 font-space mb-2">Edit Pendaftaran Pengunjung</h2>
+        <p class="text-zinc-650 text-sm max-w-lg mx-auto">Perbarui informasi kunjungan rombongan Anda ke Kebun Raya Sambas.</p>
     </div>
 
-    @guest
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-            <h4 class="font-bold text-sm font-space">Harus Login Terlebih Dahulu</h4>
-            <p class="text-xs text-amber-700 mt-1">Anda perlu masuk atau mendaftar akun untuk dapat mengajukan izin kunjungan Kebun Raya.</p>
-        </div>
-        <a href="{{ route('login') }}" class="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-            Masuk Sekarang
-        </a>
-    </div>
-    @endguest
-
-    @auth
-    @if(!Auth::user()->hasVerifiedEmail())
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-            <h4 class="font-bold text-sm font-space">Email Belum Diverifikasi</h4>
-            <p class="text-xs text-amber-700 mt-1">Silakan verifikasi email Anda terlebih dahulu sebelum mengajukan permohonan kunjungan.</p>
-        </div>
-        <a href="{{ route('verification.notice') }}" class="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-            Verifikasi Email
-        </a>
-    </div>
-    @else
     <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden p-8">
-        <form id="form-pendaftaran" action="{{ route('pendaftaran.pengunjung.store') }}" method="POST" class="space-y-6">
+        <form id="form-pendaftaran" action="{{ route('dashboard.pengunjungs.update', $pengunjung->id) }}" method="POST" class="space-y-6">
             @csrf
+            @method('PATCH')
 
             <h3 class="text-base font-bold text-zinc-800 border-b border-zinc-100 pb-2 mb-4">Informasi Utama Pendaftar</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
                     <label for="nama_lengkap" class="text-sm font-medium text-zinc-700">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap') }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('nama_lengkap') border-red-500 @enderror" placeholder="Masukkan nama lengkap" required>
+                    <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap', $pengunjung->nama_lengkap) }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('nama_lengkap') border-red-500 @enderror" placeholder="Masukkan nama lengkap" required>
                     @error('nama_lengkap')<p class="text-xs text-red-600 mt-1 server-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="space-y-2">
                     <label for="nomor_hp_display" class="text-sm font-medium text-zinc-700">Nomor HP <span class="text-red-500">*</span></label>
                     <input type="tel" id="nomor_hp_display" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3" placeholder="8xxxxxxxxxx" required>
-                    <input type="hidden" name="nomor_hp" id="nomor_hp" value="{{ old('nomor_hp') }}">
+                    <input type="hidden" name="nomor_hp" id="nomor_hp" value="{{ old('nomor_hp', $pengunjung->nomor_hp) }}">
                     @error('nomor_hp')<p class="text-xs text-red-600 mt-1 server-error">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -61,24 +38,24 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
                     <label for="instansi" class="text-sm font-medium text-zinc-700">Instansi / Lembaga <span class="text-red-500">*</span></label>
-                    <input type="text" name="instansi" id="instansi" value="{{ old('instansi') }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('instansi') border-red-500 @enderror" placeholder="Contoh: Universitas, Sekolah, Keluarga, Umum" required>
+                    <input type="text" name="instansi" id="instansi" value="{{ old('instansi', $pengunjung->instansi) }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('instansi') border-red-500 @enderror" placeholder="Contoh: Universitas, Sekolah, Keluarga, Umum" required>
                     @error('instansi')<p class="text-xs text-red-600 mt-1 server-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="space-y-2">
                     <label for="tanggal_kunjungan" class="text-sm font-medium text-zinc-700">Tanggal Kunjungan <span class="text-red-500">*</span></label>
-                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" value="{{ old('tanggal_kunjungan') }}" min="{{ date('Y-m-d') }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('tanggal_kunjungan') border-red-500 @enderror" required>
+                    <input type="date" name="tanggal_kunjungan" id="tanggal_kunjungan" value="{{ old('tanggal_kunjungan', \Carbon\Carbon::parse($pengunjung->tanggal_kunjungan)->format('Y-m-d')) }}" min="{{ date('Y-m-d') }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('tanggal_kunjungan') border-red-500 @enderror" required>
                     @error('tanggal_kunjungan')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
 
             <div class="space-y-2">
                 <label class="text-sm font-medium text-zinc-700">Total Jumlah Rombongan</label>
-                <input type="text" id="display_jumlah_rombongan" class="w-full rounded-xl border-zinc-200 bg-zinc-50 text-zinc-500 text-sm px-4 py-3 font-bold" value="1 Orang" readonly>
+                <input type="text" id="display_jumlah_rombongan" class="w-full rounded-xl border-zinc-200 bg-zinc-50 text-zinc-500 text-sm px-4 py-3 font-bold" value="{{ $pengunjung->jumlah_rombongan }} Orang" readonly>
             </div>
 
             <div class="space-y-2">
                 <label for="keperluan" class="text-sm font-medium text-zinc-700">Tujuan Berkunjung / Keperluan <span class="text-red-500">*</span></label>
-                <textarea name="keperluan" id="keperluan" rows="3" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('keperluan') border-red-500 @enderror" placeholder="Contoh: Wisata keluarga, Penelitian tanaman, Rekreasi, dll." required>{{ old('keperluan') }}</textarea>
+                <textarea name="keperluan" id="keperluan" rows="3" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('keperluan') border-red-500 @enderror" placeholder="Contoh: Wisata keluarga, Penelitian tanaman, Rekreasi, dll." required>{{ old('keperluan', $pengunjung->keperluan) }}</textarea>
                 @error('keperluan')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
@@ -96,20 +73,44 @@
                 </div>
 
                 <div id="rombongan-list" class="space-y-4">
-                    {{-- Row list --}}
+                    @if(!empty($pengunjung->rombongan_details))
+                        @foreach($pengunjung->rombongan_details as $idx => $member)
+                            <div class="rombongan-row bg-zinc-50 border border-zinc-150 rounded-2xl p-4 relative group transition-all" data-index="{{ $idx }}">
+                                <button type="button" class="btn-remove-row absolute top-4 right-4 text-zinc-400 hover:text-red-650 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mr-6">
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-semibold text-zinc-650">Nama Anggota <span class="text-red-500">*</span></label>
+                                        <input type="text" name="rombongan[{{ $idx }}][nama]" value="{{ $member['nama'] }}" class="row-name w-full rounded-lg border-zinc-200 focus:ring-zinc-900 focus:border-zinc-900 text-xs px-3 py-2" placeholder="Nama Rekan Rombongan" required>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-semibold text-zinc-650">Nomor HP</label>
+                                        <input type="tel" class="row-phone-display w-full rounded-lg border-zinc-200 focus:ring-zinc-900 focus:border-zinc-900 text-xs px-3 py-2" placeholder="Nomor HP">
+                                        <input type="hidden" name="rombongan[{{ $idx }}][nomor_hp]" value="{{ $member['nomor_hp'] ?? '' }}" class="row-phone-hidden">
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-semibold text-zinc-650">Instansi</label>
+                                        <input type="text" name="rombongan[{{ $idx }}][instansi]" value="{{ $member['instansi'] ?? '' }}" class="row-instansi w-full rounded-lg border-zinc-200 focus:ring-zinc-900 focus:border-zinc-900 text-xs px-3 py-2" placeholder="Kosongkan jika sama">
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-zinc-100 mt-6">
-                <button type="submit" class="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-zinc-900/10 flex justify-center items-center gap-2">
-                    <span>Kirim Pendaftaran</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <div class="pt-4 border-t border-zinc-100 mt-6 flex gap-4">
+                <button type="submit" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3 rounded-xl transition-all shadow-lg shadow-zinc-900/10 flex justify-center items-center gap-2">
+                    <span>Simpan Perubahan</span>
                 </button>
+                <a href="{{ route('dashboard') }}" class="px-6 py-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-medium rounded-xl transition-all text-center">
+                    Batal
+                </a>
             </div>
         </form>
     </div>
-    @endif
-    @endauth
 </div>
 @endsection
 
@@ -127,7 +128,7 @@
         const rombonganList = document.getElementById('rombongan-list');
         const btnAdd = document.getElementById('btn-add-rombongan');
 
-        let rombonganIndex = 0;
+        let rombonganIndex = {{ !empty($pengunjung->rombongan_details) ? count($pengunjung->rombongan_details) : 0 }};
 
         // Initialize phone country flags
         function initIntlPhone(input, hiddenInput) {
@@ -164,6 +165,18 @@
         }
 
         initIntlPhone(phoneDisplay, phoneHidden);
+
+        // Bind existing row elements
+        document.querySelectorAll('.rombongan-row').forEach(row => {
+            row.querySelector('.row-name').addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+            });
+            initIntlPhone(row.querySelector('.row-phone-display'), row.querySelector('.row-phone-hidden'));
+            row.querySelector('.btn-remove-row').addEventListener('click', function() {
+                row.remove();
+                updateTotalCount();
+            });
+        });
 
         function updateTotalCount() {
             const rows = rombonganList.querySelectorAll('.rombongan-row');

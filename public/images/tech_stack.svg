@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="100%" height="100%">
+  <!-- Outer Frame -->
+  <rect x="5" y="5" width="890" height="470" fill="#ffffff" stroke="#000000" stroke-width="1.5" />
+  
+  <!-- ==================== COLUMN 1: FRONTEND (SISI KLIEN) ==================== -->
+  <rect x="30" y="30" width="260" height="420" fill="none" stroke="#000000" stroke-width="1" />
+  <text x="160" y="60" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">FRONTEND (SISI KLIEN)</text>
+  
+  <!-- Row 1: Laravel Blade | Tailwind CSS -->
+  <rect x="50" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="100" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Laravel Blade</text>
+  <text x="100" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Template Engine)</text>
+
+  <rect x="170" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="220" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Tailwind CSS</text>
+  <text x="220" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(CSS Framework)</text>
+
+  <!-- Row 2: Alpine.js | Axios -->
+  <rect x="50" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="100" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Alpine.js</text>
+  <text x="100" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Interactive JS)</text>
+
+  <rect x="170" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="220" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Axios</text>
+  <text x="220" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(HTTP Client)</text>
+
+  <!-- Row 3: Leaflet.js | JavaScript -->
+  <rect x="50" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="100" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Leaflet.js</text>
+  <text x="100" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Map Library)</text>
+
+  <rect x="170" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="220" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">JavaScript</text>
+  <text x="220" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Native Script)</text>
+
+  <!-- Row 4: HTML5 | CSS3 -->
+  <rect x="50" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="100" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">HTML5</text>
+
+  <rect x="170" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="220" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">CSS3</text>
+
+  
+  <!-- ==================== COLUMN 2: BACKEND & DATABASE ==================== -->
+  <rect x="320" y="30" width="260" height="420" fill="none" stroke="#000000" stroke-width="1" />
+  <text x="450" y="60" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">BACKEND &amp; DATABASE</text>
+
+  <!-- Row 1: Laravel 12 | PHP 8.2 -->
+  <rect x="340" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="390" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Laravel 12</text>
+  <text x="390" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(PHP Framework)</text>
+
+  <rect x="460" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="510" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">PHP 8.2+</text>
+  <text x="510" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Server Script)</text>
+
+  <!-- Row 2: PostgreSQL | Eloquent ORM -->
+  <rect x="340" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="390" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle"></text>
+  <text x="390" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">PostgreSQL</text>
+  <text x="390" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Relational DB)</text>
+
+  <rect x="460" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="510" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Eloquent ORM</text>
+  <text x="510" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Database Mapper)</text>
+
+  <!-- Row 3: Composer | Vite -->
+  <rect x="340" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="390" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Composer</text>
+  <text x="390" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Dependency Mgr)</text>
+
+  <rect x="460" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="510" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Vite</text>
+  <text x="510" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Asset Compiler)</text>
+
+  <!-- Row 4: Image AVIF | Auth Middleware -->
+  <rect x="340" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="390" y="385" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" fill="#000000" text-anchor="middle">AVIF Optimizer</text>
+  <text x="390" y="400" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#000000" text-anchor="middle">(Image Helper)</text>
+
+  <rect x="460" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="510" y="385" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="bold" fill="#000000" text-anchor="middle">Auth Middleware</text>
+  <text x="510" y="400" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#000000" text-anchor="middle">(Security Layer)</text>
+
+  
+  <!-- ==================== COLUMN 3: LAYANAN PIHAK KETIGA ==================== -->
+  <rect x="610" y="30" width="260" height="420" fill="none" stroke="#000000" stroke-width="1" />
+  <text x="740" y="60" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">LAYANAN PIHAK KETIGA</text>
+
+  <!-- Row 1: Google OAuth | Socialite -->
+  <rect x="630" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="680" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Google OAuth</text>
+  <text x="680" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(User Login API)</text>
+
+  <rect x="750" y="85" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="800" y="115" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Socialite</text>
+  <text x="800" y="130" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(OAuth Handler)</text>
+
+  <!-- Row 2: OpenStreetMap | OSM Tiles -->
+  <rect x="630" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="680" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">OpenStreetMap</text>
+  <text x="680" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Map Provider)</text>
+
+  <rect x="750" y="175" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="800" y="210" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">OSM Tiles API</text>
+  <text x="800" y="225" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Map Assets)</text>
+
+  <!-- Row 3: Gmail SMTP | Mail Server -->
+  <rect x="630" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="680" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Gmail SMTP</text>
+  <text x="680" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Email Protocol)</text>
+
+  <rect x="750" y="265" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="800" y="300" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Mail Service</text>
+  <text x="800" y="315" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#000000" text-anchor="middle">(Notification)</text>
+
+  <!-- Row 4: Git | GitHub -->
+  <rect x="630" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="680" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">Git</text>
+
+  <rect x="750" y="355" width="100" height="65" rx="5" fill="#ffffff" stroke="#000000" stroke-width="1" />
+  <text x="800" y="395" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="bold" fill="#000000" text-anchor="middle">GitHub</text>
+
+</svg>

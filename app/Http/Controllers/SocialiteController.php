@@ -13,14 +13,17 @@ class SocialiteController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->redirectUrl(route('auth.google.callback'))
+            ->redirect();
     }
 
     public function callback()
     {
-        // ... dalam method callback()
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')
+                ->redirectUrl(route('auth.google.callback'))
+                ->user();
 
             $user = User::where('google_id', $googleUser->id)
                 ->orWhere('email', $googleUser->email)
@@ -28,25 +31,22 @@ class SocialiteController extends Controller
 
             if ($user) {
                 // --- LOGIKA: USER SUDAH ADA ---
+                $updateData = [];
                 if (!$user->google_id) {
-                    $user->update([
-                        'google_id' => $googleUser->id,
-                        'avatar' => $googleUser->avatar,
-                    ]);
+                    $updateData['google_id'] = $googleUser->id;
+                }
+                if (!$user->avatar) {
+                    $updateData['avatar'] = $googleUser->avatar;
+                }
+                if (!empty($updateData)) {
+                    $user->update($updateData);
                 }
 
                 Auth::login($user);
 
-                // JANGAN gunakan markEmailAsVerified() di sini jika ingin tetap wajib verifikasi
-                // Cek apakah user sudah benar-benar memverifikasi emailnya lewat link
-                if ($user->hasVerifiedEmail()) {
-                    return ($user->role === 'admin')
-                        ? redirect()->route('admin.dashboard')
-                        : redirect()->route('dashboard');
-                }
-
-                // Jika belum verifikasi, lempar kembali ke halaman pemberitahuan
-                return redirect()->route('verification.notice');
+                return ($user->role === 'admin')
+                    ? redirect()->route('admin.dashboard')
+                    : redirect()->route('dashboard');
             } else {
                 // --- LOGIKA: USER BARU ---
                 $user = User::create([
@@ -56,14 +56,13 @@ class SocialiteController extends Controller
                     'avatar' => $googleUser->avatar,
                     'role' => 'user',
                     'password' => Hash::make('password_acak_' . str()->random(16)),
-                    // email_verified_at tetap NULL
+                    'email_verified_at' => now(), // Otomatis terverifikasi karena dari Google
                 ]);
 
-                event(new Registered($user)); // Kirim email verifikasi
-
+                // Tidak perlu memicu event(new Registered($user)) karena sudah verified dari Google
                 Auth::login($user);
 
-                return redirect()->route('verification.notice');
+                return redirect()->route('dashboard');
             }
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Gagal login dengan Google.');

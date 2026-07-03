@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\MapController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PendaftaranManageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\KoleksiController;
@@ -38,10 +39,14 @@ Route::get('/peta', function () {
     $markers = MapMarker::all();
     return view('landing.peta', compact('markers'));
 })->name('peta');
+Route::get('/peta/{map}', [MapController::class, 'publicShow'])->name('peta.show');
 
 // Pendaftaran Routes (Bisa diakses Guest/Auth)
 Route::get('/pendaftaran/pengunjung', [PendaftaranController::class, 'createPengunjung'])->name('pendaftaran.pengunjung');
 Route::post('/pendaftaran/pengunjung', [PendaftaranController::class, 'storePengunjung'])->name('pendaftaran.pengunjung.store');
+
+Route::get('/pendaftaran/peneliti', [PendaftaranController::class, 'createPeneliti'])->name('pendaftaran.peneliti');
+Route::post('/pendaftaran/peneliti', [PendaftaranController::class, 'storePeneliti'])->name('pendaftaran.peneliti.store');
 
 // =========================================================================
 // 1. GUEST ROUTES (Belum Login)
@@ -57,7 +62,7 @@ Route::middleware('guest')->group(function () {
 
     // Google Login (Socialite)
     Route::get('/auth/google', [SocialiteController::class, 'redirect'])->name('auth.google');
-    Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
+    Route::get('/auth/google/callback', [SocialiteController::class, 'callback'])->name('auth.google.callback');
 });
 
 // =========================================================================
@@ -98,8 +103,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // --- Dashboard User Biasa ---
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        if (Illuminate\Support\Facades\Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $pengunjungRegistrations = \App\Models\PendaftaranPengunjung::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
+        $penelitiRegistrations = \App\Models\PendaftaranPeneliti::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
+
+        return view('dashboard', compact('pengunjungRegistrations', 'penelitiRegistrations'));
     })->name('dashboard');
+
+    // --- Edit/Batal Pendaftaran (User) ---
+    Route::get('/dashboard/pengunjungs/{id}/edit', [PendaftaranController::class, 'editPengunjung'])->name('dashboard.pengunjungs.edit');
+    Route::patch('/dashboard/pengunjungs/{id}', [PendaftaranController::class, 'updatePengunjung'])->name('dashboard.pengunjungs.update');
+    Route::delete('/dashboard/pengunjungs/{id}', [PendaftaranController::class, 'destroyPengunjungUser'])->name('dashboard.pengunjungs.destroy');
+
+    Route::get('/dashboard/penelitis/{id}/edit', [PendaftaranController::class, 'editPeneliti'])->name('dashboard.penelitis.edit');
+    Route::patch('/dashboard/penelitis/{id}', [PendaftaranController::class, 'updatePeneliti'])->name('dashboard.penelitis.update');
+    Route::delete('/dashboard/penelitis/{id}', [PendaftaranController::class, 'destroyPenelitiUser'])->name('dashboard.penelitis.destroy');
 
     // --- Area Admin (Harus Verified + Role Admin) ---
     Route::middleware('admin')->prefix('admin')->group(function () {
@@ -109,7 +130,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $totalKoleksi = Koleksi::count();
             $totalMapMarkers = MapMarker::count();
 
-            return view('admin.dashboard', compact('totalUsers', 'totalKoleksi', 'totalMapMarkers'));
+            $totalPengunjung = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->sum('jumlah_rombongan') ?? 0;
+            $totalPeneliti = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->count();
+
+            return view('admin.dashboard', compact('totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti'));
         })->name('admin.dashboard');
 
         // CRUD User
@@ -120,8 +144,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // CRUD Koleksi
         Route::resource('koleksi', KoleksiController::class)->names('admin.koleksi');
-    });
 
+        // Kelola Pengunjung & Peneliti
+        // IMPORTANT: specific/static routes must come before wildcard {id} routes
+        Route::get('/pengunjungs', [PendaftaranManageController::class, 'indexPengunjung'])->name('admin.pengunjungs.index');
+        Route::post('/pengunjungs/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPengunjung'])->name('admin.pengunjungs.bulk-delete');
+        Route::get('/pengunjungs/export/{format}', [PendaftaranManageController::class, 'exportPengunjung'])->name('admin.pengunjungs.export');
+        Route::patch('/pengunjungs/{id}/status', [PendaftaranManageController::class, 'updatePengunjungStatus'])->name('admin.pengunjungs.status');
+        Route::delete('/pengunjungs/{id}', [PendaftaranManageController::class, 'destroyPengunjung'])->name('admin.pengunjungs.destroy');
+
+        Route::get('/penelitis', [PendaftaranManageController::class, 'indexPeneliti'])->name('admin.penelitis.index');
+        Route::post('/penelitis/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPeneliti'])->name('admin.penelitis.bulk-delete');
+        Route::get('/penelitis/export/{format}', [PendaftaranManageController::class, 'exportPeneliti'])->name('admin.penelitis.export');
+        Route::patch('/penelitis/{id}/status', [PendaftaranManageController::class, 'updatePenelitiStatus'])->name('admin.penelitis.status');
+        Route::delete('/penelitis/{id}', [PendaftaranManageController::class, 'destroyPeneliti'])->name('admin.penelitis.destroy');
+    });
+});
+
+// =========================================================================
+// 4. PROFILE ROUTES (Login Only, Can be Unverified to allow correcting typos)
+// =========================================================================
+Route::middleware(['auth'])->group(function () {
     // --- Profile Routes ---
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
 

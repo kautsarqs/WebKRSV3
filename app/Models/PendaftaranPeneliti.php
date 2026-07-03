@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PendaftaranPengunjung extends Model
+class PendaftaranPeneliti extends Model
 {
     use HasFactory;
 
@@ -14,19 +14,25 @@ class PendaftaranPengunjung extends Model
         'nama_lengkap',
         'no_identitas',
         'nomor_hp',
-        'tanggal_kunjungan',
-        'jumlah_rombongan',
-        'keperluan',
+        'institusi',
+        'program_studi',
+        'jenjang',
+        'judul_penelitian',
+        'bidang_penelitian',
+        'tanggal_mulai',
+        'tanggal_selesai',
+        'jumlah_anggota',
+        'tujuan_penelitian',
+        'surat_pengantar',
         'status',
-        'instansi',
-        'rombongan_details',
+        'catatan_admin',
     ];
 
     protected $casts = [
-        'rombongan_details' => 'array',
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
     ];
 
-    // Relasi ke User (Opsional, untuk dashboard nanti)
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -48,10 +48,16 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                 </button>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
                     <div class="bg-white rounded-xl shadow-xl border border-zinc-100 p-1.5 ring-1 ring-zinc-900/5">
-                        <a href="{{ route('pendaftaran.pengunjung') }}" class="block px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 rounded-lg transition-colors">
+                        <a href="{{ route('pendaftaran.pengunjung') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 rounded-lg transition-colors">
+                            <span class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </span>
                             Pendaftaran Pengunjung
                         </a>
-                        <a href="{{ route('register') }}" class="block px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 rounded-lg transition-colors">
+                        <a href="{{ route('pendaftaran.peneliti') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 rounded-lg transition-colors">
+                            <span class="w-6 h-6 rounded-lg bg-violet-100 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </span>
                             Pendaftaran Peneliti
                         </a>
                     </div>
@@ -72,14 +78,7 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                                    :class="(scrolled || mobileMenuOpen) ? 'text-zinc-600' : 'text-zinc-200'">{{ Auth::user()->role=="admin"?"Administrator":"User" }}</p>
                             </div>
                             
-                            @if (Auth::user()->avatar)
-                                <img src="{{ Auth::user()->avatar }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
-                            @else
-                                <div class="w-9 h-9 rounded-full transition-colors duration-300 flex items-center justify-center font-bold font-space border {{ $isHome ? 'bg-white/20 border-white/30 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900' }}"
-                                    :class="(scrolled || mobileMenuOpen) ? 'bg-zinc-100 border-zinc-200 text-zinc-900' : 'bg-white/20 border-white/30 text-white'">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
-                                </div>
-                            @endif
+                            <img src="{{ Auth::user()->avatar_url }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
                         </button>
 
                         <div x-show="open" @click.away="open = false" 
@@ -157,10 +156,9 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                 </button>
                 <div x-show="mobilePendaftaranOpen" style="display: none;" class="pl-4 mt-1 flex flex-col gap-1">
                     <a href="{{ route('pendaftaran.pengunjung') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">Pendaftaran Pengunjung</a>
-                    <a href="{{ route('register') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">Pendaftaran Peneliti</a>
+                    <a href="{{ route('pendaftaran.peneliti') }}" class="block px-3 py-2 rounded-md text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50">Pendaftaran Peneliti</a>
                 </div>
             </div>
-
 
             {{-- Tombol Login/Register untuk Mobile --}}
             @guest

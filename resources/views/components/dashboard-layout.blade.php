@@ -71,13 +71,7 @@
                                 <p class="text-xs text-zinc-500 font-medium">{{ Auth::user()->role=="admin"?"Administrator":"User" }}</p>
                             </div>
                             
-                            @if (Auth::user()->avatar)
-                                <img src="{{ Auth::user()->avatar }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
-                            @else
-                                <div class="w-9 h-9 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-600 font-bold font-space">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
-                                </div>
-                            @endif
+                            <img src="{{ Auth::user()->avatar_url }}" class="w-9 h-9 rounded-full border border-zinc-200 shadow-sm object-cover">
                         </button>
 
                         <div x-show="open" @click.away="open = false" 

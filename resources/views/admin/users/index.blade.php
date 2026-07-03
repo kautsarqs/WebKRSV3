@@ -67,8 +67,8 @@
                             <tr class="hover:bg-white/40 transition-colors group">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
-                                        <img src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=18181b&color=fff&bold=true' }}" 
-                                             class="h-9 w-9 rounded-full border border-zinc-200 shadow-sm object-cover" alt="">
+                                         <img src="{{ $user->avatar_url }}" 
+                                              class="h-9 w-9 rounded-full border border-zinc-200 shadow-sm object-cover" alt="">
                                         <span class="font-bold text-zinc-700 font-space group-hover:text-zinc-900 transition-colors">{{ $user->name }}</span>
                                     </div>
                                 </td>

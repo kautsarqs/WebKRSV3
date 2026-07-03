@@ -10,7 +10,7 @@
             <div class="relative inline-block mb-6">
                 <div class="relative w-32 h-32 mx-auto">
                     <img 
-                        src="{{ $user->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=18181b&color=fff&size=128&bold=true' }}" 
+                        src="{{ $user->avatar_url }}" 
                         alt="{{ $user->name }}" 
                         class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
                     >

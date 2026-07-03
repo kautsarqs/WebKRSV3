@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 650" width="100%" height="100%">
+  <!-- Definitions for markers, filters, and gradients -->
+  <defs>
+    <!-- Arrow definitions -->
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#475569" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#2563eb" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#16a34a" />
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#ea580c" />
+    </marker>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+  </defs>
+  
+  <!-- Outer Container -->
+  <rect x="10" y="10" width="1130" height="630" rx="15" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+  
+  <!-- Title -->
+  <text x="575" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="bold" fill="#1e293b" text-anchor="middle">Gambar 5.1 Arsitektur Sistem WebKRSV3</text>
+  
+  <!-- COLUMN 1: AKTOR (x=40 to 180) -->
+  <rect x="40" y="80" width="140" height="490" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4,4" />
+  <text x="110" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">AKTOR / PENGGUNA</text>
+  
+  <!-- Admin Actor -->
+  <g transform="translate(60, 140)" filter="url(#shadow)">
+    <rect x="0" y="0" width="100" height="120" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" />
+    <!-- Actor Icon -->
+    <circle cx="50" cy="40" r="15" fill="#3b82f6" opacity="0.2" />
+    <circle cx="50" cy="40" r="12" fill="none" stroke="#3b82f6" stroke-width="2" />
+    <path d="M 30 75 A 20 20 0 0 1 70 75" fill="none" stroke="#3b82f6" stroke-width="2" />
+    <circle cx="50" cy="40" r="4" fill="#3b82f6" />
+    <text x="50" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Admin</text>
+    <text x="50" y="110" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#2563eb" text-anchor="middle">(Pengelola)</text>
+  </g>
+  
+  <!-- Visitor Actor -->
+  <g transform="translate(60, 340)" filter="url(#shadow)">
+    <rect x="0" y="0" width="100" height="120" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" />
+    <!-- Visitor Icon -->
+    <circle cx="50" cy="40" r="15" fill="#3b82f6" opacity="0.2" />
+    <circle cx="50" cy="40" r="12" fill="none" stroke="#3b82f6" stroke-width="2" />
+    <path d="M 32 75 A 18 18 0 0 1 68 75" fill="none" stroke="#3b82f6" stroke-width="2" />
+    <text x="50" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#1e3a8a" text-anchor="middle">Pengunjung</text>
+    <text x="50" y="110" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#2563eb" text-anchor="middle">(Masyarakat)</text>
+  </g>
+
+  <!-- COLUMN 2: SISI KLIEN / FRONTEND (x=210 to 450) -->
+  <rect x="210" y="80" width="240" height="490" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+  <text x="330" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">SISI KLIEN (WEB BROWSER)</text>
+  
+  <!-- Frontend Components -->
+  <!-- Web Interface (Blade + Tailwind) -->
+  <g transform="translate(230, 130)" filter="url(#shadow)">
+    <rect x="0" y="0" width="200" height="80" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+    <text x="100" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#14532d" text-anchor="middle">Antarmuka Web</text>
+    <text x="100" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">(Laravel Blade &amp; Tailwind CSS)</text>
+  </g>
+
+  <!-- Interactive Logic (Alpine.js + Axios) -->
+  <g transform="translate(230, 250)" filter="url(#shadow)">
+    <rect x="0" y="0" width="200" height="80" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+    <text x="100" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#14532d" text-anchor="middle">Logika Interaktif Klien</text>
+    <text x="100" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">(Alpine.js &amp; Axios)</text>
+  </g>
+
+  <!-- Interactive Map (Leaflet.js) -->
+  <g transform="translate(230, 370)" filter="url(#shadow)">
+    <rect x="0" y="0" width="200" height="80" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+    <text x="100" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#14532d" text-anchor="middle">Peta Interaktif</text>
+    <text x="100" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">(Leaflet.js Library)</text>
+  </g>
+
+  <!-- COLUMN 3: SISI SERVER / BACKEND (x=480 to 780) -->
+  <rect x="480" y="80" width="300" height="340" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+  <text x="630" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">SISI SERVER (LARAVEL BACKEND)</text>
+
+  <!-- Routing & Security Middleware -->
+  <g transform="translate(500, 130)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="70" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5" />
+    <text x="130" y="30" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#742a2a" text-anchor="middle">Routing &amp; Security Middleware</text>
+    <text x="130" y="50" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#c53030" text-anchor="middle">(Laravel Web Router &amp; Auth Guard)</text>
+  </g>
+
+  <!-- Controllers & Business Logic -->
+  <g transform="translate(500, 220)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="70" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5" />
+    <text x="130" y="30" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#742a2a" text-anchor="middle">Controller &amp; Logika Bisnis</text>
+    <text x="130" y="50" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#c53030" text-anchor="middle">(Katalog, Peta, &amp; Booking Handling)</text>
+  </g>
+
+  <!-- Image Optimization Helper -->
+  <g transform="translate(500, 310)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="70" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5" />
+    <text x="130" y="30" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#742a2a" text-anchor="middle">Image Optimization Helper</text>
+    <text x="130" y="50" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#c53030" text-anchor="middle">(Media Conversion &amp; AVIF Compress)</text>
+  </g>
+
+  <!-- PostgreSQL Database Box (below Server Backend container) -->
+  <g transform="translate(530, 440)" filter="url(#shadow)">
+    <path d="M 0 20 A 100 20 0 0 0 200 20 L 200 80 A 100 20 0 0 1 0 80 Z" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5" />
+    <ellipse cx="100" cy="20" rx="100" ry="20" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+    <text x="100" y="50" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#0c4a6e" text-anchor="middle">Basis Data PostgreSQL</text>
+    <text x="100" y="68" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#0284c7" text-anchor="middle">(db_webkrsv2)</text>
+  </g>
+
+  <!-- COLUMN 4: LAYANAN PIHAK KETIGA (x=810 to 1110) -->
+  <rect x="810" y="80" width="300" height="490" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+  <text x="960" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">LAYANAN PIHAK KETIGA (EXTERNAL)</text>
+
+  <!-- Google OAuth API -->
+  <g transform="translate(830, 140)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="80" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" />
+    <text x="130" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#78350f" text-anchor="middle">Google OAuth Provider</text>
+    <text x="130" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#d97706" text-anchor="middle">(Google Sign-In / Laravel Socialite)</text>
+  </g>
+
+  <!-- OpenStreetMap Tiles -->
+  <g transform="translate(830, 260)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="80" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" />
+    <text x="130" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#78350f" text-anchor="middle">OpenStreetMap Map Tiles</text>
+    <text x="130" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#d97706" text-anchor="middle">(Penyedia Ubin Peta / OSM API)</text>
+  </g>
+
+  <!-- Gmail SMTP Server -->
+  <g transform="translate(830, 380)" filter="url(#shadow)">
+    <rect x="0" y="0" width="260" height="80" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" />
+    <text x="130" y="35" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#78350f" text-anchor="middle">Gmail SMTP Email Server</text>
+    <text x="130" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" fill="#d97706" text-anchor="middle">(Notifikasi Email &amp; Verifikasi Akun)</text>
+  </g>
+
+  <!-- ==================== ORTHOGONAL CONNECTIONS ==================== -->
+  
+  <!-- Actor Admin Connections -->
+  <path d="M 160 170 L 230 170" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow-gray)" />
+  <path d="M 160 220 L 180 220 L 180 390 L 230 390" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow-gray)" />
+  
+  <!-- Actor Visitor Connections -->
+  <path d="M 160 370 L 180 370 L 180 190 L 230 190" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow-gray)" />
+  <path d="M 160 420 L 230 420" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow-gray)" />
+
+  <!-- Client Web Interface <-> Backend Routing/Middleware -->
+  <path d="M 430 165 L 500 165" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <path d="M 500 165 L 430 165" fill="none" stroke="#2563eb" stroke-width="1.5" marker-start="url(#arrow-blue)" />
+  <text x="465" y="155" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">HTTP Req</text>
+  
+  <!-- Client AlpineJS/Axios <-> Backend Controllers -->
+  <path d="M 430 290 L 465 290 L 465 255 L 500 255" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <path d="M 500 255 L 465 255 L 465 290 L 430 290" fill="none" stroke="#2563eb" stroke-width="1.5" marker-start="url(#arrow-blue)" />
+  <text x="465" y="240" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">AJAX API</text>
+
+  <!-- Client Leaflet.js <-> Backend Controllers (GeoJSON) -->
+  <path d="M 430 410 L 465 410 L 465 275 L 500 275" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <path d="M 500 275 L 465 275 L 465 410 L 430 410" fill="none" stroke="#2563eb" stroke-width="1.5" marker-start="url(#arrow-blue)" />
+  <text x="445" y="350" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">GeoJSON</text>
+
+  <!-- Backend Controller <-> Database PostgreSQL (Routed along the left to avoid AVIF box) -->
+  <path d="M 500 255 L 490 255 L 490 500 L 530 500" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-green)" />
+  <path d="M 530 500 L 490 500 L 490 255 L 500 255" fill="none" stroke="#16a34a" stroke-width="2" marker-start="url(#arrow-green)" />
+  <text x="510" y="490" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="bold" fill="#16a34a" text-anchor="middle">SQL Query</text>
+
+  <!-- Client Leaflet.js <-> OpenStreetMap Tiles API (Routed at bottom to bypass Backend Column & Database) -->
+  <path d="M 330 450 L 330 590 L 960 590 L 960 340" fill="none" stroke="#ea580c" stroke-dasharray="4,4" stroke-width="1.5" marker-end="url(#arrow-orange)" />
+  <text x="645" y="582" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="bold" fill="#ea580c" text-anchor="middle">Fetch Map Tiles (.png)</text>
+
+  <!-- Laravel Backend <-> Google OAuth API -->
+  <path d="M 760 240 L 795 240 L 795 180 L 830 180" fill="none" stroke="#2563eb" stroke-width="1.5" marker-end="url(#arrow-blue)" />
+  <path d="M 830 180 L 795 180 L 795 240 L 760 240" fill="none" stroke="#2563eb" stroke-width="1.5" marker-start="url(#arrow-blue)" />
+  <text x="795" y="210" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#2563eb" text-anchor="middle">OAuth</text>
+
+  <!-- Laravel Backend -> Gmail SMTP Server -->
+  <path d="M 760 270 L 795 270 L 795 420 L 830 420" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow-gray)" />
+  <text x="795" y="350" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">Send Mail</text>
+
+</svg>

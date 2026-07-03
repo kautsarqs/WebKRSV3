@@ -5,7 +5,14 @@
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
-    #map { height: 600px; width: 100%; z-index: 10; border-radius: 1.5rem; }
+    #map { height: 600px; width: 100%; z-index: 10; border-radius: 1.75rem; }
+    
+    /* Fix Leaflet SVG rendering glitch with Tailwind CSS base styles */
+    .leaflet-container svg {
+        max-width: none !important;
+        max-height: none !important;
+    }
+    
     .map-controls {
         position: absolute;
         top: 1rem;
@@ -22,43 +29,77 @@
         z-index: 1000;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        max-width: 200px;
+        gap: 0.75rem;
+        max-width: 220px;
     }
     .map-control-btn {
-        background: white;
-        border: 1px solid #e4e4e7;
-        border-radius: 0.75rem;
-        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(228, 228, 231, 0.6);
+        border-radius: 1.25rem;
+        padding: 0.75rem 1.25rem;
         font-size: 0.875rem;
-        font-weight: 500;
-        color: #52525b;
+        font-weight: 600;
+        color: #3f3f46;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        min-width: 120px;
+        gap: 0.625rem;
+        min-width: 140px;
     }
     .map-control-btn:hover {
-        background: #fafafa;
-        border-color: #d4d4d8;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(212, 212, 216, 0.8);
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     .map-control-btn.active {
-        background: #3b82f6;
+        background: #10b981;
         color: white;
-        border-color: #2563eb;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        border-color: #059669;
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
     }
     .map-wrapper { position: relative; }
-    .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 16px; border: none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); background: white; }
-    .leaflet-popup-content { margin: 0 !important; width: 300px !important; line-height: 1.5; }
+    
+    /* Premium Leaflet Popup styles */
+    .leaflet-popup-content-wrapper { 
+        padding: 0; 
+        overflow: hidden; 
+        border-radius: 1.75rem; 
+        border: 1px solid rgba(228, 228, 231, 0.5); 
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+        background: white; 
+    }
+    .leaflet-popup-content { margin: 0 !important; width: 320px !important; line-height: 1.5; }
     .leaflet-popup-tip { background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-    .leaflet-container a.leaflet-popup-close-button { top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); color: #3f3f46; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; transition: all 0.2s; font-weight: bold; padding-bottom: 2px; }
-    .leaflet-container a.leaflet-popup-close-button:hover { background: #ffffff; color: #ef4444; transform: scale(1.1); }
+    .leaflet-container a.leaflet-popup-close-button { 
+        top: 14px; 
+        right: 14px; 
+        width: 32px; 
+        height: 32px; 
+        border-radius: 50%; 
+        background: rgba(255, 255, 255, 0.95); 
+        color: #27272a; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 16px; 
+        text-decoration: none; 
+        transition: all 0.25s ease; 
+        font-weight: bold; 
+        padding-bottom: 2px;
+        border: 1px solid rgba(228, 228, 231, 0.4);
+    }
+    .leaflet-container a.leaflet-popup-close-button:hover { 
+        background: #ffffff; 
+        color: #ef4444; 
+        transform: scale(1.1) rotate(90deg); 
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
 
     /* Custom GPS User location marker styles */
     .user-location-marker {
@@ -68,19 +109,19 @@
         justify-content: center;
     }
     .blue-dot {
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
         background-color: #3b82f6;
         border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        border: 2.5px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         z-index: 2;
     }
     .pulse-ring {
         position: absolute;
-        width: 24px;
-        height: 24px;
-        border: 2.5px solid #3b82f6;
+        width: 28px;
+        height: 28px;
+        border: 3px solid #3b82f6;
         border-radius: 50%;
         background-color: rgba(59, 130, 246, 0.15);
         animation: pulse-animation 1.6s infinite ease-out;
@@ -106,71 +147,221 @@
         <p class="text-zinc-500">Sistem Informasi Geografis (WebGIS) persebaran koleksi tumbuhan.</p>
     </div>
 
-    <div class="p-2 bg-white border border-zinc-200 rounded-4xl shadow-xl shadow-zinc-200/50">
-        <div class="map-wrapper">
-            <div id="map" class="bg-zinc-100"></div>
+    <div class="p-2.5 bg-white border border-zinc-200 rounded-[2.5rem] shadow-2xl shadow-zinc-250/30">
+        <div x-data="{ 
+                 isNavigating: false, 
+                 destinationName: '', 
+                 remainingDistance: '---', 
+                 remainingTime: '---',
+                 startNav(detail) {
+                     this.isNavigating = true;
+                     this.destinationName = detail.name;
+                     this.remainingDistance = detail.distance;
+                     this.remainingTime = detail.time;
+                 },
+                 updateNav(detail) {
+                     this.remainingDistance = detail.distance;
+                     this.remainingTime = detail.time;
+                 },
+                 cancelNavigation() {
+                     this.isNavigating = false;
+                     window.stopNavigation();
+                 }
+             }"
+             @start-nav.window="startNav($event.detail)"
+             @update-nav.window="updateNav($event.detail)"
+             class="map-wrapper">
+            <div id="map" class="bg-zinc-50"></div>
+            
+            <!-- Floating Navigation Panel -->
+            <div x-show="isNavigating" 
+                 x-transition:enter="transition ease-out duration-350"
+                 x-transition:enter-start="opacity-0 translate-y-12 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-250"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-12 scale-95"
+                 class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1001] w-[92%] max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/60 rounded-[2rem] p-5 shadow-2xl flex flex-col gap-4">
+                
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100/50">
+                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 mb-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Navigasi Aktif
+                            </span>
+                            <h3 class="font-heading font-extrabold text-zinc-900 text-base leading-tight" x-text="destinationName">Nama Bangunan</h3>
+                        </div>
+                    </div>
+                    <button @click="cancelNavigation()" class="p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="h-px bg-zinc-200/60 w-full"></div>
+                
+                <div class="grid grid-cols-2 gap-4 text-zinc-700">
+                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Sisa Jarak</span>
+                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingDistance">---</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
+                        <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Waktu Tempuh</span>
+                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingTime">---</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <!-- Left Controls: GPS & Offline Caching -->
             <div class="map-left-controls">
                 <!-- GPS status -->
-                <div class="bg-white/95 backdrop-blur-xs border border-zinc-200 rounded-xl p-2.5 shadow-sm flex flex-col gap-1">
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Status GPS</span>
+                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-1">
+                    <span class="text-[9px] font-bold text-zinc-450 uppercase tracking-widest">Status GPS</span>
                     <div id="gps-status">
-                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-100 text-zinc-600">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
                             GPS Menghubungkan...
                         </span>
                     </div>
                 </div>
 
                 <!-- Cache Map offline -->
-                <div class="bg-white/95 backdrop-blur-xs border border-zinc-200 rounded-xl p-2.5 shadow-sm flex flex-col gap-1.5">
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Peta Offline</span>
-                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-1 px-2 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-[10px] font-semibold transition">
-                        Unduh Area Peta
+                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-2">
+                    <span class="text-[9px] font-bold text-zinc-450 uppercase tracking-widest">Peta Offline</span>
+                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-1.5 px-2.5 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-[9px] font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                        Unduh Peta
                     </button>
-                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-1 px-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-semibold transition">
-                        Hapus Cache Peta
+                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-1 px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[9px] font-bold transition-all duration-200 cursor-pointer">
+                        Hapus Cache
                     </button>
                     
                     <div id="download-progress" class="hidden">
                         <div class="w-full bg-zinc-100 rounded-full h-1 mt-1 overflow-hidden">
-                            <div id="progress-bar" class="bg-green-500 h-1 w-0 transition-all duration-150"></div>
+                            <div id="progress-bar" class="bg-emerald-500 h-1 w-0 transition-all duration-150"></div>
                         </div>
-                        <p id="progress-text" class="text-[9px] text-zinc-500 mt-1 text-center font-medium"></p>
+                        <p id="progress-text" class="text-[8px] text-zinc-500 mt-1 text-center font-semibold"></p>
                     </div>
                 </div>
             </div>
             
             <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false">
                 <div class="relative">
-                    <button @click="open = !open" class="map-control-btn flex items-center justify-between w-48">
+                    <button @click="open = !open" class="map-control-btn">
                         <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
                             <span x-text="selected === 'road' ? 'Lapisan Default' : (selected === 'satellite' ? 'Lapisan Satelit' : 'Lapisan Medan')"></span>
                         </span>
-                        <svg class="w-4 h-4 text-zinc-400 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-4 h-4 text-zinc-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div x-show="open" x-transition class="absolute top-full right-0 mt-2 w-48 bg-white border border-zinc-200 rounded-lg shadow-lg py-1">
-                        <a @click="selected = 'road'; switchLayer('road'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">Lapisan Default</a>
-                        <a @click="selected = 'satellite'; switchLayer('satellite'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">Lapisan Satelit</a>
-                        <a @click="selected = 'terrain'; switchLayer('terrain'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">Lapisan Medan</a>
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-200" 
+                         x-transition:enter-start="opacity-0 scale-95" 
+                         x-transition:enter-end="opacity-100 scale-100" 
+                         x-transition:leave="transition ease-in duration-100" 
+                         x-transition:leave-start="opacity-100 scale-100" 
+                         x-transition:leave-end="opacity-0 scale-95" 
+                         class="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-2xl py-1.5 z-[2000]">
+                        <a @click="selected = 'road'; switchLayer('road'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Default</a>
+                        <a @click="selected = 'satellite'; switchLayer('satellite'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Satelit</a>
+                        <a @click="selected = 'terrain'; switchLayer('terrain'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Medan</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="mt-8 flex flex-wrap items-center gap-3">
-        @php
-            $markerTypes = $markers->groupBy('type');
-        @endphp
+    <!-- Legenda Peta (Beautified) -->
+    <div class="mt-12 bg-zinc-50 border border-zinc-200 rounded-3xl p-6 shadow-sm">
+        <h4 class="font-heading text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            Legenda Peta
+        </h4>
+        <div class="flex flex-wrap items-center gap-3">
+            @php
+                $markerTypes = $markers->groupBy('type');
+            @endphp
+            
+            @foreach($markerTypes as $type => $markersOfType)
+                @php
+                    $color = $markersOfType->first()->color ?? '#3b82f6';
+                    $firstGeomType = $markersOfType->first()->geometry_type ?? 'point';
+                @endphp
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-zinc-200 shadow-xs">
+                    @if($firstGeomType === 'point')
+                        <span class="w-3 h-3 rounded-full" style="background-color: {{ $color }}; box-shadow: 0 0 0 3px {{ $color }}22;"></span>
+                    @else
+                        <span class="w-7 h-1.5 border-b-2 border-dashed shrink-0" style="border-color: {{ $color }};"></span>
+                    @endif
+                    <span class="text-zinc-700">{{ Str::of($type)->replace('_', ' ')->title() }}</span>
+                    <span class="bg-zinc-100 text-zinc-500 rounded-full px-1.5 py-0.2 text-[10px] font-bold">{{ $markersOfType->count() }}</span>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Keterangan Lanjutan / Detail Marker -->
+    <div class="mt-10 mb-16">
+        <h4 class="font-heading text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
+            <svg class="w-5.5 h-5.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            Daftar Detail Lokasi & Area
+        </h4>
         
-        @foreach($markerTypes as $type => $markersOfType)
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium bg-zinc-100 text-zinc-700 ring-1 ring-inset ring-zinc-200">
-                <span class="w-2.5 h-2.5 rounded-full" style="background-color: {{ $markersOfType->first()->color }}"></span>
-                <span>{{ Str::of($type)->replace('_', ' ')->title() }}</span>
-            </div>
-        @endforeach
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach($markers->filter(fn($m) => $m->geometry_type === 'point') as $marker)
+                @php
+                    $color = $marker->color ?? '#3b82f6';
+                    $typeLabel = Str::of($marker->type)->replace('_', ' ')->title();
+                @endphp
+                <div id="marker-detail-{{ $marker->id }}" 
+                     class="bg-white border border-zinc-200/80 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all duration-300 flex gap-4 items-center scroll-mt-24">
+                    
+                    @if($marker->photo)
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-zinc-100">
+                            <img src="{{ Storage::url($marker->photo) }}" alt="{{ $marker->name }}" class="w-full h-full object-cover">
+                        </div>
+                    @else
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl shrink-0 bg-zinc-50 border border-zinc-200/50 flex items-center justify-center text-zinc-400">
+                            <svg class="w-8 h-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    @endif
+                    
+                    <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
+                        <div>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider mb-1" 
+                                  style="color: {{ $color }}; border: 1px solid {{ $color }}40; background-color: {{ $color }}15;">
+                                {{ $typeLabel }}
+                            </span>
+                            <h5 class="font-heading text-sm font-bold text-zinc-900 truncate mb-1" title="{{ $marker->name }}">{{ $marker->name }}</h5>
+                            <p class="text-xs text-zinc-500 font-light font-inter line-clamp-2 leading-relaxed mb-2">
+                                {{ $marker->description ?? 'Tidak ada deskripsi tambahan.' }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('peta.show', $marker->id) }}" 
+                               class="px-2.5 py-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] font-bold rounded-lg transition-colors">
+                                DETAIL
+                            </a>
+                            <button onclick="focusOnMarker({{ $marker->id }})" 
+                                    class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer">
+                                PETA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
     </div>
 </div>
 @endsection
@@ -180,6 +371,7 @@
 <!-- LocalForage library for IndexedDB caching -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script>
+document.addEventListener("DOMContentLoaded", function () {
     // Custom Tile Layer to cache map tiles in IndexedDB via localForage
     L.TileLayer.Offline = L.TileLayer.extend({
         getTileKey: function(coords) {
@@ -243,7 +435,13 @@
         return new L.TileLayer.Offline(urlTemplate, options);
     };
 
-    var map = L.map('map', { zoomControl: false }).setView([1.2706202914994014, 109.48517276551188], 14); 
+    var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]); // Batas Kalimantan Barat
+    var map = L.map('map', { 
+        zoomControl: false,
+        maxBounds: bounds,
+        maxBoundsViscosity: 0.8,
+        minZoom: 8
+    }).setView([1.2706202914994014, 109.48517276551188], 14); 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     // Gunakan Offline Layer untuk melayani tile dengan offline support
@@ -259,13 +457,13 @@
 
     var currentLayer = roadLayer.addTo(map);
 
-    function switchLayer(mode) {
+    window.switchLayer = function(mode) {
         map.removeLayer(currentLayer);
         if(mode === 'satellite') currentLayer = satelliteLayer;
         else if(mode === 'terrain') currentLayer = terrainLayer;
         else currentLayer = roadLayer;
         currentLayer.addTo(map);
-    }
+    };
 
 
 
@@ -315,6 +513,11 @@
                 // Tambahkan koordinat ke riwayat rute user dan perbarui linestring
                 userPathCoords.push(latlng);
                 userPolyline.setLatLngs(userPathCoords);
+
+                // Update rute navigasi jika sedang aktif
+                if (window.currentNavTarget) {
+                    window.updateNavigationRouting();
+                }
 
                 if (firstLocationCheck) {
                     map.setView(latlng, 16);
@@ -501,25 +704,435 @@
     var markers = @json($markers);
     var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
 
+    // --- Ekstrak Jalan Kustom untuk Sistem Navigasi ---
+    var roadPolylines = [];
     markers.forEach(function(marker) {
-        var typeLabel = 'Lokasi';
-        var badgeClass = 'bg-zinc-100 text-zinc-600';
-        switch(marker.type) {
-            case 'area_koleksi': typeLabel = 'Area Koleksi'; badgeClass = 'bg-green-50 text-green-700 border border-green-100'; break;
-            case 'fasilitas_umum': typeLabel = 'Fasilitas Umum'; badgeClass = 'bg-blue-50 text-blue-700 border border-blue-100'; break;
-            case 'kantor_pengelola': typeLabel = 'Kantor'; badgeClass = 'bg-red-50 text-red-700 border border-red-100'; break;
-            case 'pos_keamanan': typeLabel = 'Keamanan'; badgeClass = 'bg-yellow-50 text-yellow-700 border border-yellow-100'; break;
+        if ((marker.geometry_type === 'polyline' || marker.geometry_type === 'linestring') && marker.geojson) {
+            // Jangan gunakan garis batas wilayah/batas KRS sebagai jalur jalan navigasi
+            var nameLower = (marker.name || "").toLowerCase();
+            var typeLower = (marker.type || "").toLowerCase();
+            if (nameLower.includes("batas") || typeLower.includes("batas")) {
+                return;
+            }
+            try {
+                var coords = JSON.parse(marker.geojson);
+                if (coords.length > 0) {
+                    var path = coords.map(function(c) {
+                        return { lat: parseFloat(c[0]), lng: parseFloat(c[1]) };
+                    });
+                    roadPolylines.push({
+                        id: marker.id,
+                        path: path
+                    });
+                }
+            } catch(e) {
+                console.error("Gagal memproses jalan kustom untuk rute:", e);
+            }
         }
+    });
 
+    // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
+    function getHaversineDistance(p1, p2) {
+        var R = 6371000; // Radius bumi dalam meter
+        var phi1 = p1.lat * Math.PI / 180;
+        var phi2 = p2.lat * Math.PI / 180;
+        var deltaPhi = (p2.lat - p1.lat) * Math.PI / 180;
+        var deltaLambda = (p2.lng - p1.lng) * Math.PI / 180;
+        var a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function projectPointOnSegment(p, a, b) {
+        var dx = b.lng - a.lng;
+        var dy = b.lat - a.lat;
+        
+        if (dx === 0 && dy === 0) {
+            return { point: a, distance: getHaversineDistance(p, a), t: 0 };
+        }
+        
+        var t = ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy);
+        t = Math.max(0, Math.min(1, t));
+        
+        var projected = {
+            lat: a.lat + t * dy,
+            lng: a.lng + t * dx
+        };
+        
+        return {
+            point: projected,
+            distance: getHaversineDistance(p, projected),
+            t: t
+        };
+    }
+
+    function findClosestSnapPoint(p) {
+        var minDistance = Infinity;
+        var closestProjected = null;
+        var closestSegment = null;
+        
+        for (var i = 0; i < roadPolylines.length; i++) {
+            var polyline = roadPolylines[i];
+            for (var j = 0; j < polyline.path.length - 1; j++) {
+                var a = polyline.path[j];
+                var b = polyline.path[j+1];
+                var projection = projectPointOnSegment(p, a, b);
+                
+                if (projection.distance < minDistance) {
+                    minDistance = projection.distance;
+                    closestProjected = projection.point;
+                    closestSegment = {
+                        polylineIndex: i,
+                        segmentIndex: j,
+                        a: a,
+                        b: b,
+                        t: projection.t
+                    };
+                }
+            }
+        }
+        
+        return {
+            point: closestProjected,
+            distance: minDistance,
+            segment: closestSegment
+        };
+    }
+
+    function getNodeKey(p) {
+        return p.lat.toFixed(6) + ',' + p.lng.toFixed(6);
+    }
+
+    // --- Algoritma Pembuat Graf & Dijkstra ---
+    function buildGraphAndRunDijkstra(startLatLng, endLatLng) {
+        console.log("Dijkstra started. start:", startLatLng, "end:", endLatLng);
+        console.log("Available roadPolylines:", roadPolylines);
+        
+        var snapS = findClosestSnapPoint(startLatLng);
+        var snapE = findClosestSnapPoint(endLatLng);
+        console.log("snapS:", snapS, "snapE:", snapE);
+        
+        // Batas maksimal snapping jika user terlalu jauh dari jalan kustom
+        if (!snapS.point || !snapE.point || roadPolylines.length === 0) {
+            console.log("No snap points or roadPolylines empty. Snapping failed.");
+            return {
+                path: [startLatLng, endLatLng],
+                distance: getHaversineDistance(startLatLng, endLatLng),
+                isStraightLine: true
+            };
+        }
+        
+        var adj = {};
+        function addEdge(p1, p2) {
+            var key1 = getNodeKey(p1);
+            var key2 = getNodeKey(p2);
+            var dist = getHaversineDistance(p1, p2);
+            
+            if (!adj[key1]) adj[key1] = {};
+            if (!adj[key2]) adj[key2] = {};
+            
+            adj[key1][key2] = dist;
+            adj[key2][key1] = dist;
+        }
+        
+        var keyToCoord = {};
+        function registerCoord(p) {
+            var key = getNodeKey(p);
+            keyToCoord[key] = p;
+        }
+        
+        // Daftarkan semua koordinat jalan
+        roadPolylines.forEach(function(polyline) {
+            polyline.path.forEach(function(p) { registerCoord(p); });
+            for (var i = 0; i < polyline.path.length - 1; i++) {
+                addEdge(polyline.path[i], polyline.path[i+1]);
+            }
+        });
+        
+        // Hubungkan titik-titik persimpangan berdekatan (< 5 meter) sebagai node penghubung
+        var nodeKeys = Object.keys(keyToCoord);
+        for (var i = 0; i < nodeKeys.length; i++) {
+            for (var j = i + 1; j < nodeKeys.length; j++) {
+                var k1 = nodeKeys[i];
+                var k2 = nodeKeys[j];
+                var p1 = keyToCoord[k1];
+                var p2 = keyToCoord[k2];
+                var d = getHaversineDistance(p1, p2);
+                if (d < 5.0) {
+                    if (!adj[k1]) adj[k1] = {};
+                    if (!adj[k2]) adj[k2] = {};
+                    adj[k1][k2] = d;
+                    adj[k2][k1] = d;
+                }
+            }
+        }
+        
+        // Sisipkan titik SnapStart ke Graf
+        registerCoord(snapS.point);
+        var sSeg = snapS.segment;
+        if (sSeg) {
+            addEdge(sSeg.a, snapS.point);
+            addEdge(snapS.point, sSeg.b);
+        }
+        
+        // Sisipkan titik SnapEnd ke Graf
+        registerCoord(snapE.point);
+        var eSeg = snapE.segment;
+        if (eSeg) {
+            addEdge(eSeg.a, snapE.point);
+            addEdge(snapE.point, eSeg.b);
+        }
+        
+        var startKey = getNodeKey(snapS.point);
+        var endKey = getNodeKey(snapE.point);
+        
+        // Jalankan Dijkstra
+        var distances = {};
+        var previous = {};
+        var unvisited = new Set();
+        
+        Object.keys(adj).forEach(function(key) {
+            distances[key] = Infinity;
+            unvisited.add(key);
+        });
+        distances[startKey] = 0;
+        
+        while (unvisited.size > 0) {
+            var minNode = null;
+            var minDist = Infinity;
+            
+            unvisited.forEach(function(key) {
+                if (distances[key] < minDist) {
+                    minDist = distances[key];
+                    minNode = key;
+                }
+            });
+            
+            if (minNode === null || minNode === endKey) {
+                break;
+            }
+            
+            unvisited.delete(minNode);
+            
+            var neighbors = adj[minNode] || {};
+            Object.keys(neighbors).forEach(function(neighbor) {
+                if (unvisited.has(neighbor)) {
+                    var alt = distances[minNode] + neighbors[neighbor];
+                    if (alt < distances[neighbor]) {
+                        distances[neighbor] = alt;
+                        previous[neighbor] = minNode;
+                    }
+                }
+            });
+        }
+        
+        var pathCoords = [];
+        var currentKey = endKey;
+        
+        if (distances[endKey] !== Infinity || startKey === endKey) {
+            while (currentKey) {
+                pathCoords.push(keyToCoord[currentKey]);
+                currentKey = previous[currentKey];
+            }
+            pathCoords.reverse();
+            
+            console.log("Dijkstra path successfully found! nodes count:", pathCoords.length);
+            return {
+                path: pathCoords,
+                distance: distances[endKey],
+                snapStart: snapS.point,
+                snapEnd: snapE.point,
+                isStraightLine: false
+            };
+        } else {
+            console.log("Dijkstra failed: target is unreachable in the graph. startKey:", startKey, "endKey:", endKey);
+            return {
+                path: [startLatLng, endLatLng],
+                distance: getHaversineDistance(startLatLng, endLatLng),
+                isStraightLine: true
+            };
+        }
+    }
+
+    // --- Menggambar Garis Navigasi ---
+    var navRoadLine = null;
+    var navSnapStartLine = null;
+    var navSnapEndLine = null;
+
+    function clearNavigationLayers() {
+        if (navRoadLine) map.removeLayer(navRoadLine);
+        if (navSnapStartLine) map.removeLayer(navSnapStartLine);
+        if (navSnapEndLine) map.removeLayer(navSnapEndLine);
+        
+        navRoadLine = null;
+        navSnapStartLine = null;
+        navSnapEndLine = null;
+    }
+
+    function drawNavigationRoute(userCoord, targetCoord, routingResult) {
+        clearNavigationLayers();
+        
+        if (routingResult.isStraightLine) {
+            navRoadLine = L.polyline([userCoord, targetCoord], {
+                color: '#3b82f6',
+                weight: 5,
+                opacity: 0.8,
+                dashArray: '8, 8'
+            }).addTo(map);
+        } else {
+            // Garis putus-putus dari GPS User ke Snap Start
+            navSnapStartLine = L.polyline([userCoord, routingResult.snapStart], {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '5, 8'
+            }).addTo(map);
+            
+            // Garis tebal solid menyusuri jalan kustom
+            var pathLatLngs = routingResult.path.map(function(p) {
+                return L.latLng(p.lat, p.lng);
+            });
+            navRoadLine = L.polyline(pathLatLngs, {
+                color: '#1d4ed8',
+                weight: 6,
+                opacity: 0.95
+            }).addTo(map);
+            
+            // Garis putus-putus dari Snap End ke Bangunan Tujuan
+            navSnapEndLine = L.polyline([routingResult.snapEnd, targetCoord], {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '5, 8'
+            }).addTo(map);
+        }
+    }
+
+    // --- State Navigasi Global ---
+    window.currentNavTarget = null;
+
+    window.startNavigation = function(id, name, lat, lng) {
+        window.currentNavTarget = { id: id, name: name, lat: lat, lng: lng };
+        map.closePopup();
+        window.updateNavigationRouting();
+    };
+
+    window.stopNavigation = function() {
+        window.currentNavTarget = null;
+        clearNavigationLayers();
+    };
+
+    function updateFloatingPanel(name, totalDistMeters) {
+        var distStr = '';
+        if (totalDistMeters < 1000) {
+            distStr = Math.round(totalDistMeters) + ' m';
+        } else {
+            distStr = (totalDistMeters / 1000).toFixed(2) + ' km';
+        }
+        
+        var timeMinutes = Math.round(totalDistMeters / (1.25 * 60)); // 1.25 m/s jalan kaki
+        var timeStr = '';
+        if (timeMinutes < 1) {
+            timeStr = '< 1 mnt jalan kaki';
+        } else {
+            timeStr = timeMinutes + ' mnt jalan kaki';
+        }
+        
+        window.dispatchEvent(new CustomEvent('start-nav', {
+            detail: {
+                name: name,
+                distance: distStr,
+                time: timeStr
+            }
+        }));
+    }
+
+    window.updateNavigationRouting = function() {
+        if (!window.currentNavTarget) return;
+        
+        if (!userMarker) {
+            window.dispatchEvent(new CustomEvent('start-nav', {
+                detail: {
+                    name: window.currentNavTarget.name,
+                    distance: 'Mencari GPS...',
+                    time: '---'
+                }
+            }));
+            return;
+        }
+        
+        var userLatLng = userMarker.getLatLng();
+        var targetLatLng = L.latLng(window.currentNavTarget.lat, window.currentNavTarget.lng);
+        
+        var result = buildGraphAndRunDijkstra(userLatLng, targetLatLng);
+        drawNavigationRoute(userLatLng, targetLatLng, result);
+        
+        var totalDistMeters = 0;
+        if (result.isStraightLine) {
+            totalDistMeters = result.distance;
+        } else {
+            var distUserToSnapS = getHaversineDistance(userLatLng, result.snapStart);
+            var distSnapEToTarget = getHaversineDistance(result.snapEnd, targetLatLng);
+            totalDistMeters = distUserToSnapS + result.distance + distSnapEToTarget;
+        }
+        
+        updateFloatingPanel(window.currentNavTarget.name, totalDistMeters);
+    };
+
+    // Simpan referensi layer peta berdasarkan marker id untuk fitur LIHAT PETA di legenda
+    window.mapLayers = window.mapLayers || {};
+
+    markers.forEach(function(marker) {
+        var typeLabel = marker.type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        
         var imageHtml = marker.photo 
             ? `<div class="relative w-full h-40 bg-zinc-100 group overflow-hidden"><img src="${storageBase + '/' + marker.photo}" alt="${marker.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>`
-            : `<div class="w-full h-24 bg-zinc-100 flex items-center justify-center border-b border-zinc-50"><svg class="w-8 h-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
+            : `<div class="w-full h-24 bg-zinc-100 flex items-center justify-center border-b border-zinc-50"><svg class="w-8 h-8 text-zinc-350" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
 
-        var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeClass} mb-2">${typeLabel}</span><h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100"><a href="#" class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">LIHAT DETAIL</a></div></div></div>`;
-
-        // Render berdasarkan tipe geometri dari database
+        var targetLat = null;
+        var targetLng = null;
         var geomType = marker.geometry_type || 'point';
 
+        if (geomType === 'point') {
+            targetLat = marker.latitude;
+            targetLng = marker.longitude;
+        } else if (marker.geojson) {
+            try {
+                var coords = JSON.parse(marker.geojson);
+                if (coords.length > 0) {
+                    var flatCoords = [];
+                    if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+                        flatCoords = coords[0];
+                    } else {
+                        flatCoords = coords;
+                    }
+                    var sumLat = 0, sumLng = 0;
+                    flatCoords.forEach(function(c) {
+                        sumLat += parseFloat(c[0]);
+                        sumLng += parseFloat(c[1]);
+                    });
+                    targetLat = sumLat / flatCoords.length;
+                    targetLng = sumLng / flatCoords.length;
+                }
+            } catch(e) {
+                console.error("Gagal mendapatkan koordinat target:", e);
+            }
+        }
+
+        var navButtonHtml = '';
+        if (targetLat && targetLng && geomType !== 'polyline') {
+            navButtonHtml = `<button onclick="window.startNavigation(${marker.id}, '${marker.name.replace(/'/g, "\\'")}', ${targetLat}, ${targetLng})" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg text-[10px] transition-all duration-200 shadow-sm cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Navigasi
+            </button>`;
+        }
+
+        var badgeHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2" style="color: ${marker.color}; border: 1px solid ${marker.color}40; background-color: ${marker.color}15;">${typeLabel}</span>`;
+        var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div>${badgeHtml}<h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between gap-2"><a href="#marker-detail-${marker.id}" onclick="document.getElementById('marker-detail-${marker.id}')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="inline-flex items-center text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">LIHAT DETAIL</a>${navButtonHtml}</div></div></div>`;
+
+        var leafletLayer = null;
         if (geomType === 'point' && marker.latitude && marker.longitude) {
             var customIcon = L.divIcon({
                 className: 'custom-marker',
@@ -528,31 +1141,71 @@
                 iconAnchor: [11, 11],
                 popupAnchor: [0, -10]
             });
-            L.marker([marker.latitude, marker.longitude], { icon: customIcon })
+            leafletLayer = L.marker([marker.latitude, marker.longitude], { icon: customIcon })
                 .addTo(map)
                 .bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
         } else if (marker.geojson) {
             try {
                 var coordinates = JSON.parse(marker.geojson);
                 if (coordinates.length > 0) {
-                    if (geomType === 'polyline') {
-                        L.polyline(coordinates, { 
+                    if (geomType === 'polyline' || geomType === 'linestring') {
+                        leafletLayer = L.polyline(coordinates, { 
                             color: marker.color, 
                             weight: 4.5 
-                        }).addTo(map).bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+                        }).addTo(map);
                     } else if (geomType === 'polygon') {
-                        L.polygon(coordinates, { 
+                        leafletLayer = L.polygon(coordinates, { 
                             color: marker.color, 
                             fillColor: marker.color, 
                             fillOpacity: 0.12, 
-                            weight: 3 
-                        }).addTo(map).bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+                            weight: 3,
+                            dashArray: '6, 6'
+                        }).addTo(map);
                     }
                 }
             } catch(e) {
                 console.error("Gagal menggambar fitur spasial:", e);
             }
         }
+
+        if (leafletLayer && marker.id) {
+            window.mapLayers[marker.id] = leafletLayer;
+        }
     });
+
+    window.focusOnMarker = function(id) {
+        var layer = window.mapLayers[id];
+        if (layer) {
+            if (layer.getLatLng) {
+                var latlng = layer.getLatLng();
+                map.setView(latlng, 17, { animate: true });
+                layer.openPopup();
+            } else if (layer.getBounds) {
+                var bounds = layer.getBounds();
+                map.fitBounds(bounds, { maxZoom: 17 });
+                layer.openPopup();
+            }
+        }
+        
+        var mapContainer = document.getElementById('map') || document.getElementById('home-map');
+        if (mapContainer) {
+            mapContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    // Cek parameter focus di URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var focusId = urlParams.get('focus');
+    if (focusId) {
+        setTimeout(function() {
+            window.focusOnMarker(focusId);
+        }, 1200);
+    }
+
+    // Paksa render ulang ukuran Leaflet setelah loader Alpine hilang
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 800);
+});
 </script>
 @endpush

@@ -5,12 +5,138 @@
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
-    #home-map { height: 480px; width: 100%; z-index: 10; border-radius: 2rem; }
-    /* Leaflet popup styling override to match main map page */
-    .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 20px; border: none; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); background: white; }
-    .leaflet-popup-content { margin: 0 !important; width: 280px !important; line-height: 1.5; }
+    #home-map { height: 600px; width: 100%; z-index: 10; border-radius: 1.75rem; }
+    
+    /* Fix Leaflet SVG rendering glitch with Tailwind CSS base styles */
+    .leaflet-container svg {
+        max-width: none !important;
+        max-height: none !important;
+    }
+    
+    .map-controls {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .map-left-controls {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 220px;
+    }
+    .map-control-btn {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(228, 228, 231, 0.6);
+        border-radius: 1.25rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #3f3f46;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        min-width: 140px;
+    }
+    .map-control-btn:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(212, 212, 216, 0.8);
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .map-control-btn.active {
+        background: #10b981;
+        color: white;
+        border-color: #059669;
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    }
+    .map-wrapper { position: relative; }
+    
+    /* Premium Leaflet Popup styles */
+    .leaflet-popup-content-wrapper { 
+        padding: 0; 
+        overflow: hidden; 
+        border-radius: 1.75rem; 
+        border: 1px solid rgba(228, 228, 231, 0.5); 
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+        background: white; 
+    }
+    .leaflet-popup-content { margin: 0 !important; width: 320px !important; line-height: 1.5; }
     .leaflet-popup-tip { background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-    .leaflet-container a.leaflet-popup-close-button { top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); color: #3f3f46; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; transition: all 0.2s; font-weight: bold; }
+    .leaflet-container a.leaflet-popup-close-button { 
+        top: 14px; 
+        right: 14px; 
+        width: 32px; 
+        height: 32px; 
+        border-radius: 50%; 
+        background: rgba(255, 255, 255, 0.95); 
+        color: #27272a; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08); 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 16px; 
+        text-decoration: none; 
+        transition: all 0.25s ease; 
+        font-weight: bold; 
+        padding-bottom: 2px;
+        border: 1px solid rgba(228, 228, 231, 0.4);
+    }
+    .leaflet-container a.leaflet-popup-close-button:hover { 
+        background: #ffffff; 
+        color: #ef4444; 
+        transform: scale(1.1) rotate(90deg); 
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Custom GPS User location marker styles */
+    .user-location-marker {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .blue-dot {
+        width: 14px;
+        height: 14px;
+        background-color: #3b82f6;
+        border-radius: 50%;
+        border: 2.5px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+    }
+    .pulse-ring {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border: 3px solid #3b82f6;
+        border-radius: 50%;
+        background-color: rgba(59, 130, 246, 0.15);
+        animation: pulse-animation 1.6s infinite ease-out;
+        z-index: 1;
+    }
+    @keyframes pulse-animation {
+        0% {
+            transform: scale(0.5);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(2.0);
+            opacity: 0;
+        }
+    }
 </style>
 @endpush
 
@@ -241,8 +367,139 @@
         </p>
     </div>
 
-    <div class="p-2.5 bg-white border border-zinc-200 rounded-4xl shadow-2xl shadow-zinc-200/50">
-        <div id="home-map" class="bg-zinc-100"></div>
+    <div class="p-2.5 bg-white border border-zinc-200 rounded-[2.5rem] shadow-2xl shadow-zinc-250/30">
+        <div x-data="{ 
+                 isNavigating: false, 
+                 destinationName: '', 
+                 remainingDistance: '---', 
+                 remainingTime: '---',
+                 startNav(detail) {
+                     this.isNavigating = true;
+                     this.destinationName = detail.name;
+                     this.remainingDistance = detail.distance;
+                     this.remainingTime = detail.time;
+                 },
+                 updateNav(detail) {
+                     this.remainingDistance = detail.distance;
+                     this.remainingTime = detail.time;
+                 },
+                 cancelNavigation() {
+                     this.isNavigating = false;
+                     window.stopNavigation();
+                 }
+             }"
+             @start-nav.window="startNav($event.detail)"
+             @update-nav.window="updateNav($event.detail)"
+             class="map-wrapper">
+            <div id="home-map" class="bg-zinc-50" style="height: 600px; width: 100%; border-radius: 1.75rem;"></div>
+            
+            <!-- Floating Navigation Panel -->
+            <div x-show="isNavigating" 
+                 x-transition:enter="transition ease-out duration-355"
+                 x-transition:enter-start="opacity-0 translate-y-12 scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave="transition ease-in duration-250"
+                 x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-12 scale-95"
+                 class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1001] w-[92%] max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/60 rounded-[2rem] p-5 shadow-2xl flex flex-col gap-4">
+                
+                <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100/50">
+                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 mb-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Navigasi Aktif
+                            </span>
+                            <h3 class="font-heading font-extrabold text-zinc-900 text-base leading-tight" x-text="destinationName">Nama Bangunan</h3>
+                        </div>
+                    </div>
+                    <button @click="cancelNavigation()" class="p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="h-px bg-zinc-200/60 w-full"></div>
+                
+                <div class="grid grid-cols-2 gap-4 text-zinc-700">
+                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Sisa Jarak</span>
+                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingDistance">---</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
+                        <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-650 flex items-center justify-center shadow-xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Waktu Tempuh</span>
+                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingTime">---</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Left Controls: GPS & Offline Caching -->
+            <div class="map-left-controls">
+                <!-- GPS status -->
+                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-1">
+                    <span class="text-[9px] font-bold text-zinc-455 uppercase tracking-widest">Status GPS</span>
+                    <div id="gps-status">
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
+                            GPS Menghubungkan...
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Cache Map offline -->
+                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-2">
+                    <span class="text-[9px] font-bold text-zinc-455 uppercase tracking-widest">Peta Offline</span>
+                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-1.5 px-2.5 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-[9px] font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
+                        Unduh Peta
+                    </button>
+                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-1 px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[9px] font-bold transition-all duration-200 cursor-pointer">
+                        Hapus Cache
+                    </button>
+                    
+                    <div id="download-progress" class="hidden">
+                        <div class="w-full bg-zinc-100 rounded-full h-1 mt-1 overflow-hidden">
+                            <div id="progress-bar" class="bg-emerald-500 h-1 w-0 transition-all duration-150"></div>
+                        </div>
+                        <p id="progress-text" class="text-[8px] text-zinc-500 mt-1 text-center font-semibold"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false">
+                <div class="relative">
+                    <button @click="open = !open" class="map-control-btn">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                            <span x-text="selected === 'road' ? 'Lapisan Default' : (selected === 'satellite' ? 'Lapisan Satelit' : 'Lapisan Medan')"></span>
+                        </span>
+                        <svg class="w-4 h-4 text-zinc-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-200" 
+                         x-transition:enter-start="opacity-0 scale-95" 
+                         x-transition:enter-end="opacity-100 scale-100" 
+                         x-transition:leave="transition ease-in duration-100" 
+                         x-transition:leave-start="opacity-100 scale-100" 
+                         x-transition:leave-end="opacity-0 scale-95" 
+                         class="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-2xl py-1.5 z-[2000]">
+                        <a @click="selected = 'road'; switchLayer('road'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Default</a>
+                        <a @click="selected = 'satellite'; switchLayer('satellite'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Satelit</a>
+                        <a @click="selected = 'terrain'; switchLayer('terrain'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Medan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="mt-14 flex flex-col sm:flex-row items-center justify-between gap-6 p-8 bg-zinc-50 rounded-3xl border border-zinc-200/70">
@@ -288,58 +545,812 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<!-- LocalForage library for IndexedDB caching -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map('home-map', { scrollWheelZoom: false, zoomControl: false }).setView([1.2706202914994014, 109.48517276551188], 15);
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+document.addEventListener("DOMContentLoaded", function () {
+    // Custom Tile Layer to cache map tiles in IndexedDB via localForage
+    L.TileLayer.Offline = L.TileLayer.extend({
+        getTileKey: function(coords) {
+            var cleanUrl = (this._url || "").replace(/[^a-zA-Z0-9]/g, "").substring(0, 20);
+            return `${cleanUrl}_tile_${coords.z}_${coords.x}_${coords.y}`;
+        },
+        createTile: function(coords, done) {
+            var tile = document.createElement('img');
+            var url = this.getTileUrl(coords);
+            var key = this.getTileKey(coords);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+            localforage.getItem(key).then(function(blob) {
+                if (blob) {
+                    var objectUrl = URL.createObjectURL(blob);
+                    tile.src = objectUrl;
+                    tile.onload = function() {
+                        URL.revokeObjectURL(objectUrl);
+                        done(null, tile);
+                    };
+                    tile.onerror = function() {
+                        done(new Error("Gagal render blob tile"), tile);
+                    };
+                } else {
+                    fetch(url)
+                        .then(function(res) {
+                            if (!res.ok) throw new Error("Gagal mengambil tile");
+                            return res.blob();
+                        })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob);
+                            var objectUrl = URL.createObjectURL(blob);
+                            tile.src = objectUrl;
+                            tile.onload = function() {
+                                URL.revokeObjectURL(objectUrl);
+                                done(null, tile);
+                            };
+                            tile.onerror = function() {
+                                done(new Error("Gagal render downloaded tile"), tile);
+                            };
+                        })
+                        .catch(function(err) {
+                            console.warn("Offline fallback ke normal image src:", url);
+                            tile.src = url;
+                            done(err, tile);
+                        });
+                }
+            }).catch(function(err) {
+                console.error(err);
+                tile.src = url;
+                done(err, tile);
+            });
 
-        var markers = @json($markers ?? []);
-        var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
+            return tile;
+        }
+    });
 
-        markers.forEach(function(marker) {
-            var typeLabel = 'Lokasi';
-            var badgeClass = 'bg-zinc-100 text-zinc-600';
-            switch(marker.type) {
-                case 'area_koleksi': typeLabel = 'Area Koleksi'; badgeClass = 'bg-green-50 text-green-700 border border-green-100'; break;
-                case 'fasilitas_umum': typeLabel = 'Fasilitas Umum'; badgeClass = 'bg-blue-50 text-blue-700 border border-blue-100'; break;
-                case 'kantor_pengelola': typeLabel = 'Kantor'; badgeClass = 'bg-red-50 text-red-700 border border-red-100'; break;
-                case 'pos_keamanan': typeLabel = 'Keamanan'; badgeClass = 'bg-yellow-50 text-yellow-700 border border-yellow-100'; break;
+    L.tileLayer.offline = function(urlTemplate, options) {
+        return new L.TileLayer.Offline(urlTemplate, options);
+    };
+
+    var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]); // Batas Kalimantan Barat
+    var map = L.map('home-map', { 
+        scrollWheelZoom: true,
+        zoomControl: false,
+        maxBounds: bounds,
+        maxBoundsViscosity: 0.8,
+        minZoom: 8
+    }).setView([1.2706202914994014, 109.48517276551188], 14); 
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // Gunakan Offline Layer untuk melayani tile dengan offline support
+    var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+    var satelliteLayer = L.tileLayer.offline('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 18, attribution: '&copy; Esri', crossOrigin: true });
+    var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
+        maxNativeZoom: 17, 
+        maxZoom: 17, 
+        attribution: 'Map data: &copy; OpenStreetMap contributors',
+        subdomains: 'abc',
+        crossOrigin: true
+    });
+
+    var currentLayer = roadLayer.addTo(map);
+
+    window.switchLayer = function(mode) {
+        map.removeLayer(currentLayer);
+        if(mode === 'satellite') currentLayer = satelliteLayer;
+        else if(mode === 'terrain') currentLayer = terrainLayer;
+        else currentLayer = roadLayer;
+        currentLayer.addTo(map);
+    };
+
+    // --- Jalur Rekaman Perjalanan User (Linestring Navigasi Real-Time) ---
+    var userPathCoords = [];
+    var userPolyline = L.polyline(userPathCoords, {
+        color: '#3b82f6', // Biru untuk navigasi aktif
+        weight: 4.5,
+        opacity: 0.9,
+        dashArray: '5, 8'
+    }).addTo(map);
+
+    // --- Real-time User tracking logic ---
+    var userMarker = null;
+    var userAccuracyCircle = null;
+    var firstLocationCheck = true;
+
+    if ('geolocation' in navigator) {
+        navigator.geolocation.watchPosition(
+            function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                var accuracy = position.coords.accuracy;
+                var latlng = L.latLng(lat, lng);
+
+                if (userMarker) {
+                    userMarker.setLatLng(latlng);
+                    userAccuracyCircle.setLatLng(latlng);
+                    userAccuracyCircle.setRadius(accuracy);
+                } else {
+                    var userIcon = L.divIcon({
+                        className: 'user-location-marker',
+                        html: '<div class="pulse-ring"></div><div class="blue-dot"></div>',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+                    userMarker = L.marker(latlng, { icon: userIcon }).addTo(map);
+                    userAccuracyCircle = L.circle(latlng, {
+                        radius: accuracy,
+                        color: '#3b82f6',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.12,
+                        weight: 1
+                    }).addTo(map);
+                }
+
+                // Tambahkan koordinat ke riwayat rute user dan perbarui linestring
+                userPathCoords.push(latlng);
+                userPolyline.setLatLngs(userPathCoords);
+
+                // Update rute navigasi jika sedang aktif
+                if (window.currentNavTarget) {
+                    window.updateNavigationRouting();
+                }
+
+                if (firstLocationCheck) {
+                    map.setView(latlng, 16);
+                    firstLocationCheck = false;
+                }
+
+                document.getElementById('gps-status').innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-green-50 text-green-700 border border-green-100">
+                        GPS Aktif (${accuracy.toFixed(1)}m)
+                    </span>
+                `;
+            },
+            function(error) {
+                console.warn("GPS error:", error);
+                var text = "GPS Error";
+                if (error.code === error.PERMISSION_DENIED) text = "Akses Ditolak";
+                else if (error.code === error.POSITION_UNAVAILABLE) text = "Lokasi Hilang";
+                else if (error.code === error.TIMEOUT) text = "GPS Timeout";
+
+                document.getElementById('gps-status').innerHTML = `
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                        ${text}
+                    </span>
+                `;
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
             }
+        );
+    } else {
+        document.getElementById('gps-status').innerHTML = `
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                Tak Didukung
+            </span>
+        `;
+    }
 
-            var imageHtml = marker.photo 
-                ? `<div class="relative w-full h-32 bg-zinc-100 overflow-hidden"><img src="${storageBase + '/' + marker.photo}" alt="${marker.name}" class="w-full h-full object-cover"></div>`
-                : `<div class="w-full h-16 bg-zinc-100 flex items-center justify-center border-b border-zinc-50"><svg class="w-6 h-6 text-zinc-350" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
+    // --- Offline map seeding logic ---
+    function getTileCoordsForBounds(bounds, zoom) {
+        var tileSize = 256;
+        var nw = bounds.getNorthWest();
+        var se = bounds.getSouthEast();
+        var nwPoint = map.project(nw, zoom);
+        var sePoint = map.project(se, zoom);
 
-            var popupContent = `
-                <div class="flex flex-col font-sans text-left bg-white w-full">
-                    ${imageHtml}
-                    <div class="p-4">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${badgeClass} mb-1">${typeLabel}</span>
-                        <h3 class="font-heading font-bold text-sm leading-tight text-zinc-900 m-0">${marker.name}</h3>
-                        <div class="mt-3 pt-3 border-t border-zinc-100">
-                            <a href="{{ route('peta') }}" class="inline-flex items-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors">LIHAT DI PETA</a>
-                        </div>
-                    </div>
-                </div>`;
+        var minX = Math.floor(nwPoint.x / tileSize);
+        var minY = Math.floor(nwPoint.y / tileSize);
+        var maxX = Math.floor(sePoint.x / tileSize);
+        var maxY = Math.floor(sePoint.y / tileSize);
 
-            if (marker.latitude && marker.longitude) {
-                var customIcon = L.divIcon({
-                    className: 'custom-marker',
-                    html: '<div style="background-color: ' + marker.color + '; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.3);"></div>',
-                    iconSize: [18, 18],
-                    iconAnchor: [9, 9],
-                    popupAnchor: [0, -8]
-                });
-                L.marker([marker.latitude, marker.longitude], { icon: customIcon })
-                    .addTo(map)
-                    .bindPopup(popupContent, { closeButton: true, maxWidth: 300, minWidth: 260 });
+        var tiles = [];
+        for (var x = minX; x <= maxX; x++) {
+            for (var y = minY; y <= maxY; y++) {
+                tiles.push({ z: zoom, x: x, y: y });
+            }
+        }
+        return tiles;
+    }
+
+    function downloadVisibleArea() {
+        var bounds = map.getBounds();
+        var currentZoom = map.getZoom();
+        var zoomsToDownload = [currentZoom - 1, currentZoom, currentZoom + 1];
+        var tiles = [];
+
+        zoomsToDownload.forEach(function(z) {
+            if (z >= map.getMinZoom() && z <= map.getMaxZoom()) {
+                tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
             }
         });
+
+        if (tiles.length === 0) return;
+
+        if (tiles.length > 250) {
+            var confirmDl = confirm(`Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`);
+            if (!confirmDl) return;
+        }
+
+        var downloaded = 0;
+        var progressDiv = document.getElementById('download-progress');
+        var bar = document.getElementById('progress-bar');
+        var text = document.getElementById('progress-text');
+        var btn = document.getElementById('download-btn');
+
+        progressDiv.classList.remove('hidden');
+        btn.disabled = true;
+        btn.innerText = "Mengunduh...";
+
+        function updateProgress() {
+            var percentage = Math.round((downloaded / tiles.length) * 100);
+            bar.style.width = percentage + '%';
+            text.innerText = `Mengunduh: ${downloaded}/${tiles.length} (${percentage}%)`;
+
+            if (downloaded === tiles.length) {
+                setTimeout(function() {
+                    progressDiv.classList.add('hidden');
+                    btn.disabled = false;
+                    btn.innerText = "Unduh Peta";
+                    alert("Selesai! Peta berhasil disimpan secara offline.");
+                }, 1000);
+            }
+        }
+
+        tiles.forEach(function(tile) {
+            var url = currentLayer.getTileUrl(tile);
+            var key = currentLayer.getTileKey(tile);
+
+            localforage.getItem(key).then(function(val) {
+                if (val) {
+                    downloaded++;
+                    updateProgress();
+                } else {
+                    fetch(url)
+                        .then(function(r) { return r.blob(); })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob).then(function() {
+                                downloaded++;
+                                updateProgress();
+                            });
+                        })
+                        .catch(function(e) {
+                            downloaded++;
+                            updateProgress();
+                        });
+                }
+            });
+        });
+    }
+
+    function clearCachedMap() {
+        if (confirm("Hapus semua peta offline yang tersimpan di browser ini?")) {
+            var btn = document.getElementById('clear-btn');
+            btn.disabled = true;
+            btn.innerText = "Menghapus...";
+
+            localforage.clear().then(function() {
+                alert("Cache dibersihkan.");
+                btn.disabled = false;
+                btn.innerText = "Hapus Cache";
+                currentLayer.redraw();
+            }).catch(function(err) {
+                btn.disabled = false;
+                btn.innerText = "Hapus Cache";
+            });
+        }
+    }
+
+    function autoDownloadKRS() {
+        if (!navigator.onLine) return; // Jangan download jika offline
+        
+        var bounds = L.latLngBounds([1.2599, 109.4751], [1.2799, 109.4951]);
+        var zooms = [13, 14, 15, 16, 17];
+        var tiles = [];
+
+        zooms.forEach(function(z) {
+            tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
+        });
+
+        tiles.forEach(function(tile) {
+            var url = roadLayer.getTileUrl(tile);
+            var key = roadLayer.getTileKey(tile);
+
+            localforage.getItem(key).then(function(val) {
+                if (!val) {
+                    fetch(url)
+                        .then(function(r) { return r.blob(); })
+                        .then(function(blob) {
+                            localforage.setItem(key, blob);
+                        })
+                        .catch(function(e) {
+                            // Abaikan
+                        });
+                }
+            });
+        });
+    }
+
+    setTimeout(autoDownloadKRS, 3000);
+
+    var markers = @json($markers ?? []);
+    var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
+
+    // --- Ekstrak Jalan Kustom untuk Sistem Navigasi ---
+    var roadPolylines = [];
+    markers.forEach(function(marker) {
+        if ((marker.geometry_type === 'polyline' || marker.geometry_type === 'linestring') && marker.geojson) {
+            // Jangan gunakan garis batas wilayah/batas KRS sebagai jalur jalan navigasi
+            var nameLower = (marker.name || "").toLowerCase();
+            var typeLower = (marker.type || "").toLowerCase();
+            if (nameLower.includes("batas") || typeLower.includes("batas")) {
+                return;
+            }
+            try {
+                var coords = JSON.parse(marker.geojson);
+                if (coords.length > 0) {
+                    var path = coords.map(function(c) {
+                        return { lat: parseFloat(c[0]), lng: parseFloat(c[1]) };
+                    });
+                    roadPolylines.push({
+                        id: marker.id,
+                        path: path
+                    });
+                }
+            } catch(e) {
+                console.error("Gagal memproses jalan kustom untuk rute:", e);
+            }
+        }
     });
+
+    // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
+    function getHaversineDistance(p1, p2) {
+        var R = 6371000; // Radius bumi dalam meter
+        var phi1 = p1.lat * Math.PI / 180;
+        var phi2 = p2.lat * Math.PI / 180;
+        var deltaPhi = (p2.lat - p1.lat) * Math.PI / 180;
+        var deltaLambda = (p2.lng - p1.lng) * Math.PI / 180;
+        var a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function projectPointOnSegment(p, a, b) {
+        var dx = b.lng - a.lng;
+        var dy = b.lat - a.lat;
+        
+        if (dx === 0 && dy === 0) {
+            return { point: a, distance: getHaversineDistance(p, a), t: 0 };
+        }
+        
+        var t = ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy);
+        t = Math.max(0, Math.min(1, t));
+        
+        var projected = {
+            lat: a.lat + t * dy,
+            lng: a.lng + t * dx
+        };
+        
+        return {
+            point: projected,
+            distance: getHaversineDistance(p, projected),
+            t: t
+        };
+    }
+
+    function findClosestSnapPoint(p) {
+        var minDistance = Infinity;
+        var closestProjected = null;
+        var closestSegment = null;
+        
+        for (var i = 0; i < roadPolylines.length; i++) {
+            var polyline = roadPolylines[i];
+            for (var j = 0; j < polyline.path.length - 1; j++) {
+                var a = polyline.path[j];
+                var b = polyline.path[j+1];
+                var projection = projectPointOnSegment(p, a, b);
+                
+                if (projection.distance < minDistance) {
+                    minDistance = projection.distance;
+                    closestProjected = projection.point;
+                    closestSegment = {
+                        polylineIndex: i,
+                        segmentIndex: j,
+                        a: a,
+                        b: b,
+                        t: projection.t
+                    };
+                }
+            }
+        }
+        
+        return {
+            point: closestProjected,
+            distance: minDistance,
+            segment: closestSegment
+        };
+    }
+
+    function getNodeKey(p) {
+        return p.lat.toFixed(6) + ',' + p.lng.toFixed(6);
+    }
+
+    // --- Algoritma Pembuat Graf & Dijkstra ---
+    function buildGraphAndRunDijkstra(startLatLng, endLatLng) {
+        var snapS = findClosestSnapPoint(startLatLng);
+        var snapE = findClosestSnapPoint(endLatLng);
+        
+        if (!snapS.point || !snapE.point || roadPolylines.length === 0) {
+            return {
+                path: [startLatLng, endLatLng],
+                distance: getHaversineDistance(startLatLng, endLatLng),
+                isStraightLine: true
+            };
+        }
+        
+        var adj = {};
+        function addEdge(p1, p2) {
+            var key1 = getNodeKey(p1);
+            var key2 = getNodeKey(p2);
+            var dist = getHaversineDistance(p1, p2);
+            
+            if (!adj[key1]) adj[key1] = {};
+            if (!adj[key2]) adj[key2] = {};
+            
+            adj[key1][key2] = dist;
+            adj[key2][key1] = dist;
+        }
+        
+        var keyToCoord = {};
+        function registerCoord(p) {
+            var key = getNodeKey(p);
+            keyToCoord[key] = p;
+        }
+        
+        roadPolylines.forEach(function(polyline) {
+            polyline.path.forEach(function(p) { registerCoord(p); });
+            for (var i = 0; i < polyline.path.length - 1; i++) {
+                addEdge(polyline.path[i], polyline.path[i+1]);
+            }
+        });
+        
+        var nodeKeys = Object.keys(keyToCoord);
+        for (var i = 0; i < nodeKeys.length; i++) {
+            for (var j = i + 1; j < nodeKeys.length; j++) {
+                var k1 = nodeKeys[i];
+                var k2 = nodeKeys[j];
+                var p1 = keyToCoord[k1];
+                var p2 = keyToCoord[k2];
+                var d = getHaversineDistance(p1, p2);
+                if (d < 5.0) {
+                    if (!adj[k1]) adj[k1] = {};
+                    if (!adj[k2]) adj[k2] = {};
+                    adj[k1][k2] = d;
+                    adj[k2][k1] = d;
+                }
+            }
+        }
+        
+        registerCoord(snapS.point);
+        var sSeg = snapS.segment;
+        if (sSeg) {
+            addEdge(sSeg.a, snapS.point);
+            addEdge(snapS.point, sSeg.b);
+        }
+        
+        registerCoord(snapE.point);
+        var eSeg = snapE.segment;
+        if (eSeg) {
+            addEdge(eSeg.a, snapE.point);
+            addEdge(snapE.point, eSeg.b);
+        }
+        
+        var startKey = getNodeKey(snapS.point);
+        var endKey = getNodeKey(snapE.point);
+        
+        var distances = {};
+        var previous = {};
+        var unvisited = new Set();
+        
+        Object.keys(adj).forEach(function(key) {
+            distances[key] = Infinity;
+            unvisited.add(key);
+        });
+        distances[startKey] = 0;
+        
+        while (unvisited.size > 0) {
+            var minNode = null;
+            var minDist = Infinity;
+            
+            unvisited.forEach(function(key) {
+                if (distances[key] < minDist) {
+                    minDist = distances[key];
+                    minNode = key;
+                }
+            });
+            
+            if (minNode === null || minNode === endKey) {
+                break;
+            }
+            
+            unvisited.delete(minNode);
+            
+            var neighbors = adj[minNode] || {};
+            Object.keys(neighbors).forEach(function(neighbor) {
+                if (unvisited.has(neighbor)) {
+                    var alt = distances[minNode] + neighbors[neighbor];
+                    if (alt < distances[neighbor]) {
+                        distances[neighbor] = alt;
+                        previous[neighbor] = minNode;
+                    }
+                }
+            });
+        }
+        
+        var pathCoords = [];
+        var currentKey = endKey;
+        
+        if (distances[endKey] !== Infinity || startKey === endKey) {
+            while (currentKey) {
+                pathCoords.push(keyToCoord[currentKey]);
+                currentKey = previous[currentKey];
+            }
+            pathCoords.reverse();
+            
+            return {
+                path: pathCoords,
+                distance: distances[endKey],
+                snapStart: snapS.point,
+                snapEnd: snapE.point,
+                isStraightLine: false
+            };
+        } else {
+            return {
+                path: [startLatLng, endLatLng],
+                distance: getHaversineDistance(startLatLng, endLatLng),
+                isStraightLine: true
+            };
+        }
+    }
+
+    // --- Menggambar Garis Navigasi ---
+    var navRoadLine = null;
+    var navSnapStartLine = null;
+    var navSnapEndLine = null;
+
+    function clearNavigationLayers() {
+        if (navRoadLine) map.removeLayer(navRoadLine);
+        if (navSnapStartLine) map.removeLayer(navSnapStartLine);
+        if (navSnapEndLine) map.removeLayer(navSnapEndLine);
+        
+        navRoadLine = null;
+        navSnapStartLine = null;
+        navSnapEndLine = null;
+    }
+
+    function drawNavigationRoute(userCoord, targetCoord, routingResult) {
+        clearNavigationLayers();
+        
+        if (routingResult.isStraightLine) {
+            navRoadLine = L.polyline([userCoord, targetCoord], {
+                color: '#3b82f6',
+                weight: 5,
+                opacity: 0.8,
+                dashArray: '8, 8'
+            }).addTo(map);
+        } else {
+            navSnapStartLine = L.polyline([userCoord, routingResult.snapStart], {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '5, 8'
+            }).addTo(map);
+            
+            var pathLatLngs = routingResult.path.map(function(p) {
+                return L.latLng(p.lat, p.lng);
+            });
+            navRoadLine = L.polyline(pathLatLngs, {
+                color: '#1d4ed8',
+                weight: 6,
+                opacity: 0.95
+            }).addTo(map);
+            
+            navSnapEndLine = L.polyline([routingResult.snapEnd, targetCoord], {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '5, 8'
+            }).addTo(map);
+        }
+    }
+
+    // --- State Navigasi Global ---
+    window.currentNavTarget = null;
+
+    window.startNavigation = function(id, name, lat, lng) {
+        window.currentNavTarget = { id: id, name: name, lat: lat, lng: lng };
+        map.closePopup();
+        window.updateNavigationRouting();
+    };
+
+    window.stopNavigation = function() {
+        window.currentNavTarget = null;
+        clearNavigationLayers();
+    };
+
+    function updateFloatingPanel(name, totalDistMeters) {
+        var distStr = '';
+        if (totalDistMeters < 1000) {
+            distStr = Math.round(totalDistMeters) + ' m';
+        } else {
+            distStr = (totalDistMeters / 1000).toFixed(2) + ' km';
+        }
+        
+        var timeMinutes = Math.round(totalDistMeters / (1.25 * 60)); // 1.25 m/s jalan kaki
+        var timeStr = '';
+        if (timeMinutes < 1) {
+            timeStr = '< 1 mnt jalan kaki';
+        } else {
+            timeStr = timeMinutes + ' mnt jalan kaki';
+        }
+        
+        window.dispatchEvent(new CustomEvent('start-nav', {
+            detail: {
+                name: name,
+                distance: distStr,
+                time: timeStr
+            }
+        }));
+    }
+
+    window.updateNavigationRouting = function() {
+        if (!window.currentNavTarget) return;
+        
+        if (!userMarker) {
+            window.dispatchEvent(new CustomEvent('start-nav', {
+                detail: {
+                    name: window.currentNavTarget.name,
+                    distance: 'Mencari GPS...',
+                    time: '---'
+                }
+            }));
+            return;
+        }
+        
+        var userLatLng = userMarker.getLatLng();
+        var targetLatLng = L.latLng(window.currentNavTarget.lat, window.currentNavTarget.lng);
+        
+        var result = buildGraphAndRunDijkstra(userLatLng, targetLatLng);
+        drawNavigationRoute(userLatLng, targetLatLng, result);
+        
+        var totalDistMeters = 0;
+        if (result.isStraightLine) {
+            totalDistMeters = result.distance;
+        } else {
+            var distUserToSnapS = getHaversineDistance(userLatLng, result.snapStart);
+            var distSnapEToTarget = getHaversineDistance(result.snapEnd, targetLatLng);
+            totalDistMeters = distUserToSnapS + result.distance + distSnapEToTarget;
+        }
+        
+        updateFloatingPanel(window.currentNavTarget.name, totalDistMeters);
+    };
+
+    // Simpan referensi layer peta berdasarkan marker id
+    window.mapLayers = window.mapLayers || {};
+
+    markers.forEach(function(marker) {
+        var typeLabel = marker.type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        
+        var imageHtml = marker.photo 
+            ? `<div class="relative w-full h-40 bg-zinc-100 group overflow-hidden"><img src="${storageBase + '/' + marker.photo}" alt="${marker.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>`
+            : `<div class="w-full h-24 bg-zinc-100 flex items-center justify-center border-b border-zinc-50"><svg class="w-8 h-8 text-zinc-350" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
+
+        var targetLat = null;
+        var targetLng = null;
+        var geomType = marker.geometry_type || 'point';
+
+        if (geomType === 'point') {
+            targetLat = marker.latitude;
+            targetLng = marker.longitude;
+        } else if (marker.geojson) {
+            try {
+                var coords = JSON.parse(marker.geojson);
+                if (coords.length > 0) {
+                    var flatCoords = [];
+                    if (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) {
+                        flatCoords = coords[0];
+                    } else {
+                        flatCoords = coords;
+                    }
+                    var sumLat = 0, sumLng = 0;
+                    flatCoords.forEach(function(c) {
+                        sumLat += parseFloat(c[0]);
+                        sumLng += parseFloat(c[1]);
+                    });
+                    targetLat = sumLat / flatCoords.length;
+                    targetLng = sumLng / flatCoords.length;
+                }
+            } catch(e) {
+                console.error("Gagal mendapatkan koordinat target:", e);
+            }
+        }
+
+        var navButtonHtml = '';
+        if (targetLat && targetLng && geomType !== 'polyline') {
+            navButtonHtml = `<button onclick="window.startNavigation(${marker.id}, '${marker.name.replace(/'/g, "\\'")}', ${targetLat}, ${targetLng})" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg text-[10px] transition-all duration-200 shadow-sm cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Navigasi
+            </button>`;
+        }
+
+        var badgeHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2" style="color: ${marker.color}; border: 1px solid ${marker.color}40; background-color: ${marker.color}15;">${typeLabel}</span>`;
+        var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div>${badgeHtml}<h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between gap-2"><a href="{{ url('/peta') }}/${marker.id}" class="inline-flex items-center text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">LIHAT DETAIL</a>${navButtonHtml}</div></div></div>`;
+
+        var leafletLayer = null;
+        if (geomType === 'point' && marker.latitude && marker.longitude) {
+            var customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<div style="background-color: ' + marker.color + '; width: 22px; height: 22px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+                popupAnchor: [0, -10]
+            });
+            leafletLayer = L.marker([marker.latitude, marker.longitude], { icon: customIcon })
+                .addTo(map)
+                .bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+        } else if (marker.geojson) {
+            try {
+                var coordinates = JSON.parse(marker.geojson);
+                if (coordinates.length > 0) {
+                    if (geomType === 'polyline' || geomType === 'linestring') {
+                        leafletLayer = L.polyline(coordinates, { 
+                            color: marker.color, 
+                            weight: 4.5 
+                        }).addTo(map);
+                    } else if (geomType === 'polygon') {
+                        leafletLayer = L.polygon(coordinates, { 
+                            color: marker.color, 
+                            fillColor: marker.color, 
+                            fillOpacity: 0.12, 
+                            weight: 3,
+                            dashArray: '6, 6'
+                        }).addTo(map);
+                    }
+                }
+            } catch(e) {
+                console.error("Gagal menggambar fitur spasial:", e);
+            }
+        }
+
+        if (leafletLayer && marker.id) {
+            window.mapLayers[marker.id] = leafletLayer;
+        }
+    });
+
+    window.focusOnMarker = function(id, geomType, lat, lng) {
+        var layer = window.mapLayers[id];
+        if (layer) {
+            if (geomType === 'point' && lat && lng) {
+                map.setView([lat, lng], 17, { animate: true });
+                layer.openPopup();
+            } else if (geomType === 'polygon') {
+                var bounds = layer.getBounds();
+                map.fitBounds(bounds, { maxZoom: 17 });
+                layer.openPopup();
+            }
+        }
+        
+        var mapContainer = document.getElementById('map') || document.getElementById('home-map');
+        if (mapContainer) {
+            mapContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+    // Paksa render ulang ukuran Leaflet setelah loader Alpine hilang
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 1000);
+});
 </script>
 @endpush
