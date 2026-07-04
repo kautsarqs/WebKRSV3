@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
 
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Custom email verification representation
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
             return (new MailMessage)
