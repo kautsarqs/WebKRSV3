@@ -119,33 +119,18 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center justify-center gap-2 flex-wrap">
+                                    <div class="grid grid-cols-2 gap-1.5 w-full max-w-[180px] mx-auto">
                                         {{-- Lihat Semua --}}
                                         <button type="button"
                                                 onclick="openRombonganModal({{ json_encode($row->nama_lengkap) }}, {{ json_encode($allMembers) }})"
-                                                class="px-2.5 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-lg transition-all">
+                                                class="col-span-1 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Lihat Semua
                                         </button>
-
-                                        @if($row->status === 'pending')
-                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" style="display:inline;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="disetujui">
-                                                <button type="submit" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-xs font-bold rounded-lg transition-all">Setujui</button>
-                                            </form>
-                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" style="display:inline;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="ditolak">
-                                                <button type="submit" class="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-xs font-bold rounded-lg transition-all">Tolak</button>
-                                            </form>
-                                        @endif
 
                                         {{-- Hapus button opens confirm modal --}}
                                         <button type="button"
                                                 onclick="confirmDelete({{ $row->id }}, {{ json_encode($row->nama_lengkap) }})"
-                                                class="px-2.5 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-xs font-bold rounded-lg transition-all">
+                                                class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Hapus
                                         </button>
                                         {{-- Hidden form for actual delete --}}
@@ -153,6 +138,21 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
+
+                                        @if($row->status === 'pending')
+                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" class="col-span-1">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="disetujui">
+                                                <button type="submit" class="w-full px-2 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Setujui</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" class="col-span-1">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="ditolak">
+                                                <button type="submit" class="w-full px-2 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Tolak</button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

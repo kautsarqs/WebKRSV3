@@ -85,8 +85,14 @@
                                     {{ $koleksi->title }}
                                 </h3>
                                 @if ($koleksi->genus || $koleksi->spesies)
-                                    <p class="text-xs text-zinc-400 font-inter italic font-medium leading-relaxed">
-                                        {{ implode(' ', array_filter([$koleksi->genus, $koleksi->spesies])) }}
+                                    @php
+                                        $species_cleaned = $koleksi->spesies;
+                                        if ($koleksi->genus && $koleksi->spesies) {
+                                            $species_cleaned = trim(str_ireplace($koleksi->genus, '', $koleksi->spesies));
+                                        }
+                                    @endphp
+                                    <p class="text-xs text-emerald-800 font-inter font-medium leading-relaxed">
+                                        <i class="italic">{{ $koleksi->genus }} {{ $species_cleaned }}</i>@if($koleksi->otoritas_1) ({{ $koleksi->otoritas_1 }})@endif @if($koleksi->otoritas_2) {{ $koleksi->otoritas_2 }}@endif
                                     </p>
                                 @elseif ($koleksi->famili)
                                     <p class="text-xs text-zinc-400 font-inter font-medium leading-relaxed">

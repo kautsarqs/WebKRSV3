@@ -26,6 +26,7 @@ class PendaftaranPeneliti extends Model
         'surat_pengantar',
         'status',
         'catatan_admin',
+        'status_penelitian',
     ];
 
     protected $casts = [

@@ -7,6 +7,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Kebun Raya Sambas') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS.png') }}" />
+
+    <!-- PWA Settings -->
+    <meta name="theme-color" content="#064e3b" />
+    <link rel="manifest" href="{{ asset('manifest.json') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS.png') }}" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="KRS" />
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700|space-grotesk:500,700" rel="stylesheet" />
@@ -52,8 +61,9 @@
 
         {{-- Static sidebar for lg+ (always visible) --}}
         <aside class="hidden lg:flex w-64 flex-col border-r border-zinc-200/80 bg-white/70 backdrop-blur-xl h-full shadow-sm relative z-20 shrink-0">
-            <div class="h-16 flex items-center px-6 border-b border-zinc-200/80">
-                <span class="font-bold text-xl tracking-tight font-space text-zinc-900">Kebun Raya Sambas</span>
+            <div class="h-16 flex items-center px-5 border-b border-zinc-200/80 gap-2 shrink-0">
+                <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-7 w-auto">
+                <span class="font-bold text-xs sm:text-sm tracking-wider font-space text-zinc-900 uppercase">KEBUN RAYA SAMBAS</span>
             </div>
             <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
                 {{ $sidebar ?? '' }}
@@ -79,7 +89,10 @@
                style="display: none;">
 
             <div class="h-16 flex items-center justify-between px-5 border-b border-zinc-200/80 shrink-0">
-                <span class="font-bold text-lg tracking-tight font-space text-zinc-900">Kebun Raya Sambas</span>
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-7 w-auto">
+                    <span class="font-bold text-xs sm:text-sm tracking-wider font-space text-zinc-900 uppercase">KEBUN RAYA SAMBAS</span>
+                </div>
                 <button @click="sidebarOpen = false"
                         class="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-all focus:outline-none"
                         aria-label="Tutup Sidebar">
@@ -157,5 +170,14 @@
     </div>
 
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered successfully!', reg))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
 </body>
 </html>

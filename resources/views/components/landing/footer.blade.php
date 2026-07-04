@@ -62,7 +62,7 @@
 
         <div class="border-t border-zinc-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-zinc-400 text-sm text-center md:text-left">
-                &copy; {{ date('Y') }} UPT Kebun Raya Sambas. All rights reserved.
+                &copy; {{ date('Y') }} UPTD Kebun Raya Sambas. All rights reserved.
             </p>
             <div class="flex gap-6 text-sm text-zinc-500">
                 <a href="#" class="hover:text-zinc-900 transition">Kebijakan Privasi</a>

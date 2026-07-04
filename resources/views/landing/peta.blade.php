@@ -1215,10 +1215,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1200);
     }
 
-    // Paksa render ulang ukuran Leaflet setelah loader Alpine hilang
+    // Paksa render ulang ukuran Leaflet secara berkala selama transisi loading halaman selesai
+    var invalidateInterval = setInterval(function() {
+        if (map) {
+            map.invalidateSize();
+        }
+    }, 1000);
+    
     setTimeout(function() {
-        map.invalidateSize();
-    }, 800);
+        clearInterval(invalidateInterval);
+    }, 6000);
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 600);
+    });
 });
 </script>
 @endpush

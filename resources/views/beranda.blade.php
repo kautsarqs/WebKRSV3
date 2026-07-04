@@ -144,13 +144,13 @@
 {{-- 1. Hero Section --}}
 <div id="home" class="relative h-screen w-full flex items-center justify-center text-center overflow-hidden">
     <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
-        <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4" />
         Your browser does not support the video tag.
     </video>
 
     <div class="absolute inset-0 bg-black/45 z-1"></div>
     {{-- Gradient Putih di Bawah Hero --}}
-    <div class="absolute bottom-0 left-0 w-full h-36 bg-linear-to-t from-white via-white/40 to-transparent z-2"></div>
+    <div class="absolute bottom-0 left-0 w-full h-12 bg-linear-to-t from-white via-white/40 to-transparent z-2"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto px-6 mt-8">
 
@@ -218,10 +218,10 @@
 <div id="penelitian" class="max-w-7xl mx-auto px-6 py-16 scroll-mt-20">
     <div class="text-center mb-10 relative">
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
-            Pusat Riset & Sains
+            Fasilitas Penelitian
         </h2>
         <p class="text-base md:text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed font-light font-inter">
-            Mendorong pemahaman ekologi hutan tropis Borneo melalui fasilitas penelitian dan sarana edukasi modern.
+            Mendukung pengembangan ilmu pengetahuan melalui fasilitas penelitian yang memadai untuk para peneliti nasional maupun internasional.
         </p>
     </div>
 
@@ -235,10 +235,6 @@
             <p class="text-zinc-500 text-sm leading-relaxed mb-6 font-inter font-light">
                 Analisis morfologi dan anatomi tumbuhan, pengembangan kultur jaringan, serta identifikasi genetik flora hutan tropis.
             </p>
-            <span class="text-xs font-bold font-space text-emerald-600 inline-flex items-center gap-1 group-hover:underline">
-                Pelajari Fasilitas
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </span>
         </div>
 
         {{-- Card 2 --}}
@@ -250,10 +246,6 @@
             <p class="text-zinc-500 text-sm leading-relaxed mb-6 font-inter font-light">
                 Basis referensi pustaka botani Kalimantan lengkap dengan ratusan koleksi spesimen basah dan kering berstandar internasional.
             </p>
-            <span class="text-xs font-bold font-space text-blue-600 inline-flex items-center gap-1 group-hover:underline">
-                Buka Referensi
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </span>
         </div>
 
         {{-- Card 3 --}}
@@ -265,16 +257,12 @@
             <p class="text-zinc-500 text-sm leading-relaxed mb-6 font-inter font-light">
                 Program kunjungan sekolah, pelatihan perkebunan botani, serta fasilitasi magang mahasiswa Kehutanan dan Biologi.
             </p>
-            <span class="text-xs font-bold font-space text-orange-600 inline-flex items-center gap-1 group-hover:underline">
-                Lihat Program
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </span>
         </div>
     </div>
 
     <div class="mt-8 flex justify-center">
-        <a href="{{ route('profil') }}#penelitian" class="px-8 py-3 border border-zinc-200 hover:border-zinc-900 text-zinc-700 hover:text-zinc-900 rounded-full font-bold font-space text-xs tracking-wider transition">
-            SELENGKAPNYA TENTANG PENELITIAN
+        <a href="{{ route('profil') }}" class="px-8 py-3 border border-zinc-200 hover:border-zinc-900 text-zinc-700 hover:text-zinc-900 rounded-full font-bold font-space text-xs tracking-wider transition">
+            SELENGKAPNYA TENTANG KAMI
         </a>
     </div>
 </div>
@@ -287,7 +275,7 @@
                 Eksplorasi Keanekaragaman Flora
             </h2>
             <p class="text-base md:text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed font-light font-inter">
-                Spesies tumbuhan endemik dan langka yang dibudidayakan secara khusus dalam naungan konservasi Kebun Raya Sambas.
+                Jelajahi ragam spesies tumbuhan yang dirawat dan dilestarikan secara khusus di kawasan Kebun Raya Sambas.
             </p>
         </div>
 
@@ -319,8 +307,14 @@
                             {{ $koleksi->title }}
                         </h3>
                         @if ($koleksi->genus || $koleksi->spesies)
-                            <p class="text-xs text-zinc-400 font-inter italic font-medium">
-                                {{ implode(' ', array_filter([$koleksi->genus, $koleksi->spesies])) }}
+                            @php
+                                $species_cleaned = $koleksi->spesies;
+                                if ($koleksi->genus && $koleksi->spesies) {
+                                    $species_cleaned = trim(str_ireplace($koleksi->genus, '', $koleksi->spesies));
+                                }
+                            @endphp
+                            <p class="text-xs text-emerald-800 font-inter font-medium">
+                                <i class="italic">{{ $koleksi->genus }} {{ $species_cleaned }}</i>@if($koleksi->otoritas_1) ({{ $koleksi->otoritas_1 }})@endif @if($koleksi->otoritas_2) {{ $koleksi->otoritas_2 }}@endif
                             </p>
                         @else
                             <p class="text-xs text-zinc-450 font-inter font-medium">
@@ -539,7 +533,7 @@
             Hutan Tropis Kalimantan
         </h2>
         <p class="text-base md:text-lg text-zinc-450 max-w-2xl mx-auto mb-12 font-inter font-light">
-            Anda dapat berkunjung langsung untuk edukasi alam atau mendaftar sebagai peneliti mitra riset Kebun Raya Sambas.
+            Anda dapat berkunjung langsung untuk edukasi alam atau mendaftar sebagai peneliti Kebun Raya Sambas.
         </p>
 
         <div class="flex flex-col sm:flex-row justify-center items-center gap-5">
@@ -1359,10 +1353,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Paksa render ulang ukuran Leaflet setelah loader Alpine hilang
-    setTimeout(function() {
-        map.invalidateSize();
+    // Paksa render ulang ukuran Leaflet secara berkala selama transisi loading halaman selesai
+    var invalidateInterval = setInterval(function() {
+        if (map) {
+            map.invalidateSize();
+        }
     }, 1000);
+    
+    setTimeout(function() {
+        clearInterval(invalidateInterval);
+    }, 6000);
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 600);
+    });
 });
 </script>
 @endpush

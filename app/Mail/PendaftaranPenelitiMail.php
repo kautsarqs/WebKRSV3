@@ -13,12 +13,14 @@ class PendaftaranPenelitiMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $pendaftaran;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($pendaftaran)
     {
-        //
+        $this->pendaftaran = $pendaftaran;
     }
 
     /**
@@ -27,7 +29,7 @@ class PendaftaranPenelitiMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pendaftaran Peneliti Mail',
+            subject: 'Pendaftaran Peneliti Baru - KEBUN RAYA SAMBAS',
         );
     }
 
@@ -37,7 +39,7 @@ class PendaftaranPenelitiMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.pendaftaran-peneliti',
+            view: 'emails.pendaftaran-peneliti',
         );
     }
 

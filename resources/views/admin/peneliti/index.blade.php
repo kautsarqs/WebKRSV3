@@ -131,36 +131,56 @@
                                     @if($row->status === 'pending')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase">Pending</span>
                                     @elseif($row->status === 'disetujui')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Disetujui</span>
+                                        <div class="flex flex-col gap-1.5 items-start">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Disetujui</span>
+                                            <form method="POST" action="{{ route('admin.peneliti.status-penelitian', $row->id) }}" id="status-penelitian-form-{{ $row->id }}">
+                                                @csrf
+                                                @method('PATCH')
+                                                <select name="status_penelitian" onchange="document.getElementById('status-penelitian-form-{{ $row->id }}').submit()"
+                                                        class="text-[10px] font-bold rounded-lg border border-zinc-200 bg-white pl-2 pr-8 py-1 text-zinc-700 focus:outline-none cursor-pointer min-w-[100px]">
+                                                    <option value="sedang" {{ $row->status_penelitian === 'sedang' ? 'selected' : '' }}>🟢 Meneliti</option>
+                                                    <option value="selesai" {{ $row->status_penelitian === 'selesai' ? 'selected' : '' }}>⚪ Selesai</option>
+                                                </select>
+                                            </form>
+                                        </div>
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 uppercase">Ditolak</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="flex items-center justify-center gap-2 flex-wrap">
-                                        @if($row->status === 'pending')
-                                            <form method="POST" action="{{ route('admin.peneliti.status', $row->id) }}" style="display:inline;">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="disetujui">
-                                                <button type="submit" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-xs font-bold rounded-lg transition-all">Setujui</button>
-                                            </form>
-                                            <button type="button"
-                                                    onclick="openTolakModal('{{ route('admin.peneliti.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
-                                                    class="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-xs font-bold rounded-lg transition-all">
-                                                Tolak
-                                            </button>
-                                        @endif
+                                    <div class="grid grid-cols-2 gap-1.5 w-full max-w-[180px] mx-auto">
+                                        {{-- Detail --}}
+                                        <button type="button"
+                                                onclick="openDetailPenelitiModal({{ json_encode($row) }})"
+                                                class="col-span-1 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                            Detail
+                                        </button>
 
+                                        {{-- Hapus button opens confirm modal --}}
                                         <button type="button"
                                                 onclick="confirmDeletePeneliti({{ $row->id }}, {{ json_encode($row->nama_lengkap) }})"
-                                                class="px-2.5 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-xs font-bold rounded-lg transition-all">
+                                                class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Hapus
                                         </button>
+                                        {{-- Hidden form for actual delete --}}
                                         <form id="delete-form-peneliti-{{ $row->id }}" method="POST" action="{{ route('admin.peneliti.destroy', $row->id) }}" style="display:none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
+
+                                        @if($row->status === 'pending')
+                                            <form method="POST" action="{{ route('admin.peneliti.status', $row->id) }}" class="col-span-1">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="hidden" name="status" value="disetujui">
+                                                <button type="submit" class="w-full px-2 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Setujui</button>
+                                            </form>
+                                            <button type="button"
+                                                    onclick="openTolakModal('{{ route('admin.peneliti.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
+                                                    class="col-span-1 px-2 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                Tolak
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -246,6 +266,22 @@
         </div>
     </div>
 
+    {{-- ===== DETAIL PENELITI MODAL ===== --}}
+    <div id="detail-peneliti-modal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:24px; padding:0; max-width:560px; width:90%; max-height:85vh; box-shadow:0 25px 50px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden;">
+            <div style="padding:24px 24px 16px; border-bottom:1px solid #f4f4f5; display:flex; align-items:center; justify-content:space-between;">
+                <h3 style="font-size:17px;font-weight:700;color:#18181b;margin:0;">Detail Peneliti</h3>
+                <button onclick="closeDetailPenelitiModal()" style="background:none;border:none;cursor:pointer;color:#a1a1aa;font-size:22px;line-height:1;">&times;</button>
+            </div>
+            <div id="detail-peneliti-content" style="padding:24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px; font-size:14px; color:#3f3f46;">
+                {{-- Data populated dynamically --}}
+            </div>
+            <div style="padding:16px 24px; border-top:1px solid #f4f4f5; display:flex; justify-content:flex-end;">
+                <button onclick="closeDetailPenelitiModal()" style="padding:8px 20px;background:#18181b;border:none;border-radius:12px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     var _deletePenelitiId = null;
 
@@ -308,8 +344,65 @@
         document.getElementById('modal-tolak-peneliti').style.display = 'none';
     }
 
+    // Detail Modal
+    function openDetailPenelitiModal(data) {
+        var content = document.getElementById('detail-peneliti-content');
+        
+        var dateMulai = new Date(data.tanggal_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        var dateSelesai = new Date(data.tanggal_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        var docs = '';
+        try {
+            var parsed = JSON.parse(data.surat_pengantar);
+            if (parsed && typeof parsed === 'object') {
+                if (parsed.surat_izin) {
+                    docs += `<a href="/storage/${parsed.surat_izin}" target="_blank" style="color:#059669;font-weight:700;text-decoration:underline;margin-right:12px;">Surat Izin</a>`;
+                }
+                if (parsed.cv) {
+                    docs += `<a href="/storage/${parsed.cv}" target="_blank" style="color:#059669;font-weight:700;text-decoration:underline;">CV</a>`;
+                }
+            } else {
+                docs = `<a href="/storage/${data.surat_pengantar}" target="_blank" style="color:#059669;font-weight:700;text-decoration:underline;">Surat Pengantar</a>`;
+            }
+        } catch(e) {
+            docs = `<a href="/storage/${data.surat_pengantar}" target="_blank" style="color:#059669;font-weight:700;text-decoration:underline;">Surat Pengantar</a>`;
+        }
+
+        var statusBadge = '';
+        if (data.status === 'pending') {
+            statusBadge = '<span style="padding:2px 8px;font-size:11px;font-weight:700;background:#fef3c7;color:#b45309;border:1px solid #fde68a;border-radius:9999px;text-transform:uppercase;">Pending</span>';
+        } else if (data.status === 'disetujui') {
+            statusBadge = '<span style="padding:2px 8px;font-size:11px;font-weight:700;background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;border-radius:9999px;text-transform:uppercase;">Disetujui</span>';
+        } else {
+            statusBadge = '<span style="padding:2px 8px;font-size:11px;font-weight:700;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:9999px;text-transform:uppercase;">Ditolak</span>';
+        }
+
+        var statusPenelitianText = data.status_penelitian === 'selesai' ? '⚪ Selesai Penelitian' : '🟢 Sedang Penelitian';
+
+        content.innerHTML = `
+            <div style="display:grid;grid-template-columns: 140px 1fr; gap:10px 16px; align-items: start;">
+                <div style="font-weight:700;color:#18181b;">Nama Lengkap:</div><div>${data.nama_lengkap}</div>
+                <div style="font-weight:700;color:#18181b;">Nomor HP/WA:</div><div>${data.nomor_hp}</div>
+                <div style="font-weight:700;color:#18181b;">Institusi:</div><div>${data.institusi}</div>
+                <div style="font-weight:700;color:#18181b;">Program Studi:</div><div>${data.program_studi || '-'} (${data.jenjang})</div>
+                <div style="font-weight:700;color:#18181b;">Judul Penelitian:</div><div style="font-weight:600;color:#18181b;line-height:1.4;">${data.judul_penelitian}</div>
+                <div style="font-weight:700;color:#18181b;">Bidang Penelitian:</div><div>${data.bidang_penelitian}</div>
+                <div style="font-weight:700;color:#18181b;">Durasi Waktu:</div><div>${dateMulai} s/d ${dateSelesai}</div>
+                <div style="font-weight:700;color:#18181b;">Tujuan Penelitian:</div><div style="line-height:1.4;white-space:pre-line;">${data.tujuan_penelitian || '-'}</div>
+                <div style="font-weight:700;color:#18181b;">Lampiran Dokumen:</div><div>${docs}</div>
+                <div style="font-weight:700;color:#18181b;">Status Izin:</div><div>${statusBadge}</div>
+                ${data.status === 'disetujui' ? `<div style="font-weight:700;color:#18181b;">Status Aktivitas:</div><div style="font-weight:600;color:#18181b;">${statusPenelitianText}</div>` : ''}
+                ${data.catatan_admin ? `<div style="font-weight:700;color:#991b1b;">Catatan Penolakan:</div><div style="color:#991b1b;font-weight:500;line-height:1.4;">${data.catatan_admin}</div>` : ''}
+            </div>
+        `;
+        document.getElementById('detail-peneliti-modal').style.display = 'flex';
+    }
+    function closeDetailPenelitiModal() {
+        document.getElementById('detail-peneliti-modal').style.display = 'none';
+    }
+
     // Close on backdrop click
-    ['modal-confirm-delete-peneliti','modal-confirm-bulk-peneliti','modal-tolak-peneliti'].forEach(function(id) {
+    ['modal-confirm-delete-peneliti','modal-confirm-bulk-peneliti','modal-tolak-peneliti','detail-peneliti-modal'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
     });

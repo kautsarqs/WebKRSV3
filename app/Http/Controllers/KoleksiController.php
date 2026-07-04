@@ -50,6 +50,8 @@ class KoleksiController extends Controller
             'famili' => 'nullable|string|max:255',
             'genus' => 'nullable|string|max:255',
             'spesies' => 'nullable|string|max:255',
+            'otoritas_1' => 'nullable|string|max:255',
+            'otoritas_2' => 'nullable|string|max:255',
         ]);
 
         DB::beginTransaction();
@@ -70,6 +72,8 @@ class KoleksiController extends Controller
                 'famili' => $validated['famili'] ?? null,
                 'genus' => $validated['genus'] ?? null,
                 'spesies' => $validated['spesies'] ?? null,
+                'otoritas_1' => $validated['otoritas_1'] ?? null,
+                'otoritas_2' => $validated['otoritas_2'] ?? null,
             ]);
             
             DB::commit();
@@ -114,6 +118,8 @@ class KoleksiController extends Controller
             'famili' => 'nullable|string|max:255',
             'genus' => 'nullable|string|max:255',
             'spesies' => 'nullable|string|max:255',
+            'otoritas_1' => 'nullable|string|max:255',
+            'otoritas_2' => 'nullable|string|max:255',
         ]);
         
         DB::beginTransaction();
@@ -137,6 +143,8 @@ class KoleksiController extends Controller
                 'famili' => $validated['famili'] ?? null,
                 'genus' => $validated['genus'] ?? null,
                 'spesies' => $validated['spesies'] ?? null,
+                'otoritas_1' => $validated['otoritas_1'] ?? null,
+                'otoritas_2' => $validated['otoritas_2'] ?? null,
             ]);
 
             DB::commit();

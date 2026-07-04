@@ -237,4 +237,18 @@ class PendaftaranManageController extends Controller
 
         return back()->with('success', 'Pendaftaran peneliti terpilih berhasil dihapus massal.');
     }
+
+    public function updatePenelitiStatusPenelitian(Request $request, $id)
+    {
+        $request->validate([
+            'status_penelitian' => 'required|in:sedang,selesai',
+        ]);
+
+        $peneliti = PendaftaranPeneliti::findOrFail($id);
+        $peneliti->update([
+            'status_penelitian' => $request->status_penelitian,
+        ]);
+
+        return back()->with('success', 'Status penelitian berhasil diperbarui.');
+    }
 }

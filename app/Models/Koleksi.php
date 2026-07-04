@@ -21,15 +21,19 @@ class Koleksi extends Model
         'famili',
         'genus',
         'spesies',
+        'otoritas_1',
+        'otoritas_2',
     ];
 
     /**
-     * Enforce Title Case (capitalize first letter of each word) for taxonomy fields
+     * Enforce Title/Lower Case for taxonomy fields according to botanical standards
      */
     public function setAttribute($key, $value)
     {
-        if (in_array($key, ['kerajaan', 'divisi', 'kelas', 'order', 'famili', 'genus', 'spesies']) && is_string($value)) {
+        if (in_array($key, ['kerajaan', 'divisi', 'kelas', 'order', 'famili', 'genus']) && is_string($value)) {
             $value = ucwords(strtolower(trim($value)));
+        } elseif ($key === 'spesies' && is_string($value)) {
+            $value = strtolower(trim($value));
         }
         return parent::setAttribute($key, $value);
     }

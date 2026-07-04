@@ -76,13 +76,39 @@
                             @error('genus') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="space-y-1 md:col-span-2">
-                            <label for="spesies" class="block text-xs font-bold text-zinc-600 font-space ml-1">Spesies</label>
+                        <div class="space-y-1">
+                            <label for="spesies" class="block text-xs font-bold text-zinc-600 font-space ml-1">Spesies (Penunjuk Spesies Saja)</label>
                             <input id="spesies" type="text" name="spesies" value="{{ old('spesies', $koleksi->spesies) }}" 
-                                class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Gymnostoma Sumatranum" />
+                                class="w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: sumatranum" />
+                            <p class="text-[10px] text-zinc-400 ml-1">Tulis penunjuk spesies dalam huruf kecil (epithet saja, e.g. sumatranum).</p>
                             @error('spesies') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
+
+                        <div class="space-y-1">
+                            <label for="otoritas_1" class="block text-xs font-bold text-zinc-600 font-space ml-1">Otoritas 1 (Dalam Kurung)</label>
+                            <input id="otoritas_1" type="text" name="otoritas_1" value="{{ old('otoritas_1', $koleksi->otoritas_1) }}" 
+                                class="w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Jungh. ex de Vriese" />
+                            <p class="text-[10px] text-zinc-400 ml-1">Otoritas pertama (dalam tanda kurung).</p>
+                            @error('otoritas_1') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="space-y-1">
+                            <label for="otoritas_2" class="block text-xs font-bold text-zinc-600 font-space ml-1">Otoritas 2 (Di Luar Kurung)</label>
+                            <input id="otoritas_2" type="text" name="otoritas_2" value="{{ old('otoritas_2', $koleksi->otoritas_2) }}" 
+                                class="w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: L.A.S. Johnson" />
+                            <p class="text-[10px] text-zinc-400 ml-1">Otoritas pengubah (di luar tanda kurung).</p>
+                            @error('otoritas_2') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                        </div>
                     </div>
+
+                    {{-- Live Preview Nama Ilmiah / Botani --}}
+                    <div class="mt-5 p-4 bg-zinc-50 border border-zinc-200 rounded-2xl">
+                        <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space block mb-1">Preview Nama Ilmiah / Botani</span>
+                        <div id="scientific-preview" class="text-sm font-medium text-emerald-800 font-serif leading-relaxed">
+                            <span class="text-zinc-400 italic font-sans font-normal">Belum ada input genus/spesies</span>
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 <div class="space-y-2">
@@ -125,5 +151,45 @@
                 this.setSelectionRange(start, end);
             });
         });
+
+        function updateScientificNamePreview() {
+            let genusVal = document.getElementById('genus').value.trim();
+            let speciesVal = document.getElementById('spesies').value.trim();
+            let aut1Val = document.getElementById('otoritas_1').value.trim();
+            let aut2Val = document.getElementById('otoritas_2').value.trim();
+
+            if (genusVal) {
+                genusVal = genusVal.charAt(0).toUpperCase() + genusVal.slice(1);
+            }
+
+            let cleanedSpecies = speciesVal;
+            if (genusVal && speciesVal) {
+                let regex = new RegExp('^' + genusVal + '\\s+', 'i');
+                cleanedSpecies = speciesVal.replace(regex, '');
+            }
+            if (cleanedSpecies) {
+                cleanedSpecies = cleanedSpecies.toLowerCase();
+            }
+
+            let html = '';
+            if (genusVal || cleanedSpecies) {
+                html += '<i class="italic">' + [genusVal, cleanedSpecies].filter(Boolean).join(' ') + '</i>';
+            }
+            if (aut1Val) {
+                html += ' (' + aut1Val + ')';
+            }
+            if (aut2Val) {
+                html += ' ' + aut2Val;
+            }
+
+            document.getElementById('scientific-preview').innerHTML = html || '<span class="text-zinc-400 italic font-sans font-normal">Belum ada input genus/spesies</span>';
+        }
+
+        document.querySelectorAll('#genus, #spesies, #otoritas_1, #otoritas_2').forEach(input => {
+            input.addEventListener('input', updateScientificNamePreview);
+        });
+
+        // Initialize preview on page load
+        document.addEventListener('DOMContentLoaded', updateScientificNamePreview);
     </script>
 </x-dashboard-layout>

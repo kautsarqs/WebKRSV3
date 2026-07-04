@@ -131,7 +131,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $totalPengunjung = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->sum('jumlah_rombongan') ?? 0;
             $totalPeneliti = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->count();
 
-            return view('admin.dashboard', compact('totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti'));
+            // Statistik Tambahan untuk Chart/Diagram
+            $pengunjungPending = \App\Models\PendaftaranPengunjung::where('status', 'pending')->count();
+            $pengunjungSetuju = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->count();
+            $pengunjungTolak = \App\Models\PendaftaranPengunjung::where('status', 'ditolak')->count();
+
+            $penelitiPending = \App\Models\PendaftaranPeneliti::where('status', 'pending')->count();
+            $penelitiSedang = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->where('status_penelitian', 'sedang')->count();
+            $penelitiSelesai = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->where('status_penelitian', 'selesai')->count();
+            $penelitiTolak = \App\Models\PendaftaranPeneliti::where('status', 'ditolak')->count();
+
+            return view('admin.dashboard', compact(
+                'totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti',
+                'pengunjungPending', 'pengunjungSetuju', 'pengunjungTolak',
+                'penelitiPending', 'penelitiSedang', 'penelitiSelesai', 'penelitiTolak'
+            ));
         })->name('admin.dashboard');
 
         // CRUD User
@@ -155,6 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/peneliti/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPeneliti'])->name('admin.peneliti.bulk-delete');
         Route::get('/peneliti/export/{format}', [PendaftaranManageController::class, 'exportPeneliti'])->name('admin.peneliti.export');
         Route::patch('/peneliti/{id}/status', [PendaftaranManageController::class, 'updatePenelitiStatus'])->name('admin.peneliti.status');
+        Route::patch('/peneliti/{id}/status-penelitian', [PendaftaranManageController::class, 'updatePenelitiStatusPenelitian'])->name('admin.peneliti.status-penelitian');
         Route::delete('/peneliti/{id}', [PendaftaranManageController::class, 'destroyPeneliti'])->name('admin.peneliti.destroy');
     });
 });

@@ -64,9 +64,15 @@
                         {{ $koleksi->title }}
                     </h1>
                     @if ($koleksi->genus || $koleksi->spesies)
-                        <div class="flex items-center gap-2">
-                            <span class="text-base md:text-lg font-serif italic text-emerald-800 font-medium">
-                                {{ implode(' ', array_filter([$koleksi->genus, $koleksi->spesies])) }}
+                        @php
+                            $species_cleaned = $koleksi->spesies;
+                            if ($koleksi->genus && $koleksi->spesies) {
+                                $species_cleaned = trim(str_ireplace($koleksi->genus, '', $koleksi->spesies));
+                            }
+                        @endphp
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-base md:text-lg font-serif text-emerald-800 font-medium">
+                                <i class="italic">{{ $koleksi->genus }} {{ $species_cleaned }}</i>@if($koleksi->otoritas_1) ({{ $koleksi->otoritas_1 }})@endif @if($koleksi->otoritas_2) {{ $koleksi->otoritas_2 }}@endif
                             </span>
                             <span class="text-xs text-zinc-400 font-inter font-normal">Nama Ilmiah / Botani</span>
                         </div>
@@ -116,10 +122,24 @@
                             <div class="text-sm font-bold text-zinc-800 font-inter italic">{{ $koleksi->genus ?: '-' }}</div>
                         </div>
 
-                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250 col-span-2 sm:col-span-4 lg:col-span-2 xl:col-span-3">
+                        <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
                             <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Spesies</div>
-                            <div class="text-sm font-bold text-emerald-800 font-inter italic">{{ $koleksi->spesies ?: '-' }}</div>
+                            <div class="text-sm font-bold text-zinc-800 font-inter italic">{{ $species_cleaned ?: '-' }}</div>
                         </div>
+
+                        @if($koleksi->otoritas_1)
+                            <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                                <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Otoritas 1</div>
+                                <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->otoritas_1 }}</div>
+                            </div>
+                        @endif
+
+                        @if($koleksi->otoritas_2)
+                            <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
+                                <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Otoritas 2</div>
+                                <div class="text-sm font-bold text-zinc-800 font-inter">{{ $koleksi->otoritas_2 }}</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

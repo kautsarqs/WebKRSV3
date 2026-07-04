@@ -1,0 +1,24 @@
+{
+  "name": "Kebun Raya Sambas",
+  "short_name": "KRS",
+  "description": "Kawasan Konservasi & Pusat Penelitian Flora, Sambas, Kalimantan Barat",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#064e3b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/storage/images/logoKRS.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/storage/images/logoKRS.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

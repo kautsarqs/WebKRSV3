@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifikasi Pendaftaran Peneliti Baru</title>
+    <title>Verifikasi Akun Anda</title>
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -54,43 +54,15 @@
             font-size: 22px;
             font-weight: 700;
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 18px;
             color: #0f172a;
         }
-        .subtitle {
-            font-size: 14px;
-            color: #71717a;
+        .content p {
+            font-size: 15px;
+            line-height: 1.6;
             margin-top: 0;
-            margin-bottom: 30px;
-        }
-        .details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 14px;
-            border: 1px solid #e4e4e7;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .details-table th, .details-table td {
-            padding: 14px 16px;
-            text-align: left;
-            vertical-align: top;
-        }
-        .details-table th {
-            width: 160px;
-            font-weight: 700;
-            color: #3f3f46;
-            background-color: #f9f9fb;
-            border-bottom: 1px solid #e4e4e7;
-            border-right: 1px solid #e4e4e7;
-        }
-        .details-table td {
-            color: #18181b;
-            border-bottom: 1px solid #e4e4e7;
-        }
-        .details-table tr:last-child th, .details-table tr:last-child td {
-            border-bottom: none;
+            margin-bottom: 22px;
+            color: #52525b;
         }
         .button-wrapper {
             text-align: center;
@@ -112,6 +84,19 @@
         }
         .button:hover {
             background-color: #047857;
+        }
+        .security-notice {
+            background-color: #fcfcfd;
+            border: 1px solid #f3f3f6;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #71717a;
+            line-height: 1.5;
+        }
+        .security-notice strong {
+            color: #3f3f46;
         }
         .footer {
             background-color: #fafafa;
@@ -135,42 +120,17 @@
                 <h1>Kebun Raya Sambas</h1>
             </div>
             <div class="content">
-                <h2>Permohonan Izin Penelitian Baru</h2>
-                <div class="subtitle">Sistem Notifikasi Administrator Kebun Raya Sambas</div>
-                
-                <p>Halo Admin, satu permohonan izin penelitian baru telah masuk ke sistem. Berikut ringkasan informasi pendaftar:</p>
-                
-                <table class="details-table">
-                    <tr>
-                        <th>Nama Lengkap</th>
-                        <td>{{ $pendaftaran->nama_lengkap }}</td>
-                    </tr>
-                    <tr>
-                        <th>Institusi</th>
-                        <td>{{ $pendaftaran->institusi }}</td>
-                    </tr>
-                    <tr>
-                        <th>Program Studi</th>
-                        <td>{{ $pendaftaran->program_studi ?? '-' }} ({{ $pendaftaran->jenjang }})</td>
-                    </tr>
-                    <tr>
-                        <th>Judul Penelitian</th>
-                        <td><strong>{{ $pendaftaran->judul_penelitian }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Bidang Penelitian</th>
-                        <td>{{ $pendaftaran->bidang_penelitian }}</td>
-                    </tr>
-                    <tr>
-                        <th>Durasi Waktu</th>
-                        <td>{{ $pendaftaran->tanggal_mulai->format('d F Y') }} s/d {{ $pendaftaran->tanggal_selesai->format('d F Y') }}</td>
-                    </tr>
-                </table>
-                
-                <p>Silakan masuk ke panel admin untuk meninjau permohonan izin penelitian ini (menyetujui atau menolak permohonan).</p>
+                <h2>Halo, {{ $user->name }}!</h2>
+                <p>Terima kasih telah melakukan registrasi di platform digital <strong>Kebun Raya Sambas</strong>. Silakan verifikasi alamat email Anda agar dapat menikmati seluruh akses navigasi, pendaftaran kunjungan, serta perizinan penelitian.</p>
                 
                 <div class="button-wrapper">
-                    <a href="{{ route('admin.peneliti.index') }}" class="button">Tinjau Permohonan</a>
+                    <a href="{{ $url }}" class="button">Verifikasi Alamat Email</a>
+                </div>
+                
+                <p>Tautan verifikasi ini akan kedaluwarsa dalam 60 menit demi alasan keamanan akun Anda.</p>
+                
+                <div class="security-notice">
+                    <strong>Pemberitahuan Keamanan:</strong> Jika Anda tidak merasa membuat akun baru atau merasa salah menerima email ini, abaikan pesan ini dengan aman.
                 </div>
             </div>
             <div class="footer">
