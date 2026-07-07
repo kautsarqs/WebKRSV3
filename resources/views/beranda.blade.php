@@ -515,6 +515,7 @@
                 </button>
 
                 <!-- Settings Modal (Responsive) -->
+                <template x-teleport="body">
                 <div x-show="showSettingsModal" 
                      class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
                      x-transition:enter="transition ease-out duration-300"
@@ -588,8 +589,10 @@
                         </div>
                     </div>
                 </div>
+                </template>
 
                 <!-- Custom Alert/Confirm Modal -->
+                <template x-teleport="body">
                 <div x-show="showNotification" 
                      class="fixed inset-0 z-[10005] flex items-center justify-center p-4"
                      x-transition:enter="transition ease-out duration-200"
@@ -662,6 +665,7 @@
                         </div>
                     </div>
                 </div>
+                </template>
             </div>
             
             <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false" @close-layer-dropdown.window="open = false">

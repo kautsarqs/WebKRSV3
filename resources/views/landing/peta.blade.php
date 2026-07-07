@@ -287,6 +287,7 @@
                 </button>
 
                 <!-- Settings Modal (Responsive) -->
+                <template x-teleport="body">
                 <div x-show="showSettingsModal" 
                      class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
                      x-transition:enter="transition ease-out duration-300"
@@ -360,8 +361,10 @@
                         </div>
                     </div>
                 </div>
+                </template>
 
                 <!-- Custom Alert/Confirm Modal -->
+                <template x-teleport="body">
                 <div x-show="showNotification" 
                      class="fixed inset-0 z-[10005] flex items-center justify-center p-4"
                      x-transition:enter="transition ease-out duration-200"
@@ -392,15 +395,12 @@
                                  'bg-red-50 text-red-600': notificationType === 'error',
                                  'bg-amber-50 text-amber-600': notificationType === 'confirm' || notificationType === 'warning'
                              }">
-                            <!-- Success Check Icon -->
                             <template x-if="notificationType === 'success'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                             </template>
-                            <!-- Error Close Icon -->
                             <template x-if="notificationType === 'error'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </template>
-                            <!-- Confirm/Warning Icon -->
                             <template x-if="notificationType === 'confirm' || notificationType === 'warning'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             </template>
@@ -434,6 +434,7 @@
                         </div>
                     </div>
                 </div>
+                </template>
             </div>
             
             <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false" @close-layer-dropdown.window="open = false">
