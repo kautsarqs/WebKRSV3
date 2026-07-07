@@ -15,14 +15,20 @@
     </div>
 
     @guest
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-            <h4 class="font-bold text-sm font-space">Harus Login Terlebih Dahulu</h4>
-            <p class="text-xs text-amber-700 mt-1">Anda perlu masuk atau mendaftar akun untuk dapat mengajukan izin kunjungan Kebun Raya.</p>
+    <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden p-8 text-center">
+        <div class="max-w-md mx-auto">
+            <svg class="w-16 h-16 text-zinc-300 mx-auto mb-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H4.5a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <h2 class="text-2xl font-bold mb-2 font-heading">Akses Dibatasi</h2>
+            <p class="text-zinc-500 mb-6">
+                Untuk dapat mengisi formulir pengunjung, silakan masuk ke akun Anda terlebih dahulu.
+            </p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="{{ route('login') }}" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3 px-6 rounded-xl transition-all text-center">Masuk</a>
+                <a href="{{ route('register') }}" class="flex-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-medium py-3 px-6 rounded-xl transition-all text-center">Daftar Akun</a>
+            </div>
         </div>
-        <a href="{{ route('login') }}" class="px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl text-xs font-bold transition-all shadow-md">
-            Masuk Sekarang
-        </a>
     </div>
     @endguest
 

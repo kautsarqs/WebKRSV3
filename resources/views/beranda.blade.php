@@ -233,7 +233,7 @@
             <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-full bg-emerald-800 text-white font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-950/30 text-xs sm:text-sm">
                 Pendaftaran Pengunjung
             </a>
-            <a href="{{ route('register') }}" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-full bg-white/10 text-white font-semibold border border-white/30 hover:bg-white/20 backdrop-blur-md transition shadow-md text-xs sm:text-sm">
+            <a href="{{ route('pendaftaran.peneliti') }}" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-full bg-white/10 text-white font-semibold border border-white/30 hover:bg-white/20 backdrop-blur-md transition shadow-md text-xs sm:text-sm">
                 Pendaftaran Penelitian
             </a>
         </div>
@@ -724,7 +724,7 @@
             <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg transition duration-300">
                 PENDAFTARAN KUNJUNGAN
             </a>
-            <a href="{{ route('register') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold font-space text-xs tracking-wider rounded-full border border-white/20 backdrop-blur-xs transition duration-300">
+            <a href="{{ route('pendaftaran.peneliti') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold font-space text-xs tracking-wider rounded-full border border-white/20 backdrop-blur-xs transition duration-300">
                 PENDAFTARAN PENELITI
             </a>
         </div>

@@ -42,7 +42,7 @@
                 <h3 class="font-heading font-bold text-zinc-900 mb-6">Layanan</h3>
                 <ul class="space-y-4 text-sm text-zinc-500">
                     <li><a href="{{ route('pendaftaran.pengunjung') }}" class="hover:text-zinc-900 transition">Pendaftaran Pengunjung</a></li>
-                    <li><a href="{{ route('register') }}" class="hover:text-zinc-900 transition">Pendaftaran Penelitian</a></li>
+                    <li><a href="{{ route('pendaftaran.peneliti') }}" class="hover:text-zinc-900 transition">Pendaftaran Penelitian</a></li>
                 </ul>
             </div>
 
