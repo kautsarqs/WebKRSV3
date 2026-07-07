@@ -1,308 +1,952 @@
 # BAB 5
-## ANALISIS DAN DESAIN SISTEM
+# HASIL DAN PENELITIAN
 
-### 5.1 Perancangan dan Pengembangan
-Tahap perancangan dan pengembangan bertujuan menerjemahkan kebutuhan sistem WebGIS berbasis *Progressive Web App* pada Kebun Raya Sambas menjadi rancangan teknis yang siap diimplementasikan sebagai aplikasi web. Pendekatan yang digunakan mencakup arsitektur web berbasis Laravel 12, pengelolaan basis data menggunakan PostgreSQL, serta integrasi layanan eksternal seperti Google OAuth untuk autentikasi dan Gmail SMTP untuk notifikasi sistem.
+## 5.1 Perancangan dan Pengembangan
+Tahap perancangan dan pengembangan bertujuan menerjemahkan kebutuhan sistem WebGIS berbasis Progressive Web App (PWA) pada Kebun Raya Sambas menjadi rancangan teknis yang siap diimplementasikan sebagai sistem aplikasi web terintegrasi. Pendekatan yang digunakan mencakup arsitektur web berbasis kerangka kerja (framework) Laravel 12, pengelolaan basis data spasial dan relasional menggunakan PostgreSQL, serta visualisasi peta interaktif berbasis Leaflet.js. Sistem ini juga mengintegrasikan Google OAuth untuk mempermudah pendaftaran pengguna serta Service Worker untuk mendukung kemampuan akses luring (offline-first).
 
-Penjabaran tahapan tersebut dilakukan secara terstruktur dengan mengawali pembahasan pada pendefinisian kebutuhan (*requirement*) sebagai spesifikasi dasar sistem. Langkah berikutnya adalah memaparkan arsitektur aplikasi secara menyeluruh. Rancangan logika dan perilaku sistem divisualisasikan melalui beberapa diagram UML (*Unified Modeling Language*) yang meliputi *use case diagram*, *activity diagram*, *class diagram*, dan *sequence diagram*. Pemodelan struktur penyimpanan data dibahas pada bagian akhir dengan memetakan relasi tabel menggunakan *Entity Relationship Diagram* (ERD).
+Untuk menjabarkan tahapan tersebut secara terstruktur, pembahasan pada sub-bab ini diawali dengan pendefinisian kebutuhan (requirement) sebagai dasar spesifikasi sistem, dilanjutkan dengan pemaparan arsitektur aplikasi secara menyeluruh. Selanjutnya, rancangan logika dan perilaku sistem divisualisasikan melalui beberapa diagram Unified Modelling Language (UML) yang meliputi Use Case Diagram, Activity Diagram, Class Diagram, dan Sequence Diagram. Pembahasan ini kemudian ditutup dengan pemodelan struktur penyimpanan data yang dipetakan menggunakan Diagram Hubungan Entitas (Entity Relationship Diagram - ERD) serta spesifikasi tabel database.
 
-#### 5.1.1 Requirement
-##### 5.1.1.1 Kebutuhan Sistem
-Kebutuhan sistem merupakan proses untuk merumuskan poin-poin kebutuhan yang diperlukan pada pengembangan sistem WebGIS berbasis *Progressive Web App* pada Kebun Raya Sambas. Langkah ini penting dilakukan agar solusi yang dibangun dapat menjawab permasalahan yang telah diidentifikasi pada bagian analisis. Kebutuhan sistem ini dibagi berdasarkan peran hak akses (*role*) yang terdaftar di dalam sistem, yaitu kebutuhan dari sisi Pengguna Umum (Pengunjung), Peneliti, dan Administrator sebagai pengelola tertinggi. Berikut adalah rincian kebutuhan sistem berdasarkan hasil penelitian pada Kebun Raya Sambas:
+### 5.1.1 Requirement
+Pendefinisian requirement dilakukan guna mengidentifikasi secara mendalam kebutuhan fungsional dan non-fungsional dari sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas.
 
-a. Kebutuhan Sistem dari Sisi Pengguna Umum (Pengunjung):
-* **a)** Menampilkan halaman beranda yang memuat informasi ringkas profil Kebun Raya Sambas, katalog flora terbaru, dan peta sebaran flora.
-* **b)** Menampilkan halaman profil Kebun Raya Sambas yang memuat sejarah singkat, visi, misi, dan struktur organisasi.
-* **c)** Menampilkan daftar katalog koleksi tanaman (flora) secara terstruktur berdasarkan kategori.
-* **d)** Melakukan pencarian cepat koleksi flora berdasarkan kata kunci nama lokal, nama ilmiah, genus, famili, atau deskripsi.
-* **e)** Menampilkan detail informasi botani tanaman, meliputi nama ilmiah, nama lokal, klasifikasi taksonomi, foto spesimen, deskripsi tanaman, serta titik koordinat lokasinya.
-* **f)** Menampilkan peta geografis interaktif berbasis Leaflet yang memuat koordinat lokasi tanaman, batas area koleksi, fasilitas umum, kantor pengelola, dan pos keamanan.
-* **g)** Menyediakan fitur registrasi akun baru dan login menggunakan email dan password secara aman.
-* **h)** Menyediakan opsi login cepat yang terintegrasi dengan akun Google (Google OAuth).
-* **i)** Menyediakan alur verifikasi email otomatis untuk memastikan validitas akun pengguna.
-* **j)** Menyediakan dasbor pengguna untuk memantau riwayat pendaftaran kunjungan.
-* **k)** Melakukan pendaftaran kunjungan umum secara online dengan mengisi data rombongan (nama, kontak, instansi, tanggal kunjungan, keperluan, dan daftar anggota rombongan).
-* **l)** Melakukan perubahan atau pembatalan data pendaftaran kunjungan selama statusnya masih berstatus pending.
-* **m)** Menampilkan halaman profil akun untuk memperbarui data diri dan mengubah kata sandi secara mandiri.
-* **n)** Menyediakan kemampuan instalasi aplikasi secara langsung ke layar utama perangkat (*Add to Home Screen*) tanpa melalui toko aplikasi resmi.
-* **o)** Menyediakan akses luring (*offline access*) menggunakan penyimpanan cache lokal untuk melihat halaman profil dan katalog flora yang pernah dimuat sebelumnya.
+#### 5.1.1.1 Kebutuhan Sistem
+Kebutuhan sistem dirumuskan untuk menggambarkan apa saja kemampuan (fitur) yang harus disediakan oleh sistem berdasarkan hak akses (role) pengguna yang terdaftar, yaitu Pengunjung Umum, Peneliti, dan Administrator (Pengelola). Rincian kebutuhan sistem adalah sebagai berikut:
+a. **Kebutuhan Sistem dari Sisi Pengunjung Umum**:
+   1. Menampilkan halaman beranda yang memuat informasi ringkas profil Kebun Raya Sambas, galeri katalog flora terbaru, dan ringkasan peta fasilitas dan zonasi area.
+   2. Menampilkan profil lengkap UPTD Kebun Raya Sambas (sejarah, visi, misi, dan struktur organisasi).
+   3. Menampilkan peta geografis interaktif (WebGIS) berbasis Leaflet.js yang memvisualisasikan titik lokasi fasilitas umum, kantor pengelola, pos keamanan, dan batas-area koleksi flora.
+   4. Melakukan registrasi akun baru menggunakan email dan password secara aman.
+   5. Melakukan login manual serta login cepat terintegrasi Google Account (Google Socialite/OAuth).
+   6. Melakukan verifikasi email (Email Verification) demi keamanan data pengguna.
+   7. Melakukan pendaftaran rencana kunjungan umum untuk rombongan secara mandiri dengan mengisi form (nama lengkap, nomor HP, tanggal kunjungan, instansi, keperluan, dan rincian data anggota rombongan).
+   8. Mengakses dasbor pengguna untuk memantau riwayat pendaftaran kunjungan, status persetujuan admin (pending, disetujui, ditolak), serta mengedit atau membatalkan pendaftaran sebelum disetujui.
+   9. Menyediakan fitur *Add to Home Screen* (A2HS) agar aplikasi web dapat diinstal di perangkat mobile tanpa melalui Google Play Store.
+   10. Menyediakan kemampuan akses luring (*offline access*) melalui cache Service Worker agar halaman utama, profil, dan peta dasar yang pernah dimuat tetap dapat diakses tanpa koneksi internet.
 
-b. Kebutuhan Sistem dari Sisi Peneliti:
-* **a)** Melakukan verifikasi peran pengguna sebagai peneliti ketika hendak melakukan pengajuan izin penelitian.
-* **b)** Melakukan pendaftaran permohonan izin penelitian secara online dengan mengisi formulir riset (nama peneliti, kontak, institusi, program studi, jenjang akademik, judul penelitian, bidang penelitian, tanggal mulai, tanggal selesai, dan tujuan penelitian).
-* **c)** Menyediakan fitur unggah dokumen administrasi pendukung, yaitu Curriculum Vitae (CV) dan Surat Izin Penelitian dalam format PDF/gambar.
-* **d)** Mengirimkan email notifikasi konfirmasi secara otomatis ke email admin setelah permohonan riset diajukan.
-* **e)** Menyediakan halaman dasbor peneliti untuk memantau status persetujuan penelitian (*pending*, *disetujui*, *ditolak*) secara real-time.
-* **f)** Melakukan perubahan atau pembatalan permohonan penelitian jika status pendaftaran belum diverifikasi oleh admin.
+b. **Kebutuhan Sistem dari Sisi Peneliti**:
+   1. Memiliki seluruh hak akses dasar pengunjung umum.
+   2. Melakukan pendaftaran izin penelitian di area Kebun Raya Sambas secara daring dengan mengisi form riset (institusi, program studi, jenjang akademik, judul penelitian, bidang penelitian, tanggal mulai, tanggal selesai, dan tujuan penelitian).
+   3. Mengunggah dokumen administrasi pendukung, yaitu Surat Izin Penelitian (dari instansi/kampus) dan *Curriculum Vitae* (CV) dalam format PDF atau gambar.
+   4. Memantau status persetujuan riset secara real-time melalui dasbor serta melihat status pelaksanaan riset (*sedang berjalan* atau *selesai*).
+   5. Menerima email notifikasi konfirmasi secara otomatis ketika status pendaftaran diperbarui oleh admin.
 
-c. Kebutuhan Sistem dari Sisi Administrator:
-* **a)** Menampilkan halaman dasbor utama yang memuat ringkasan statistik operasional, seperti total pengguna, total koleksi flora, total penanda peta, total pengunjung disetujui, dan total peneliti terdaftar.
-* **b)** Mengelola data master pengguna (CRUD Users), termasuk menambahkan akun staf baru, mengubah data akun, menghapus akun, serta mengatur peran (*role*) admin atau user.
-* **c)** Mengelola data master kategori tanaman (CRUD Categories) untuk klasifikasi kelompok flora.
-* **d)** Mengelola katalog koleksi flora (CRUD Koleksi) secara dinamis, meliputi nama, genus, spesies, famili, deskripsi, kelompok kategori, lokasi koordinat, serta unggahan foto tanaman.
-* **e)** Melakukan optimasi gambar secara otomatis dengan mengonversi berkas foto koleksi tanaman ke format AVIF guna menghemat ruang penyimpanan server.
-* **f)** Mengelola data koordinat spasial peta (CRUD Maps/Markers), baik berupa penanda titik (*Point*), garis (*Polyline*), maupun area (*Polygon*) berbasis GeoJSON.
-* **g)** Mengatur klasifikasi visualisasi penanda peta (Area Koleksi, Fasilitas Umum, Kantor Pengelola, Pos Keamanan) lengkap dengan ikon, warna penanda, dan foto lokasi.
-* **h)** Mengelola status pendaftaran kunjungan umum dengan memverifikasi data rombongan dan mengubah status pendaftaran (*pending*, *disetujui*, *ditolak*).
-* **i)** Mengelola status permohonan penelitian dengan memeriksa dokumen yang diunggah dan mengubah status pendaftaran.
-* **j)** Mengakses fitur pencarian cepat, pengurutan (*sorting*), serta penyaringan (*filtering*) pada data pengguna, koleksi flora, peta, dan pendaftaran kunjungan.
-* **k)** Melakukan ekspor data rekapitulasi pendaftaran pengunjung umum dan peneliti yang telah disetujui ke format cetak atau dokumen unduhan (CSV/Excel).
-* **l)** Mengelola profil pribadi admin dan mengubah kata sandi secara berkala demi keamanan sistem.
+c. **Kebutuhan Sistem dari Sisi Administrator**:
+   1. Mengakses dasbor admin untuk melihat ringkasan statistik operasional (total pengguna, total koleksi flora, total penanda peta, total pengunjung disetujui, dan total peneliti terdaftar).
+   2. Mengelola data master pengguna (CRUD Users) dan menentukan hak akses (role: admin atau user).
+   3. Mengelola data master kategori flora (CRUD Categories).
+   4. Mengelola katalog koleksi flora (CRUD Koleksi) secara dinamis, termasuk data taksonomi (Kerajaan, Divisi, Kelas, Order, Famili, Genus, Spesies, serta Otoritas takson).
+   5. Melakukan optimasi kompresi gambar secara otomatis dengan mengonversi berkas foto koleksi tanaman yang diunggah ke format AVIF guna menghemat kapasitas penyimpanan server.
+   6. Mengelola penanda peta (CRUD Maps/Markers) baik berupa titik koordinat tunggal (Point) maupun koordinat banyak yang membentuk jalur (Polyline) atau area batas zonasi (Polygon) berbasis data GeoJSON.
+   7. Memproses status pendaftaran kunjungan umum dan permohonan izin penelitian (menyetujui atau menolak pendaftaran, serta memperbarui status penelitian).
+   8. Melakukan ekspor data rekapitulasi pengunjung dan peneliti ke format dokumen unduhan (CSV/Excel).
 
-##### 5.1.1.2 Kebutuhan Pengguna
-Kebutuhan pengguna diidentifikasi untuk memahami interaksi dan ekspektasi fungsional dari setiap aktor yang terlibat langsung dengan sistem WebGIS. Pengelompokan pengguna dilakukan berdasarkan hak akses dan tanggung jawab operasional di dalam sistem. Hasil identifikasi ini menjadi landasan utama dalam menyusun tata letak antarmuka (*user interface*) dan alur kerja aplikasi agar dapat digunakan secara efektif. Berikut adalah kebutuhan pengguna berdasarkan peran masing-masing:
+#### 5.1.1.2 Kebutuhan Pengguna
+Kebutuhan pengguna dilakukan untuk memahami siapa saja pihak yang terlibat dalam penggunaan sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas serta kebutuhan mereka dalam menjalankan aktivitas di dalamnya. Pengguna sistem dibagi menjadi tiga kelompok utama sesuai dengan peran operasional yang ada, yaitu pengunjung umum sebagai pengguna publik yang mengakses informasi dan melakukan pendaftaran kunjungan, peneliti sebagai pengguna yang mengajukan permohonan izin riset di kawasan kebun raya, serta administrator sebagai pengelola keseluruhan sistem dan data. Kebutuhan pengguna ini menjadi dasar dalam merancang fitur, antarmuka, serta alur proses pada sistem yang dikembangkan.
 
-a. Kebutuhan Pengguna dari Sisi Pengunjung:
-* **a)** Pengunjung dapat melihat profil lengkap, sejarah, visi, dan misi Kebun Raya Sambas secara online.
-* **b)** Pengunjung dapat mencari dan menjelajahi informasi katalog koleksi tanaman secara terstruktur dan responsif.
-* **c)** Pengunjung dapat melihat sebaran flora dan fasilitas pendukung melalui peta interaktif berbasis Leaflet.
-* **d)** Pengunjung dapat mendaftarkan akun baru dan masuk ke sistem menggunakan email atau Google OAuth.
-* **e)** Pengunjung dapat melakukan pendaftaran rencana kunjungan umum untuk rombongan secara online.
-* **f)** Pengunjung dapat memantau status persetujuan kunjungan rombongan melalui halaman dasbor.
-* **g)** Pengunjung dapat melakukan pembaruan data atau membatalkan kunjungan sebelum disetujui oleh admin.
-* **h)** Pengunjung dapat memperbarui data profil akun pribadi dan mengganti kata sandi secara mandiri.
-* **i)** Pengunjung dapat menginstal aplikasi WebGIS langsung ke layar utama perangkat mobile atau desktop mereka.
-* **j)** Pengunjung dapat mengakses sebagian informasi katalog tanaman secara offline ketika perangkat kehilangan koneksi internet.
+a. Kebutuhan Pengguna dari Sisi Pengunjung Umum
+   a) Pengunjung umum dapat mengakses halaman beranda yang memuat profil singkat Kebun Raya Sambas, galeri koleksi flora terbaru, dan ringkasan peta fasilitas dan zonasi area secara langsung tanpa harus login terlebih dahulu.
+   b) Pengunjung umum dapat menjelajahi halaman profil UPTD Kebun Raya Sambas yang memuat informasi sejarah pendirian, visi dan misi, serta struktur organisasi pengelola.
+   c) Pengunjung umum dapat melihat peta geografis interaktif berbasis Leaflet.js yang menampilkan titik lokasi fasilitas umum, kantor pengelola, pos keamanan, dan batas area zonasi koleksi dalam format GeoJSON.
+   d) Pengunjung umum dapat menelusuri katalog koleksi flora yang tersedia dengan fitur pencarian berdasarkan nama lokal, nama ilmiah (genus/spesies), atau famili tanaman.
+   e) Pengunjung umum dapat melihat halaman detail koleksi flora yang memuat foto spesimen, deskripsi botani, serta klasifikasi taksonomi lengkap (Kerajaan, Divisi, Kelas, Order, Famili, Genus, Spesies, dan Otoritas takson).
+   f) Pengunjung umum dapat melakukan registrasi akun baru menggunakan email dan kata sandi, atau masuk menggunakan akun Google melalui fitur Google OAuth (Socialite).
+   g) Pengunjung umum dapat melakukan verifikasi email setelah registrasi sebagai syarat aktivasi akun dan akses fitur pendaftaran kunjungan.
+   h) Pengunjung umum yang telah login dan terverifikasi dapat mengajukan pendaftaran rencana kunjungan rombongan secara mandiri dengan mengisi formulir yang memuat nama lengkap, nomor HP, tanggal kunjungan, instansi, keperluan, serta rincian data anggota rombongan.
+   i) Pengunjung umum dapat mengakses dasbor pribadi untuk memantau riwayat pendaftaran kunjungan, melihat status persetujuan admin (*pending*, *disetujui*, atau *ditolak*), serta mengedit atau membatalkan pendaftaran yang masih berstatus *pending*.
+   j) Pengunjung umum dapat menginstal aplikasi WebGIS ke layar utama perangkat *smartphone* melalui fitur *Add to Home Screen* (PWA) tanpa perlu mengunduh melalui toko aplikasi.
+   k) Pengunjung umum dapat mengakses halaman beranda, profil, dan tampilan peta yang pernah dimuat sebelumnya secara luring (*offline*) melalui mekanisme *cache* Service Worker.
 
-b. Kebutuhan Pengguna dari Sisi Peneliti:
-* **a)** Peneliti dapat mengajukan izin penelitian di area Kebun Raya Sambas secara online melalui sistem.
-* **b)** Peneliti dapat menginputkan detail agenda riset seperti judul, bidang studi, institusi, dan jangka waktu penelitian.
-* **c)** Peneliti dapat mengunggah berkas syarat pendaftaran (Curriculum Vitae dan Surat Izin Penelitian) ke server.
-* **d)** Peneliti dapat memantau status verifikasi izin penelitian melalui halaman dasbor.
-* **e)** Peneliti dapat mengedit atau membatalkan permohonan penelitian sebelum diverifikasi oleh admin.
+b. Kebutuhan Pengguna dari Sisi Peneliti
+   a) Peneliti dapat mengakses seluruh fitur yang dimiliki oleh pengunjung umum.
+   b) Peneliti yang telah login dan terverifikasi dapat mengajukan permohonan izin penelitian di kawasan Kebun Raya Sambas secara daring dengan mengisi formulir yang memuat nama institusi, program studi, jenjang akademik, judul penelitian, bidang kajian, tanggal mulai dan selesai, serta tujuan penelitian.
+   c) Peneliti dapat mengunggah dokumen administrasi pendukung berupa Surat Izin Penelitian dari instansi atau kampus dan *Curriculum Vitae* (CV) dalam format PDF atau gambar.
+   d) Peneliti dapat memantau status persetujuan permohonan riset secara *real-time* melalui dasbor pribadi, termasuk melihat status pelaksanaan penelitian (*sedang berjalan* atau *selesai*).
+   e) Peneliti dapat mengedit atau membatalkan permohonan riset yang masih berstatus *pending* sebelum diproses oleh administrator.
 
-c. Kebutuhan Pengguna dari Sisi Administrator:
-* **a)** Admin dapat memantau statistik operasional dan grafik ringkasan data sistem melalui dasbor utama.
-* **b)** Admin dapat mengelola akun pengguna, staf, serta menetapkan hak akses pengguna secara penuh.
-* **c)** Admin dapat mengelola data kategori dan katalog flora spesimen Kebun Raya Sambas secara dinamis.
-* **d)** Admin dapat menambahkan koordinat geografis titik (*Point*), garis (*Polyline*), atau area poligon (*Polygon*) pada peta Leaflet.
-* **e)** Admin dapat menyetujui atau menolak pendaftaran kunjungan dari pengunjung umum maupun peneliti.
-* **f)** Admin dapat mengunduh rekap laporan data pendaftaran kunjungan dan penelitian yang telah disetujui.
-* **g)** Admin dapat memperbarui informasi profil admin pribadi dan mengubah kata sandi secara berkala.
+c. Kebutuhan Pengguna dari Sisi Administrator
+   a) Administrator dapat mengakses dasbor admin yang menampilkan ringkasan statistik operasional secara visual, meliputi total pengguna terdaftar, total koleksi flora, total penanda peta, total pengunjung yang disetujui, dan total peneliti aktif.
+   b) Administrator dapat mengelola data pengguna sistem (CRUD Users) serta menentukan hak akses peran (*role*) masing-masing pengguna, yaitu *admin* atau *user*.
+   c) Administrator dapat mengelola data kategori koleksi flora (CRUD Categories) sebagai klasifikasi pengelompokan tanaman dalam sistem.
+   d) Administrator dapat mengelola katalog koleksi flora (CRUD Koleksi) secara dinamis, termasuk menginput data taksonomi botani lengkap dan mengunggah foto spesimen yang secara otomatis dioptimalkan ke format AVIF.
+   e) Administrator dapat mengelola penanda peta (CRUD Maps/Markers) berupa titik koordinat tunggal (*Point*), jalur jalan (*Polyline*), maupun batas zonasi area (*Polygon*) berbasis data GeoJSON langsung melalui antarmuka peta Leaflet.
+   f) Administrator dapat memproses status pendaftaran kunjungan rombongan dengan menyetujui atau menolak permohonan yang masuk, disertai kemampuan mengekspor rekapitulasi data pengunjung ke format CSV/Excel.
+   g) Administrator dapat memproses permohonan izin penelitian dengan menyetujui atau menolak berkas, menuliskan catatan masukan, serta memperbarui status pelaksanaan riset dari *sedang berjalan* menjadi *selesai*.
 
-##### 5.1.1.3 Kebutuhan Perangkat Lunak
-Pengembangan sistem WebGIS ini memerlukan beberapa perangkat lunak pendukung untuk memastikan proses implementasi berjalan dengan baik. Pilihan teknologi yang digunakan disesuaikan dengan kebutuhan performa, keandalan, dan kemudahan dalam integrasi spasial serta kemampuan PWA. Berikut adalah daftar perangkat lunak yang digunakan dalam pengembangan sistem:
-* **a)** Visual Studio Code versi terbaru digunakan sebagai *code editor* utama untuk menuliskan seluruh kode program PHP, JavaScript, dan HTML.
-* **b)** Node.js versi 18.x digunakan sebagai runtime environment untuk menjalankan dependensi frontend dan *asset compilation tools*.
-* **c)** Laravel Framework versi 12 digunakan sebagai framework utama berbasis PHP untuk mengatur routing, middleware, database ORM, dan logika bisnis sistem.
-* **d)** Vite versi terbaru digunakan sebagai build tool frontend untuk mengompilasi aset-aset JavaScript dan CSS agar proses rendering antarmuka berjalan optimal.
-* **e)** Tailwind CSS versi 4 digunakan sebagai framework CSS utama untuk merancang antarmuka pengguna yang responsif, modern, dan konsisten.
-* **f)** Alpine.js digunakan sebagai library JavaScript ringan untuk menambahkan fungsionalitas interaktif pada sisi klien tanpa membebani browser.
-* **g)** Leaflet.js versi terbaru digunakan sebagai library JavaScript untuk memvisualisasikan peta geografis interaktif Kebun Raya Sambas, memuat ubin peta, dan merender marker spasial.
-* **h)** PostgreSQL versi 15 atau lebih baru digunakan sebagai sistem manajemen basis data relasional (*RDBMS*) untuk menyimpan data pengguna, katalog tanaman, koordinat peta, dan pendaftaran kunjungan.
-* **i)** Laravel Socialite digunakan sebagai library pendukung untuk mengintegrasikan sistem autentikasi cepat menggunakan akun Google (OAuth 2.0).
-* **j)** Intervention Image Helper digunakan sebagai library PHP untuk memproses kompresi gambar dan konversi format file foto koleksi tanaman secara otomatis ke format AVIF.
-* **k)** Git dan GitHub digunakan sebagai sistem kontrol versi (*version control system*) untuk mengelola repositori kode program.
-* **l)** VPS Hosting (Virtual Private Server) berbasis Linux Ubuntu Server digunakan sebagai server produksi untuk menyebarkan aplikasi ke internet.
-* **m)** NPM (Node Package Manager) digunakan untuk mengelola dependensi modul frontend JavaScript.
-* **n)** *Web App Manifest* (`manifest.json`) digunakan untuk mendefinisikan metadata aplikasi (ikon, nama, warna tema, dan tipe tampilan) agar aplikasi dapat diinstal di perangkat pengguna.
-* **o)** *Service Worker* berbasis JavaScript digunakan untuk memproses intersepsi request jaringan, pengelolaan cache lokal, dan pengaktifan mode luring (*offline mode*).
-* **p)** *Cache API* digunakan sebagai media penyimpanan lokal untuk menyimpan aset-aset statis seperti dokumen HTML, stylesheet CSS, berkas gambar, dan library JavaScript langsung di browser pengguna.
 
-##### 5.1.1.4 Kebutuhan Perangkat Keras
-Perangkat keras yang digunakan dalam pengembangan dan operasional aplikasi harus memenuhi spesifikasi minimal agar sistem dapat berjalan dengan stabil dan lancar. Spesifikasi tersebut dibagi ke dalam beberapa kategori berdasarkan lingkungan penggunaannya:
+#### 5.1.1.3 Kebutuhan Perangkat Lunak
+Pengembangan Sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas ini menggunakan spesifikasi perangkat lunak sebagai berikut:
+a. Perangkat lunak lingkungan pengembangan:
+   1) Sistem Operasi: Windows 10/11 sebagai lingkungan pengembangan lokal.
+   2) PHP versi 8.2.12 sebagai bahasa pemrograman sisi server (*backend*).
+   3) Visual Studio Code versi terbaru sebagai *code editor* pengembangan aplikasi.
+   4) Git versi terbaru sebagai *version control system* pengelolaan kode sumber.
+b. Perangkat lunak framework dan library backend:
+   1) Laravel Framework versi 12.43.1 sebagai *framework* MVC *backend* utama aplikasi.
+   2) Laravel Socialite versi 5.24 sebagai paket integrasi autentikasi Google OAuth.
+c. Perangkat lunak frontend dan build tools:
+   1) Node.js versi 24.12.0 sebagai *runtime* JavaScript untuk proses kompilasi aset.
+   2) npm versi 11.7.0 sebagai manajer paket JavaScript.
+   3) Vite versi 7.0.7 sebagai *build tool* dan *dev server* aset *frontend*.
+   4) Tailwind CSS versi 4 (^4.1.18) sebagai *framework* CSS *utility-first* untuk perancangan antarmuka.
+   5) Alpine.js versi 3.15.3 sebagai *library* JavaScript ringan untuk interaktivitas antarmuka.
+   6) Leaflet.js versi 1.9.4 sebagai *library* pemetaan interaktif berbasis JavaScript.
+d. Perangkat lunak basis data dan layanan eksternal:
+   1) PostgreSQL versi 15+ sebagai sistem manajemen basis data relasional.
+   2) SMTP Gmail sebagai layanan pengiriman email notifikasi administrasi.
 
-1. Perangkat Server / Hosting:
-* **a)** Prosesor: Minimal 2 Core CPU (disarankan 4 Core) untuk menangani request asinkron dan proses optimasi gambar.
-* **b)** RAM: Minimal 2 GB (disarankan 4 GB) untuk kelancaran jalannya aplikasi Laravel, database PostgreSQL, dan mailer server.
-* **c)** Penyimpanan: Minimal 20 GB SSD untuk menyimpan file sistem, database, dan media foto flora format AVIF.
-* **d)** Peran: Berfungsi untuk menjalankan aplikasi web, menyimpan basis data relasional, merender peta spasial, dan menyimpan repositori gambar secara terpusat.
+#### 5.1.1.4 Kebutuhan Perangkat Keras
+Perangkat keras yang digunakan dalam pengembangan dan operasional sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas adalah sebagai berikut:
+1. Perangkat Server / *Hosting*
+   a. Spesifikasi minimal server yang dibutuhkan:
+      a) Prosesor: Minimal 2 *Core* CPU (disarankan 4 *Core* untuk proses konversi gambar ke format AVIF secara otomatis).
+      b) RAM: Minimal 2 GB (disarankan 4 GB untuk kelancaran kompilasi aset Vite dan pengelolaan koneksi PostgreSQL).
+      c) Penyimpanan: SSD minimal 20 GB untuk penyimpanan kode aplikasi, aset foto koleksi flora, dan berkas dokumen peneliti.
+   b. Digunakan untuk menjalankan aplikasi web Laravel, Vite *build server*, dan database PostgreSQL (dapat di-*deploy* secara lokal *on-premise* maupun di VPS *Cloud*).
+2. Perangkat Administrator / Pengelola
+   a. Laptop atau PC dengan spesifikasi minimal:
+      a) Prosesor: Intel Core i3 atau setara.
+      b) RAM: Minimal 4 GB.
+      c) *Browser* modern (Google Chrome, Microsoft Edge) versi terbaru.
+   b. Digunakan untuk mengelola panel admin, memproses verifikasi pendaftaran pengunjung dan peneliti, mengelola peta Leaflet, katalog flora dan taksonomi, serta mengekspor laporan rekapitulasi.
+3. Perangkat Pengguna (*User / Client*)
+   a. *Smartphone* atau *Tablet* berbasis Android / iOS:
+      a) Versi sistem operasi minimal: Android 8.0 (*Oreo*) atau iOS 12.
+      b) RAM minimal: 3 GB.
+      c) *Browser* modern (Chrome, Safari, Edge) yang mendukung Service Worker API dan Geolocation API.
+   b. Digunakan untuk mengakses peta WebGIS interaktif, menelusuri katalog flora, melakukan pendaftaran kunjungan secara mandiri, serta menginstal aplikasi melalui fitur *Progressive Web App* (PWA).
+4. Jaringan Internet
+   a. Koneksi internet stabil minimal 10 Mbps dan *Router* Wi-Fi/LAN berkualitas baik.
+   b. Digunakan untuk komunikasi dengan server aplikasi Laravel, integrasi Google OAuth, pengiriman notifikasi email via SMTP Gmail, serta pemuatan ubin peta dasar (*basemap tiles*) OpenStreetMap secara *real-time*.
 
-2. Perangkat Administrator:
-* **a)** Komputer / Laptop dengan spesifikasi minimal:
-  - Prosesor: Intel Core i3 atau AMD Ryzen 3 (setara atau lebih tinggi).
-  - RAM: Minimal 4 GB (disarankan 8 GB) untuk menunjang aktivitas pengelolaan data.
-  - Browser: Google Chrome, Mozilla Firefox, Microsoft Edge versi terbaru.
-* **b)** Peran: Digunakan oleh pengelola untuk memverifikasi pendaftaran pengunjung, memperbarui peta Leaflet, dan mengelola katalog koleksi flora.
 
-3. Perangkat Pengguna (Pengunjung dan Peneliti):
-* **a)** Komputer, Laptop, atau Smartphone berbasis Android / iOS.
-* **b)** Sistem Operasi: Windows, macOS, Linux, Android (minimal versi 8.0), atau iOS (minimal versi 12).
-* **c)** RAM: Minimal 3 GB agar proses rendering peta Leaflet berbasis ubin geografis (*map tiles*) dapat berjalan dengan lancar tanpa kendala lag.
-* **d)** Browser: Safari, Google Chrome, Firefox, Samsung Internet.
-* **e)** Peran: Digunakan untuk menjelajahi katalog tanaman, melihat visualisasi peta geografis, mendaftar akun, dan melakukan pendaftaran kunjungan atau penelitian.
-
-4. Jaringan Internet:
-* **a)** Koneksi internet stabil dengan kecepatan minimal 10 Mbps (diperlukan untuk sinkronisasi awal dan pemuatan ubin peta, sedangkan akses dasar katalog flora dapat dilayani secara luring melalui cache *Service Worker*).
-* **b)** Peran: Diperlukan untuk memuat ubin peta dasar OpenStreetMap secara online, melakukan pengiriman formulir pendaftaran, memproses login Google OAuth, dan mengirim notifikasi email SMTP.
 
 ---
 
-#### 5.1.2 Arsitektur Sistem
-Arsitektur sistem WebGIS dirancang menggunakan pola arsitektur monolitik terintegrasi (*integrated monolithic architecture*). Pola ini menggabungkan seluruh komponen antarmuka pengguna (*frontend*) dan logika bisnis (*backend*) ke dalam satu kesatuan kode aplikasi berbasis Laravel 12. Pengguna mengakses sistem melalui browser pada berbagai perangkat, yang kemudian dilayani oleh server Laravel yang terhubung langsung dengan database PostgreSQL dan layanan eksternal. Struktur pembagian tanggung jawab sistem dibagi menjadi lima lapisan utama sebagai berikut:
+### 5.1.2 Arsitektur Sistem
+Arsitektur Sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas dirancang menggunakan pola arsitektur 3-Tier (tiga lapis) yang terstruktur, modular, dan handal untuk memastikan pemisahan tanggung jawab yang jelas antara antarmuka pengguna (GUI), logika bisnis server, dan penyimpanan data. Pola 3-Tier ini membagi sistem menjadi Presentation Tier, Application Tier, dan Data Tier, dengan integrasi layanan pihak ketiga (External Services) yang diletakkan di luar batasan sistem utama. Rincian desain arsitektur sistem ini divisualisasikan secara menyeluruh pada Gambar 5.1.
 
-a) Lapisan Presentasi (*Presentation Layer*): Lapisan ini mengelola bagian antarmuka pengguna yang dirender di peramban web (*browser*). Komponen yang digunakan meliputi template engine Laravel Blade untuk modularitas HTML, framework Tailwind CSS v4 untuk styling, Alpine.js untuk penanganan interaksi klien yang dinamis, Axios untuk pengiriman request AJAX asinkron, serta library Leaflet.js untuk visualisasi peta geografis secara dinamis. *Web App Manifest* dan *Service Worker* juga ditempatkan pada lapisan ini untuk menangani *caching* aset statis dan kemampuan instalasi mandiri aplikasi (*Add to Home Screen*).
+![Gambar 5.1 Arsitektur Sistem WebKRSV3](Arsitektur/ArsitekturSistemV3.drawio)
 
-b) Lapisan Aplikasi (*Application Layer*): Lapisan ini bertugas menjalankan logika bisnis dan pemrosesan data di sisi server. Komponen utamanya dikembangkan menggunakan framework Laravel 12 berbasis PHP 8.2+. Lapisan ini mencakup Web Router untuk menangani rute URL, Controller untuk memproses request dan merumuskan response, Middleware untuk pembatasan akses berdasarkan status login dan verifikasi email, Eloquent ORM untuk pemrosesan query database, serta Mailer Service untuk pengiriman email SMTP.
+Berdasarkan gambar arsitektur sistem tersebut, penjelasan mengenai komponen pada masing-masing lapisan didefinisikan sebagai berikut:
+a. **Presentation Tier (Lapisan Presentasi)**: Merupakan antarmuka grafis pengguna (GUI) paling atas dari sistem yang berjalan langsung di sisi peramban web (*client-side*) pada perangkat pengguna (seperti komputer desktop, laptop, tablet, maupun ponsel pintar). Lapisan ini bertanggung jawab menyajikan visualisasi data spasial dan menerima masukan pengguna. Di dalamnya terdapat dua komponen antarmuka utama:
+   1) *User Portal UI (Client PWA)*: Antarmuka utama untuk pengunjung umum dan peneliti yang dibangun menggunakan mesin templat Laravel Blade, dipadukan dengan Tailwind CSS v4 untuk penataan visual, Alpine.js untuk interaktivitas dinamis ringan, serta Leaflet.js untuk merender data spasial berupa *marker*, *polyline*, dan *polygon* dari data GeoJSON. Pada lapisan ini dipasang berkas `manifest.json` dan Service Worker (`sw.js`) agar aplikasi dapat berjalan sebagai Progressive Web App (PWA) dengan kemampuan instalasi di layar utama perangkat (*Add to Home Screen*) dan akses luring (*offline access*).
+   2) *Admin Dashboard UI*: Antarmuka khusus untuk administrator (pengelola) yang memuat berbagai panel kontrol administratif, antarmuka manajemen pengguna, pengelolaan kategori dan katalog tanaman, pengelolaan data GeoJSON batas area, serta halaman pemrosesan persetujuan pendaftaran.
+b. **Application Tier (Lapisan Aplikasi)**: Merupakan lapisan tengah yang bertanggung jawab mengeksekusi logika bisnis aplikasi dan berjalan pada server aplikasi berbasis kerangka kerja Laravel 12. Lapisan ini memproses masukan dari klien dan berinteraksi dengan lapisan data. Komponen utama pada lapisan ini meliputi:
+   1) *Web Router & Middleware*: Berkas `routes/web.php` memetakan request URL ke controller yang sesuai, dilindungi oleh middleware keamanan seperti `auth` (proteksi sesi login), `verified` (verifikasi email aktif), dan `admin` (proteksi hak akses pengelola).
+   2) *Auth & Profile Controllers*: Mengelola proses autentikasi akun (pendaftaran akun baru, verifikasi email, login pengguna, serta manajemen akun profil).
+   3) *Koleksi & Map Controllers*: Menangani logika pengelolaan katalog tanaman flora (CRUD koleksi) serta titik koordinat spasial dan batas area geografis (GeoJSON).
+   4) *Pendaftaran Controllers*: Mengelola logika pengajuan rencana kunjungan rombongan bagi pengunjung umum dan pengajuan izin penelitian/riset untuk peneliti.
+   5) *Application Services & Helpers*: Kelas pembantu pendukung, meliputi `ImageOptimizer` untuk kompresi dan konversi otomatis berkas foto koleksi tanaman ke format AVIF untuk efisiensi penyimpanan, serta kelas mailer `PendaftaranPenelitiMail` untuk memproses pengiriman notifikasi surat elektronik.
+c. **Data Tier (Lapisan Data)**: Merupakan lapisan terbawah yang berkaitan erat dengan penyimpanan, pengelolaan, dan pengambilan data sistem secara terpusat. Lapisan ini berkomunikasi dengan Application Tier melalui lapisan abstraksi model internal. Komponennya terdiri atas:
+   1) *Eloquent ORM Models*: Model-model data relasional (`User.php`, `Koleksi.php`, `MapMarker.php`, `PendaftaranPengunjung.php`, `PendaftaranPeneliti.php`) yang menerjemahkan objek pemrograman Laravel menjadi query basis data relasional.
+   2) *PostgreSQL Database*: DBMS utama untuk menyimpan tabel database (users, koleksis, map_markers, pendaftaran_pengunjungs, pendaftaran_penelitis, categories) serta menyimpan batas area geografis spasial dalam bentuk data string GeoJSON.
+d. **External Services (Layanan Eksternal)**: Komponen layanan pihak ketiga yang berada di luar server aplikasi dan diakses melalui koneksi jaringan internet API. Seluruh layanan ini diletakkan bebas di sisi kiri luar diagram sistem untuk menegaskan batas arsitektur lokal, meliputi:
+   1) *OpenStreetMap*: Menyediakan API ubin peta dasar (*basemap tiles*) yang dimuat secara dinamis oleh Leaflet.js pada sisi klien.
+   2) *Google OAuth API*: Menyediakan layanan autentikasi pihak ketiga terintegrasi menggunakan paket Laravel Socialite agar pengguna dapat login menggunakan akun Google.
+   3) *SMTP Gmail Server*: Menyediakan layanan SMTP relay eksternal untuk pengiriman notifikasi email administratif sistem ke pengelola.
 
-c) Lapisan Data (*Data Layer*): Lapisan ini berfungsi sebagai tempat penyimpanan data relasional terstruktur pada sistem. Aplikasi menggunakan database PostgreSQL dengan nama `db_webgis`. Basis data ini menyimpan tabel pengguna (`users`), katalog flora (`koleksis`), kategori (`categories`), data koordinat spasial (`map_markers`), tabel relasi (`koleksi_map_marker`), pendaftaran pengunjung (`pendaftaran_pengunjungs`), dan pendaftaran peneliti (`pendaftaran_penelitis`).
-
-d) Lapisan Layanan Eksternal (*External Service Layer*): Lapisan ini digunakan untuk mengintegrasikan sistem dengan layanan pihak ketiga guna melengkapi fitur aplikasi. Integrasi tersebut meliputi Google OAuth Client API untuk masuk cepat pengguna, OpenStreetMap Tiles API untuk memuat ubin peta bumi dasar, serta Gmail SMTP Server untuk mengirimkan surat elektronik konfirmasi pendaftaran.
-
-e) Lapisan Keamanan (*Security Layer*): Lapisan ini berfungsi untuk mengamankan data dan akses pada aplikasi. Sandi pengguna disimpan di dalam database dengan enkripsi satu arah berbasis *bcrypt*. Sesi pengguna dikelola menggunakan session berbasis cookie HTTP-only yang terlindungi dari serangan cross-site scripting (XSS). Akses ke halaman administratif admin dilindungi secara ketat menggunakan middleware khusus role admin, serta pengiriman formulir dilengkapi dengan token CSRF (Cross-Site Request Forgery) protection.
-
-Visualisasi arsitektur sistem WebGIS ini dapat digambarkan pada Gambar 5.1 berikut.
-![Gambar 5.1 Arsitektur Sistem WebGIS](public/images/arsitektur_sistem.png)
-
----
-
-#### 5.1.3 Unified Modelling Language (UML)
-Pemodelan UML digunakan untuk memvisualisasikan rancangan logika, struktur kelas, dan perilaku sistem WebGIS secara komprehensif. Diagram yang digunakan dalam penelitian ini meliputi *use case diagram*, *activity diagram*, *class diagram*, dan *sequence diagram*. Hasil pemodelan ini membantu memperjelas batasan fungsionalitas sistem, alur kerja proses bisnis, serta struktur hubungan antar objek yang akan diimplementasikan pada kode program Laravel.
-
-##### 5.1.3.1 Use Case Diagram
-Use Case Diagram dirancang untuk memetakan hubungan antara aktor yang terlibat dengan berbagai fungsionalitas utama yang disediakan oleh sistem. Sistem WebGIS memiliki tiga aktor utama dengan hak akses dan peran operasional yang terpisah:
-1. **Pengunjung (Visitor)**: Aktor umum yang dapat mengakses informasi publik seperti profil, katalog flora, peta interaktif, melakukan registrasi akun, masuk dengan akun Google, serta mengajukan pendaftaran kunjungan rombongan dan memantau statusnya.
-2. **Peneliti (Researcher)**: Aktor tersertifikasi (user terautentikasi dan terverifikasi) yang memiliki hak khusus untuk mengajukan permohonan izin penelitian dengan mengunggah CV dan Surat Izin Penelitian, serta memantau status pengajuannya.
-3. **Administrator (Admin)**: Aktor pengelola sistem yang memiliki otoritas penuh untuk mengelola pengguna, mengedit data master kategori dan spesimen flora, memetakan koordinat peta Leaflet, serta memverifikasi dan menyetujui/menolak pendaftaran kunjungan maupun permohonan penelitian.
-
-Visualisasi interaksi ketiga aktor ini dalam sistem WebGIS dapat digambarkan pada Gambar 5.2 berikut.
-![Gambar 5.2 Use Case Diagram WebGIS](public/images/use_case_diagram.png)
-
-Penjelasan mengenai alur use case tersebut menunjukkan bahwa setiap aktor harus melalui proses autentikasi (login) untuk dapat mengakses modul transaksi seperti pendaftaran kunjungan, pengajuan penelitian, dan dasbor pemantauan status. Admin memegang kendali tertinggi dalam memvalidasi data pengajuan kunjungan dari pengunjung dan peneliti, serta mengelola basis data flora dan koordinat spasial peta secara dinamis.
-
-##### 5.1.3.2 Activity Diagram
-Activity Diagram digunakan untuk menggambarkan alur aktivitas proses bisnis yang terjadi di dalam sistem WebGIS secara visual, mulai dari aksi awal pengguna hingga respon balik dari sistem. Berikut adalah rincian aktivitas pada proses-proses utama aplikasi:
-
-1. **Activity Diagram Login & OAuth (Gambar 5.3)**: Mengilustrasikan alur ketika pengguna masuk ke dalam sistem. Alur dimulai saat pengguna membuka halaman login. Sistem menampilkan form login manual dan tombol login Google. Jika memilih manual, pengguna menginput email dan password, lalu sistem memvalidasi data ke database. Jika memilih Google login, sistem mengarahkan ke halaman autentikasi Google, menerima callback data user, dan memverifikasi akun. Apabila data valid, sistem membuat sesi login, melakukan pengecekan peran (role), dan mengarahkan admin ke Halaman Admin atau pengunjung ke Halaman Dashboard. Jika gagal, sistem menampilkan pesan error dan mengembalikan ke form login.
-![Gambar 5.3 Activity Diagram Login](public/images/activity_login.png)
-
-2. **Activity Diagram Pencarian Katalog Flora (Gambar 5.4)**: Menggambarkan alur saat pengunjung mencari koleksi tanaman. Pengunjung membuka halaman katalog. Sistem memuat seluruh data spesimen flora dari database secara default. Pengunjung dapat memasukkan kata kunci pencarian pada kolom input atau memilih filter kategori kelompok tanaman. Sistem memproses query pencarian secara dinamis. Apabila data ditemukan, sistem merender grid daftar spesimen yang cocok di layar browser. Jika tidak cocok, sistem menampilkan pesan 'Flora Tidak Ditemukan' dan bersiap menerima input pencarian baru.
-![Gambar 5.4 Activity Diagram Pencarian](public/images/activity_pencarian.png)
-
-3. **Activity Diagram Pendaftaran Pengunjung (Gambar 5.5)**: Menjelaskan alur pendaftaran kunjungan umum rombongan. Pengunjung yang telah login dan terverifikasi emailnya membuka form pendaftaran pengunjung. Pengunjung mengisi data rombongan seperti nama perwakilan, kontak, instansi, tanggal kunjungan, keperluan, dan anggota rombongan tambahan. Pengunjung menekan tombol kirim data. Sistem melakukan validasi form. Jika data valid, sistem menyimpan data ke tabel `pendaftaran_pengunjungs` dengan status default 'pending', lalu mengalihkan ke dashboard dengan menampilkan pesan sukses. Jika tidak valid, sistem menampilkan error isian form.
-![Gambar 5.5 Activity Diagram Pendaftaran Pengunjung](public/images/activity_pendaftaran_pengunjung.png)
-
-4. **Activity Diagram Pendaftaran Peneliti (Gambar 5.6)**: Menggambarkan alur pengajuan permohonan izin penelitian. Peneliti mengakses form pendaftaran peneliti. Peneliti menginputkan detail rencana riset dan mengunggah berkas CV serta Surat Izin Penelitian. Peneliti mengirimkan data. Sistem memvalidasi input dan berkas lampiran. Jika valid, sistem menyimpan file dokumen ke media storage, menyimpan data pendaftaran ke tabel `pendaftaran_penelitis` dengan status 'pending', memicu pengiriman email notifikasi otomatis via SMTP Gmail ke email admin, dan mengalihkan peneliti ke dasbor. Jika tidak valid, sistem mengembalikan form dengan pesan error.
-![Gambar 5.6 Activity Diagram Pendaftaran Peneliti](public/images/activity_pendaftaran_peneliti.png)
-
-5. **Activity Diagram Pemantauan & Batal Pendaftaran (Gambar 5.7)**: Menjelaskan alur saat user memantau atau membatalkan booking di dasbor. User mengakses halaman dasbor. Sistem memuat daftar riwayat pendaftaran pengunjung dan peneliti milik user tersebut. User dapat melihat status pendaftaran (pending, disetujui, ditolak). Jika status masih pending, sistem menampilkan tombol ubah dan batal. Apabila user mengklik tombol batal dan mengonfirmasi pembatalan, sistem mengirimkan request DELETE ke server, menghapus data dari database, dan memuat ulang tampilan dasbor dengan notifikasi pembatalan sukses.
-![Gambar 5.7 Activity Diagram Pemantauan & Batal Pendaftaran](public/images/activity_pemantauan.png)
-
-6. **Activity Diagram Verifikasi Pendaftaran Admin (Gambar 5.8)**: Menggambarkan alur kerja admin dalam memverifikasi data kunjungan. Admin masuk ke menu kelola pendaftaran pengunjung atau peneliti. Sistem menampilkan daftar data pendaftaran masuk. Admin memeriksa berkas (untuk peneliti) dan rincian rombongan. Admin memilih tindakan setujui atau tolak. Jika disetujui, sistem memperbarui kolom status menjadi 'disetujui' dan memperbarui agregasi total statistik kunjungan. Jika ditolak, sistem memperbarui status menjadi 'ditolak' dan menyimpan catatan admin terkait alasan penolakan.
-![Gambar 5.8 Activity Diagram Verifikasi Pendaftaran Admin](public/images/activity_verifikasi.png)
-
-7. **Activity Diagram Kelola Koleksi Flora (Gambar 5.9)**: Menjelaskan alur penambahan katalog flora oleh admin. Admin membuka form tambah koleksi. Admin menginput nama, genus, spesies, famili, deskripsi, kelompok kategori, lokasi koordinat, dan mengunggah foto tanaman. Admin mengirimkan data. Sistem memvalidasi input. Jika valid, sistem menjalankan helper optimasi gambar dengan mengompresi dan mengonversi format gambar ke AVIF, menyimpan file foto AVIF ke storage, menyimpan baris data ke tabel `koleksis`, dan menampilkan pesan sukses di panel admin.
-![Gambar 5.9 Activity Diagram Kelola Koleksi Flora](public/images/activity_kelola_koleksi.png)
-
-8. **Activity Diagram Kelola Titik Peta (Gambar 5.10)**: Menggambarkan alur manajemen spasial peta oleh admin. Admin membuka menu kelola peta. Sistem merender peta dasar Kebun Raya Sambas menggunakan Leaflet.js. Admin dapat menggambar penanda baru (menentukan titik marker, menarik garis polyline, atau menggambar poligon area) langsung pada peta interaktif, serta mengisi nama lokasi, warna, tipe, dan mengunggah foto. Admin menyimpan data. Sistem menangkap koordinat geografis (latitude/longitude atau GeoJSON) dan menyimpannya ke tabel `map_markers`.
-![Gambar 5.10 Activity Diagram Kelola Titik Peta](public/images/activity_kelola_peta.png)
-
-9. **Activity Diagram Kelola User (Gambar 5.11)**: Menjelaskan alur manajemen pengguna oleh admin. Admin mengakses halaman manajemen user. Sistem menampilkan daftar user terdaftar. Admin dapat menambah akun staf baru dengan mengisi nama, email, password, dan memilih hak akses (admin/user). Admin juga dapat menghapus user biasa atau mengubah informasi akun. Sistem memperbarui database tabel `users` dan menampilkan data terbaru di antarmuka admin.
-![Gambar 5.11 Activity Diagram Kelola User](public/images/activity_kelola_user.png)
-
-##### 5.1.3.3 Class Diagram
-Class Diagram memodelkan struktur kelas, atribut, metode, serta hubungan asosiasi antar entitas data yang digunakan di dalam sistem WebGIS. Diagram ini disusun berdasarkan skema database relasional PostgreSQL yang diimplementasikan pada model-model framework Laravel. Struktur ini memastikan integritas data spasial dan relasional dapat terhubung secara konsisten.
-
-Visualisasi hubungan antar kelas data ini dapat dilihat pada Gambar 5.12 berikut.
-![Gambar 5.12 Class Diagram Database WebGIS](public/images/class_diagram.png)
-
-Penjelasan hubungan asosiasi antar kelas pada Gambar 5.12 adalah sebagai berikut:
-1. Kelas `User` memiliki hubungan satu-ke-banyak (*one-to-many*) dengan `PendaftaranPengunjung` dan `PendaftaranPeneliti`. Hal ini menunjukkan bahwa satu akun pengguna dapat mengajukan banyak permohonan kunjungan maupun penelitian, sedangkan setiap pendaftaran hanya terikat pada satu akun pengguna pengaju.
-2. Kelas `Category` memiliki hubungan satu-ke-banyak (*one-to-many*) dengan `Koleksi`. Satu kategori kelompok tanaman dapat mengelompokkan banyak data tanaman koleksi, namun setiap spesimen flora hanya memiliki satu kategori utama.
-3. Kelas `Koleksi` terhubung dengan kelas `MapMarker` melalui tabel pivot `KoleksiMapMarker` dengan relasi banyak-ke-banyak (*many-to-many*). Satu spesimen tanaman koleksi dapat dikaitkan dengan satu atau lebih marker titik lokasi di peta, dan sebaliknya satu marker lokasi dapat menandai lokasi sebaran beberapa spesimen tanaman.
-4. Kelas `Koleksi` memiliki hubungan satu-ke-satu (*one-to-one*) dengan `KoleksiLocation` yang menyimpan rincian deskripsi area spesifik atau tata letak fisik penempatan tanaman di area kebun raya.
-5. Tabel penunjang sistem seperti `Session`, `Cache`, `Job`, dan `PasswordResetToken` berdiri sendiri untuk mendukung fungsionalitas framework Laravel dalam mengelola antrean pengiriman email, caching data peta, dan pengelolaan sesi autentikasi.
-
-##### 5.1.3.4 Sequence Diagram
-Sequence Diagram memvisualisasikan interaksi dinamis antar objek di dalam sistem WebGIS secara berurutan (*sequential*) berdasarkan urutan waktu kejadian. Berikut adalah penjelasan alur sekuensial untuk modul-modul utama sistem:
-
-1. **Sequence Diagram Login & OAuth (Gambar 5.13)**: Menunjukkan interaksi saat user melakukan login. User mengirimkan kredensial email & password ke Web Router, yang diteruskan ke AuthController. Controller melakukan kueri ke User Model untuk mengambil data user. Jika menggunakan Google OAuth, SocialiteController mengalihkan request ke Google Identity Provider, menerima callback profile data, lalu mencocokkan Google ID ke database. Jika valid, AuthController membuat session baru dan mengembalikan respon redirect halaman dasbor ke browser user. Jika gagal, controller mengembalikan pesan error.
-![Gambar 5.13 Sequence Diagram Login & OAuth](public/images/sequence_login.png)
-
-2. **Sequence Diagram Pencarian Koleksi Flora (Gambar 5.14)**: Menggambarkan proses pencarian tanaman. Pengunjung mengirimkan request pencarian dengan parameter kata kunci/kategori melalui peramban. Request diterima oleh KoleksiController. Controller memproses parameter pencarian dan melakukan query ke database menggunakan Eloquent ORM pada Koleksi Model. Database mengembalikan data koleksi tanaman yang cocok. KoleksiController merender data ke dalam template Blade, lalu mengembalikan dokumen HTML yang berisi susunan grid spesimen tanaman untuk ditampilkan di layar pengunjung.
-![Gambar 5.14 Sequence Diagram Pencarian Koleksi Flora](public/images/sequence_pencarian.png)
-
-3. **Sequence Diagram Pendaftaran Kunjungan (Gambar 5.15)**: Menunjukkan alur pengiriman formulir booking oleh pengunjung atau peneliti. User mengisi formulir dan menekan tombol kirim. Request dikirim ke PendaftaranController. Controller memverifikasi status verifikasi email user melalui Auth Middleware. Jika email verified, controller memvalidasi input. Untuk pengunjung, data disimpan ke PendaftaranPengunjung Model. Untuk peneliti, berkas CV dan Surat Izin diunggah ke Storage, data disimpan ke PendaftaranPeneliti Model, dan controller memicu PendaftaranPenelitiMail untuk mengirim email notifikasi ke admin melalui SMTP Mailer. Setelah sukses, controller mengembalikan status sukses ke dasbor user.
-![Gambar 5.15 Sequence Diagram Pendaftaran Kunjungan](public/images/sequence_pendaftaran.png)
-
-4. **Sequence Diagram Pemantauan & Batal Kunjungan (Gambar 5.16)**: Mengilustrasikan alur saat user membatalkan pendaftaran. User mengklik tombol batal kunjungan di halaman dasbor. Browser mengirimkan request DELETE ke PendaftaranController. Controller memeriksa apakah status pendaftaran masih pending. Jika benar, controller memanggil method delete() pada model PendaftaranPengunjung/PendaftaranPeneliti. Model menghapus baris data di database PostgreSQL. Server mengirimkan status konfirmasi pembatalan berhasil, lalu browser memuat ulang antarmuka dasbor.
-![Gambar 5.16 Sequence Diagram Pemantauan & Batal Kunjungan](public/images/sequence_pemantauan.png)
-
-5. **Sequence Diagram Verifikasi Status Kunjungan (Gambar 5.17)**: Menggambarkan proses verifikasi oleh admin. Admin membuka panel manajemen pendaftaran. Browser mengirim request ke PendaftaranManageController. Controller menarik data pendaftaran dari database dan menampilkannya di halaman admin. Admin mengklik opsi setujui atau tolak. Browser mengirim request PATCH berisi parameter status baru ke controller. Controller memperbarui kolom status pada model pendaftaran, menyimpan perubahan ke database, dan mengembalikan respon pembaruan sukses ke browser admin.
-![Gambar 5.17 Sequence Diagram Verifikasi Status Kunjungan](public/images/sequence_verifikasi.png)
-
-6. **Sequence Diagram Pengelolaan Koleksi & Optimasi Gambar (Gambar 5.18)**: Menunjukkan proses admin menambah spesimen flora. Admin menginput form data flora dan mengunggah foto, lalu mengirim request ke KoleksiController. Controller memvalidasi input data botani dan berkas gambar. Jika valid, controller memanggil helper Image Optimization. Helper mengompresi dan mengonversi format gambar menjadi berkas AVIF, menyimpannya ke storage, dan menginstruksikan Koleksi Model untuk menyimpan nama berkas beserta data flora ke database. Database mengonfirmasi penyimpanan sukses, dan controller mengirim respon sukses ke admin.
-![Gambar 5.18 Sequence Diagram Pengelolaan Koleksi](public/images/sequence_kelola_koleksi.png)
-
-7. **Sequence Diagram Pengelolaan Titik Peta (Gambar 5.19)**: Menggambarkan pemetaan titik koordinat. Admin menggambar penanda lokasi pada peta dasar Leaflet di browser. Admin mengisi data detail penanda dan menekan simpan. Request koordinat GeoJSON dikirim ke MapController. Controller memproses koordinat dan menyimpannya menggunakan MapMarker Model ke database PostgreSQL. Database mengembalikan konfirmasi sukses. MapController merender data penanda baru tersebut untuk dimuat kembali oleh Leaflet.js di sisi frontend.
-![Gambar 5.19 Sequence Diagram Pengelolaan Titik Peta](public/images/sequence_kelola_peta.png)
-
-8. **Sequence Diagram Kelola User (Gambar 5.20)**: Menunjukkan manajemen akun oleh admin. Admin mengirim request tambah/hapus user ke UserController. Controller memproses data, melakukan enkripsi password dengan bcrypt (jika user baru), dan menginstruksikan User Model untuk menyimpan atau menghapus data di database. Database memperbarui tabel user, lalu controller mengirimkan data daftar user terbaru kembali ke browser admin.
-![Gambar 5.20 Sequence Diagram Kelola User](public/images/sequence_kelola_user.png)
+Untuk menjamin kejelasan interaksi data tanpa terjadinya tumpang tindih (*overlap*) atau duplikasi langkah, seluruh pertukaran data (*data flow*) dirancang sebagai siklus tertutup (*round-trip*) yang terisolasi ke dalam lima alur operasional utama berakhiran huruf akhiran unik (`a` sampai `e`) sebagai berikut:
+1) **Alur A (Autentikasi Pengguna & Google OAuth - Suffix `a`)**: Alur login via Google Socialite. Dimulai dari langkah `1a. Request Login Google` dari User Portal ke Router, diteruskan melalui `2a. Route & Auth Middleware` ke Auth Controller, dilanjutkan dengan request redirect `3a` ke Google OAuth API dan return data pengguna `4a` ke Auth Controller. Auth Controller memanggil model `5a` untuk eksekusi SQL SELECT/INSERT `6a` ke PostgreSQL Database. Database mengembalikan status `7a` ke model, dilanjutkan return model instance `8a` ke Auth Controller, pembuatan sesi `9a` ke Router, dan diakhiri dengan redirect `10a. Redirect to Authenticated UI` kembali ke User Portal UI.
+2) **Alur B (Peta Spasial & Katalog Flora - Suffix `b`)**: Pemuatan katalog dan visualisasi spasial tanaman. Request berawal dari `1b. Request Map / Catalog Page` ke Router, diarahkan via `2b` ke Koleksi & Map Controller, yang melakukan query `3b` ke model dan eksekusi SQL SELECT `4b` ke PostgreSQL. Database mengembalikan data `5b` ke model, dilanjutkan ke controller `6b`. Controller memanggil `7b` ke ImageOptimizer untuk kompresi AVIF, menerima return path `8b`, mengirim return rendered HTML/GeoJSON `9b` ke Router, dan berakhir di `10b. Display Map & Catalog UI` di User Portal.
+3) **Alur C (Load Basemap Tiles - Suffix `c`)**: Alur asinkron di mana browser memuat ubin peta Leaflet langsung dari OpenStreetMap melalui request `1c. Load Basemap Tiles` dan menerima return gambar ubin peta pada `2c. Return Basemap Tile Images` langsung ke sisi User Portal.
+4) **Alur D (Pendaftaran Kunjungan & Peneliti - Suffix `d`)**: Formulir pendaftaran dikirim via `1d` ke Router, diteruskan via `2d` ke Pendaftaran Controller, yang memanggil model `3d` untuk eksekusi INSERT `4d` ke PostgreSQL. Database mengembalikan status `5d` ke model dan `6d` ke Controller. Controller memicu notifikasi email `7d` ke SMTP Mailer Helper, yang mengirim data SMTP Relay `8d` ke SMTP Gmail Server. Server eksternal mengembalikan respon status SMTP `9d` ke Mailer, diteruskan ke Controller `10d`, lalu dikirim kembali via `11d` ke Router, dan diakhiri dengan tampilan sukses `12d. Display Success / Invoice PWA` di User Portal.
+5) **Alur E (Admin Dashboard - Manajemen & Persetujuan - Suffix `e`)**: Aksi admin dikirim via `1e` dari Admin UI ke Router, diteruskan via `2e` ke Pendaftaran Controller. Controller memicu mutasi status `3e` ke model, dilanjutkan eksekusi SQL UPDATE/DELETE `4e` ke PostgreSQL. Database mengembalikan status update `5e` ke model, diteruskan ke Controller `6e`, lalu dikirim kembali via `7e` ke Router, dan diakhiri dengan pembaruan tampilan tabel `8e. Update Dashboard View / Table` di Admin Dashboard UI.
 
 ---
 
-#### 5.1.4 Perancangan Basis Data
-Perancangan basis data bertujuan untuk merancang struktur penyimpanan data aplikasi sistem WebGIS agar terorganisasi dengan baik, memiliki performa query yang cepat, serta terhindar dari duplikasi data yang tidak perlu. Pemodelan basis data ini menggunakan PostgreSQL sebagai sistem manajemen database relasional dengan menerapkan tahapan normalisasi, pembuatan kamus data spesifikasi tabel, serta penggambaran hubungan antar-entitas (ERD).
 
-##### 5.1.4.1 Normalisasi
-Proses normalisasi dilakukan secara bertahap mulai dari bentuk tidak normal (*Unnormalized Form*) hingga mencapai bentuk normal ketiga (*Third Normal Form* / 3NF) untuk menghilangkan redundansi data dan mencegah terjadinya anomali data saat proses manipulasi data (*insert*, *update*, *delete*) berlangsung.
 
-a. Bentuk Tidak Normal (UNF):
-Bentuk ini menampung seluruh atribut data yang diidentifikasi dari berbagai kebutuhan sistem ke dalam satu kesatuan data tanpa adanya pengelompokan entitas.
-{ id_user + name + email + role + password + email_verified_at + google_id + remember_token + user_created_at + user_updated_at + id_category + category_name + category_created_at + category_updated_at + id_koleksi + category_id + nama_koleksi + genus + spesies + famili + deskripsi_flora + foto_flora + coordinates_koleksi + koleksi_created_at + koleksi_updated_at + id_map_marker + marker_name + type_marker + color_marker + photo_marker + geom_marker + marker_created_at + marker_updated_at + id_pendaftaran_pengunjung + pengunjung_nama_lengkap + pengunjung_no_identitas + pengunjung_nomor_hp + pengunjung_tanggal_kunjungan + pengunjung_jumlah_rombongan + pengunjung_keperluan + pengunjung_instansi + pengunjung_rombongan_details + pengunjung_status + pengunjung_created_at + pengunjung_updated_at + id_pendaftaran_peneliti + peneliti_nama_lengkap + peneliti_no_identitas + peneliti_nomor_hp + peneliti_institusi + peneliti_program_studi + peneliti_jenjang + peneliti_judul_penelitian + peneliti_bidang_penelitian + peneliti_tanggal_mulai + peneliti_tanggal_selesai + peneliti_jumlah_anggota + peneliti_tujuan_penelitian + peneliti_surat_pengantar + peneliti_status + peneliti_created_at + peneliti_updated_at + id_koleksi_location + location_description }
+---
 
-b. Normalisasi Tahap Pertama (1NF):
-Tahap ini memastikan bahwa setiap kolom beratribut atomik (tidak ada grup berulang atau multi-nilai dalam satu kolom) dan menentukan primary key (@) untuk mengidentifikasi baris data secara unik.
-{ @id_user + name + email + role + password + email_verified_at + google_id + remember_token + user_created_at + user_updated_at + @id_category + category_name + category_created_at + category_updated_at + @id_koleksi + category_id + nama_koleksi + genus + spesies + famili + deskripsi_flora + foto_flora + coordinates_koleksi + koleksi_created_at + koleksi_updated_at + @id_map_marker + marker_name + type_marker + color_marker + photo_marker + geom_marker + marker_created_at + marker_updated_at + @id_pendaftaran_pengunjung + pengunjung_nama_lengkap + pengunjung_no_identitas + pengunjung_nomor_hp + pengunjung_tanggal_kunjungan + pengunjung_jumlah_rombongan + pengunjung_keperluan + pengunjung_instansi + pengunjung_rombongan_details + pengunjung_status + pengunjung_created_at + pengunjung_updated_at + @id_pendaftaran_peneliti + peneliti_nama_lengkap + peneliti_no_identitas + peneliti_nomor_hp + peneliti_institusi + peneliti_program_studi + peneliti_jenjang + peneliti_judul_penelitian + peneliti_bidang_penelitian + peneliti_tanggal_mulai + peneliti_tanggal_selesai + peneliti_jumlah_anggota + peneliti_tujuan_penelitian + peneliti_surat_pengantar + peneliti_status + peneliti_created_at + peneliti_updated_at + @id_koleksi_location + location_description }
+### 5.1.3 Unified Modelling Language (UML)
+Pemodelan UML digunakan untuk memvisualisasikan struktur statis dan interaksi dinamis dari sistem yang dibangun.
 
-c. Normalisasi Tahap Kedua (2NF):
-Tahap ini mengelompokkan data berdasarkan ketergantungan fungsional penuh terhadap primary key masing-masing entitas guna menghilangkan ketergantungan parsial.
-- `users` = { @id + name + email + role + password + email_verified_at + google_id + remember_token + created_at + updated_at }
-- `categories` = { @id + name + created_at + updated_at }
-- `koleksis` = { @id + category_id + name + genus + species + family + description + photo + coordinates + created_at + updated_at }
-- `map_markers` = { @id + name + type + color + photo + geom + created_at + updated_at }
-- `pendaftaran_pengunjungs` = { @id + user_id + nama_lengkap + no_identitas + nomor_hp + tanggal_kunjungan + jumlah_rombongan + keperluan + instansi + rombongan_details + status + created_at + updated_at }
-- `pendaftaran_penelitis` = { @id + user_id + nama_lengkap + no_identitas + nomor_hp + institusi + program_studi + jenjang + judul_penelitian + bidang_penelitian + tanggal_mulai + tanggal_selesai + jumlah_anggota + tujuan_penelitian + surat_pengantar + status + created_at + updated_at }
-- `koleksi_locations` = { @id + koleksi_id + location_description + created_at + updated_at }
-- `koleksi_map_marker` = { @koleksi_id + @map_marker_id }
+#### 5.1.3.1 Use Case Diagram
+Use Case Diagram merinci hubungan interaksi antara tiga aktor utama (Pengunjung Umum, Peneliti, Admin) dengan fungsi-fungsi utama sistem:
 
-d. Normalisasi Tahap Ketiga (3NF):
-Tahap ini memastikan tidak ada ketergantungan transitif di dalam tabel (seluruh atribut non-key hanya bergantung penuh pada primary key, bukan pada atribut non-key lainnya). Semua tabel hasil pemisahan pada tahap 2NF telah memenuhi syarat 3NF karena tidak mengandung ketergantungan transitif. Kunci tamu (foreign key) ditandai dengan simbol (@@) untuk menghubungkan relasi antar-tabel secara konsisten:
-- `users` = { @id + name + email + role + password + email_verified_at + google_id + remember_token + created_at + updated_at }
-- `categories` = { @id + name + created_at + updated_at }
-- `koleksis` = { @id + @@category_id + name + genus + species + family + description + photo + coordinates + created_at + updated_at }
-- `map_markers` = { @id + name + type + color + photo + geom + created_at + updated_at }
-- `pendaftaran_pengunjungs` = { @id + @@user_id + nama_lengkap + no_identitas + nomor_hp + tanggal_kunjungan + jumlah_rombongan + keperluan + instansi + rombongan_details + status + created_at + updated_at }
-- `pendaftaran_penelitis` = { @id + @@user_id + nama_lengkap + no_identitas + nomor_hp + institusi + program_studi + jenjang + judul_penelitian + bidang_penelitian + tanggal_mulai + tanggal_selesai + jumlah_anggota + tujuan_penelitian + surat_pengantar + status + created_at + updated_at }
-- `koleksi_locations` = { @id + @@koleksi_id + location_description + created_at + updated_at }
-- `koleksi_map_marker` = { @@koleksi_id + @@map_marker_id }
+```mermaid
+leftToRightDirection
+actor "Pengunjung Umum" as Pengunjung
+actor "Peneliti" as Peneliti
+actor "Administrator" as Admin
 
-##### 5.1.4.2 Spesifikasi Struktur Tabel Database
-Spesifikasi struktur basis data menjabarkan detail tipe data, panjang kolom, serta karakteristik kunci dari setiap tabel database PostgreSQL yang digunakan pada sistem WebGIS. Tabel 5.2 berikut memuat detail kamus data spesifikasi tabel secara lengkap.
+rectangle "Sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas" {
+    usecase "Registrasi & Login Akun" as UC1
+    usecase "Login Google OAuth" as UC1b
+    usecase "Melihat Profil & Beranda" as UC2
+    usecase "Melihat Peta Interaktif (WebGIS)" as UC3
+    usecase "Mencari & Melihat Detail Flora" as UC4
+    usecase "Pendaftaran Rencana Kunjungan" as UC5
+    usecase "Pendaftaran Izin Penelitian (Upload Dokumen)" as UC6
+    usecase "Mengakses Dasbor Pengguna" as UC7
+    usecase "Mengelola Pengguna (CRUD)" as UC8
+    usecase "Mengelola Peta & Marker (GeoJSON)" as UC9
+    usecase "Mengelola Koleksi Flora & Taksonomi" as UC10
+    usecase "Konfirmasi Pendaftaran & Ekspor Dokumen" as UC11
+}
 
-**Tabel 5.2 Spesifikasi Struktur Tabel Database WebGIS**
+Pengunjung --> UC1
+Pengunjung --> UC1b
+Pengunjung --> UC2
+Pengunjung --> UC3
+Pengunjung --> UC4
+Pengunjung --> UC5
+Pengunjung --> UC7
 
-| No | Nama Tabel | Kolom Utama / Kolom Atribut | Tipe Data | Keterangan |
+Peneliti --> UC1
+Peneliti --> UC1b
+Peneliti --> UC2
+Peneliti --> UC3
+Peneliti --> UC4
+Peneliti --> UC5
+Peneliti --> UC6
+Peneliti --> UC7
+
+Admin --> UC1
+Admin --> UC8
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+```
+
+Aktor Pengunjung Umum dan Peneliti berinteraksi dengan sistem untuk melihat peta interaktif, mencari flora, dan melakukan pendaftaran. Peneliti memiliki use case khusus yaitu pendaftaran izin penelitian yang mewajibkan unggah dokumen. Sementara Administrator memiliki otorisasi penuh untuk mengelola data master pengguna, koleksi flora, marker peta berbasis GeoJSON, serta mengonfirmasi pendaftaran kunjungan/penelitian.
+
+#### 5.1.3.2 Activity Diagram
+Activity diagram memetakan alur kerja aktivitas sistem pada proses bisnis utama.
+
+##### 5.1.3.2.1 Activity Diagram Pendaftaran Pengunjung
+Diagram ini menggambarkan alur saat pengunjung melakukan pendaftaran kunjungan rombongan secara online:
+
+```mermaid
+stateDiagram-v2
+    [*] --> AksesForm: Pengunjung Mengakses Halaman Pendaftaran Pengunjung
+    AksesForm --> CekLogin: Sistem Memeriksa Status Autentikasi Pengguna
+    CekLogin --> TampilkanLogin: Pengguna Belum Login / Belum Verifikasi Email
+    TampilkanLogin --> LoginSuccess: Pengguna Melakukan Login & Verifikasi
+    LoginSuccess --> AksesForm
+    CekLogin --> IsiForm: Pengguna Sudah Login & Verified
+    IsiForm --> ValidasiInput: Pengguna Mengisi Form Kunjungan & Anggota Rombongan
+    ValidasiInput --> SimpanDB: Input Valid (Nama, No HP, Tanggal Kunjungan)
+    ValidasiInput --> TampilkanPesanGagal: Input Tidak Valid (Tanggal Terlewat, Format HP Salah)
+    TampilkanPesanGagal --> IsiForm
+    SimpanDB --> TampilkanPesanSukses: Sistem Menyimpan Pendaftaran dengan Status 'Pending'
+    TampilkanPesanSukses --> RedirectDashboard: Sistem Mengarahkan Pengguna ke Halaman Dasbor
+    RedirectDashboard --> [*]
+```
+
+##### 5.1.3.2.2 Activity Diagram Pendaftaran Peneliti
+Diagram ini menggambarkan alur pendaftaran izin penelitian yang membutuhkan unggah file CV dan Surat Izin:
+
+```mermaid
+stateDiagram-v2
+    [*] --> AksesFormPeneliti: Peneliti Mengakses Halaman Pendaftaran Peneliti
+    AksesFormPeneliti --> CekAuth: Sistem Memeriksa Apakah Pengguna Terautentikasi & Verified
+    CekAuth --> RedirectLogin: Belum Login / Verified
+    RedirectLogin --> AksesFormPeneliti
+    CekAuth --> IsiFormPeneliti: Sudah Login & Verified
+    IsiFormPeneliti --> UploadDokumen: Mengisi Form Penelitian & Mengunggah Surat Pengantar & CV
+    UploadDokumen --> ValidasiInputPeneliti: Validasi Data & File Format (PDF/JPG, Max 5MB)
+    ValidasiInputPeneliti --> SimpanDataPeneliti: Valid
+    ValidasiInputPeneliti --> TampilkanError: Format File Salah / Ukuran Terlalu Besar
+    TampilkanError --> IsiFormPeneliti
+    SimpanDataPeneliti --> KirimEmailAdmin: Menyimpan Data Ke Database dengan Status 'Pending'
+    KirimEmailAdmin --> TampilkanSukses: Sistem Mengirim Email Notifikasi Otomatis ke Email Admin
+    TampilkanSukses --> [*]
+```
+
+##### 5.1.3.2.3 Activity Diagram Kelola Peta/Markers (Admin)
+Diagram ini menjelaskan bagaimana admin menambahkan marker baru (Point, Polyline, Polygon) ke dalam peta WebGIS:
+
+```mermaid
+stateDiagram-v2
+    [*] --> AksesHalamanMap: Admin Mengakses Halaman Kelola Peta
+    AksesHalamanMap --> TampilkanPetaAdmin: Sistem Menampilkan Daftar Marker & Peta Leaflet
+    TampilkanPetaAdmin --> KlikTambahMarker: Admin Mengeklik Tombol 'Tambah Marker'
+    KlikTambahMarker --> IsiFormMarker: Admin Mengisi Nama, Tipe, Warna, & Memilih Tipe Geometri
+    IsiFormMarker --> TentukanKoordinat: Memilih Titik Koordinat (Point) atau Menggambar Garis/Area (Polyline/Polygon)
+    TentukanKoordinat --> GenerateGeoJSON: Sistem Menghasilkan String GeoJSON Koordinat Secara Otomatis
+    GenerateGeoJSON --> ValidasiMarker: Admin Menyimpan Data & Sistem Memvalidasi Input
+    ValidasiMarker --> SimpanDBMarker: Valid
+    ValidasiMarker --> FormError: Tidak Valid (GeoJSON Kosong, Format Salah)
+    FormError --> IsiFormMarker
+    SimpanDBMarker --> SuksesSimpan: Menulis Data Ke Tabel 'map_markers' & Menyimpan Foto AVIF (Jika Ada)
+    SuksesSimpan --> [*]
+```
+
+#### 5.1.3.3 Sequence Diagram
+Sequence diagram menggambarkan interaksi antar-objek berdasarkan urutan waktu.
+
+##### 5.1.3.3.1 Sequence Diagram Registrasi Pengguna
+Diagram ini merinci urutan pendaftaran akun pengguna baru secara manual:
+
+```mermaid
+sequenceDiagram
+    actor User as Pengguna
+    participant View as Register View (HTML/Blade)
+    participant Ctrl as AuthController
+    participant Model as User Model
+    participant DB as PostgreSQL Database
+    participant Mail as Mailer Service
+    
+    User->>View: Mengisi Nama, Email, Password, Konfirmasi Password
+    View->>Ctrl: POST /register
+    activate Ctrl
+    Ctrl->>Ctrl: Validasi Input (Nama, Email Unik, Min 8 Karakter)
+    alt Validasi Gagal
+        Ctrl-->>View: Kembalikan Pesan Error Validasi
+    else Validasi Sukses
+        Ctrl->>Model: User::create([name, email, password, role='user'])
+        activate Model
+        Model->>DB: INSERT INTO users (name, email, password, role, ...)
+        DB-->>Model: Return User Object
+        deactivate Model
+        Ctrl->>Ctrl: Auth::login($user)
+        Ctrl->>Mail: sendEmailVerificationNotification()
+        activate Mail
+        Mail->>User: Kirim Link Verifikasi ke Email Pengguna
+        deactivate Mail
+        Ctrl-->>View: Redirect ke Halaman /email/verify
+    end
+    deactivate Ctrl
+```
+
+##### 5.1.3.3.2 Sequence Diagram Pendaftaran Pengunjung
+Diagram ini memetakan urutan proses pendaftaran kunjungan rombongan oleh pengguna yang telah login:
+
+```mermaid
+sequenceDiagram
+    actor User as Pengunjung
+    participant View as Pendaftaran View
+    participant Ctrl as PendaftaranController
+    participant Model as PendaftaranPengunjung
+    participant DB as PostgreSQL Database
+    
+    User->>View: Mengisi Data Pengunjung & Detail Rombongan (JSON)
+    View->>Ctrl: POST /pendaftaran/pengunjung
+    activate Ctrl
+    Ctrl->>Ctrl: Memeriksa Status Auth & Email Verified
+    Ctrl->>Ctrl: Validasi Input (Nama, HP Regex, Tanggal >= Hari ini)
+    alt Validasi Gagal
+        Ctrl-->>View: Kembalikan Input & Pesan Error
+    else Validasi Sukses
+        Ctrl->>Model: PendaftaranPengunjung::create([data_input, status='pending'])
+        activate Model
+        Model->>DB: INSERT INTO pendaftaran_pengunjungs
+        DB-->>Model: Return Object & ID
+        deactivate Model
+        Ctrl-->>View: Redirect ke /dashboard dengan Flash Success
+    end
+    deactivate Ctrl
+```
+
+##### 5.1.3.3.3 Sequence Diagram Kelola Peta/Markers oleh Admin
+Diagram ini memetakan urutan penambahan marker baru oleh admin:
+
+```mermaid
+sequenceDiagram
+    actor Admin as Administrator
+    participant View as Map Create View
+    participant Ctrl as MapController
+    participant Optimizer as ImageOptimizer Helper
+    participant Model as MapMarker Model
+    participant DB as PostgreSQL Database
+    
+    Admin->>View: Mengisi Form Marker & Menggambar di Peta Leaflet
+    View->>Ctrl: POST /admin/maps
+    activate Ctrl
+    Ctrl->>Ctrl: Validasi (Name, geometry_type, geojson/lat-lng, color)
+    alt Validasi Gagal
+        Ctrl-->>View: Tampilkan Pesan Error
+    else Validasi Sukses
+        opt Ada Foto Terlampir
+            Ctrl->>Optimizer: convertToAvif($photo, 'map_markers')
+            activate Optimizer
+            Optimizer-->>Ctrl: Return Path Foto (.avif)
+            deactivate Optimizer
+        end
+        Ctrl->>Model: MapMarker::create([name, geojson, geometry_type, photo_path, color, ...])
+        activate Model
+        Model->>DB: INSERT INTO map_markers
+        DB-->>Model: Return Success
+        deactivate Model
+        Ctrl-->>View: Redirect ke /admin/maps dengan Flash Success
+    end
+    deactivate Ctrl
+```
+
+#### 5.1.3.4 Class Diagram
+Class diagram menggambarkan hubungan antarkelas model Eloquent pada aplikasi WebGIS Kebun Raya Sambas:
+
+```mermaid
+classDiagram
+    class User {
+        +int id
+        +string name
+        +string email
+        +string role
+        +timestamp email_verified_at
+        +string password
+        +string google_id
+        +text avatar
+        +getAvatarUrlAttribute()
+        +pendaftaranPengunjungs()
+        +pendaftaranPenelitis()
+    }
+    class Category {
+        +int id
+        +string name
+        +koleksis()
+    }
+    class Koleksi {
+        +int id
+        +string title
+        +text description
+        +string photo
+        +int category_id
+        +string kerajaan
+        +string divisi
+        +string kelas
+        +string order
+        +string famili
+        +string genus
+        +string spesies
+        +string otoritas_1
+        +string otoritas_2
+        +category()
+        +setAttribute()
+    }
+    class MapMarker {
+        +int id
+        +string name
+        +decimal latitude
+        +decimal longitude
+        +string type
+        +text description
+        +string photo
+        +string color
+        +string geometry_type
+        +text geojson
+    }
+    class PendaftaranPengunjung {
+        +int id
+        +int user_id
+        +string nama_lengkap
+        +string no_identitas
+        +string nomor_hp
+        +date tanggal_kunjungan
+        +int jumlah_rombongan
+        +text keperluan
+        +string status
+        +string instansi
+        +json rombongan_details
+        +user()
+    }
+    class PendaftaranPeneliti {
+        +int id
+        +int user_id
+        +string nama_lengkap
+        +string no_identitas
+        +string nomor_hp
+        +string institusi
+        +string program_studi
+        +string jenjang
+        +string judul_penelitian
+        +string bidang_penelitian
+        +date tanggal_mulai
+        +date tanggal_selesai
+        +int jumlah_anggota
+        +text tujuan_penelitian
+        +text surat_pengantar
+        +string status
+        +text catatan_admin
+        +string status_penelitian
+        +user()
+    }
+
+    User "1" --> "0..*" PendaftaranPengunjung : registers
+    User "1" --> "0..*" PendaftaranPeneliti : registers
+    Category "1" --> "0..*" Koleksi : categorizes
+```
+
+Model `User` merepresentasikan pengguna sistem yang dapat melakukan banyak pendaftaran pengunjung (`PendaftaranPengunjung`) maupun pendaftaran peneliti (`PendaftaranPeneliti`). Model `Koleksi` memuat atribut taksonomi botani lengkap dan terasosiasi ke satu `Category`. Model `MapMarker` berdiri sendiri untuk menyimpan entitas objek spasial geografis di peta Leaflet.
+
+---
+
+### 5.1.4 Perancangan Basis Data
+Perancangan basis data dilakukan dengan melakukan normalisasi untuk menghasilkan tabel-tabel yang optimal dan minim redundansi data.
+
+#### 5.1.4.1 Normalisasi
+Proses normalisasi basis data spasial relasional ini diuraikan dari bentuk tidak normal (UNF) hingga bentuk normal ketiga (3NF):
+
+a. **Bentuk Tidak Normal (UNF - Unnormalized Form)**:
+   Format UNF menampung seluruh atribut mentah dari seluruh kebutuhan sistem tanpa adanya pengelompokan tabel:
+   `{ id_user, name, email, role, email_verified_at, password, google_id, avatar, id_category, category_name, id_koleksi, title, description, photo, category_id, kerajaan, divisi, kelas, order, famili, genus, spesies, otoritas_1, otoritas_2, id_marker, marker_name, latitude, longitude, type, marker_description, marker_photo, color, geometry_type, geojson, id_pengunjung, pengunjung_user_id, nama_lengkap, no_identitas, nomor_hp, tanggal_kunjungan, jumlah_rombongan, keperluan, status_pengunjung, instansi, rombongan_details, id_peneliti, peneliti_user_id, peneliti_nama_lengkap, peneliti_no_hp, institusi, program_studi, jenjang, judul_penelitian, bidang_penelitian, tanggal_mulai, tanggal_selesai, jumlah_anggota, tujuan_penelitian, surat_pengantar, status_peneliti, catatan_admin, status_penelitian }`
+
+b. **Bentuk Normal Pertama (1NF)**:
+   Menghilangkan atribut berulang dan memastikan seluruh kolom bersifat atomik (tunggal). Kunci primer (Primary Key) ditentukan pada setiap entitas:
+   `{ @id_user, name, email, role, email_verified_at, password, google_id, avatar, @id_category, category_name, @id_koleksi, title, description, photo, category_id, kerajaan, divisi, kelas, order, famili, genus, spesies, otoritas_1, otoritas_2, @id_marker, marker_name, latitude, longitude, type, marker_description, marker_photo, color, geometry_type, geojson, @id_pengunjung, user_id, nama_lengkap, no_identitas, nomor_hp, tanggal_kunjungan, jumlah_rombongan, keperluan, status, instansi, rombongan_details, @id_peneliti, user_id, nama_lengkap, no_identitas, nomor_hp, institusi, program_studi, jenjang, judul_penelitian, bidang_penelitian, tanggal_mulai, tanggal_selesai, jumlah_anggota, tujuan_penelitian, surat_pengantar, status, catatan_admin, status_penelitian }`
+
+c. **Bentuk Normal Kedua (2NF)**:
+   Memisahkan tabel berdasarkan ketergantungan fungsional penuh terhadap kunci primer, sehingga tidak ada ketergantungan parsial:
+   - `users = { @id, name, email, role, email_verified_at, password, google_id, avatar }`
+   - `categories = { @id, name }`
+   - `koleksis = { @id, title, description, photo, category_id, kerajaan, divisi, kelas, order, famili, genus, spesies, otoritas_1, otoritas_2 }`
+   - `map_markers = { @id, name, latitude, longitude, type, description, photo, color, geometry_type, geojson }`
+   - `pendaftaran_pengunjungs = { @id, user_id, nama_lengkap, no_identitas, nomor_hp, tanggal_kunjungan, jumlah_rombongan, keperluan, status, instansi, rombongan_details }`
+   - `pendaftaran_penelitis = { @id, user_id, nama_lengkap, no_identitas, nomor_hp, institusi, program_studi, jenjang, judul_penelitian, bidang_penelitian, tanggal_mulai, tanggal_selesai, jumlah_anggota, tujuan_penelitian, surat_pengantar, status, catatan_admin, status_penelitian }`
+
+d. **Bentuk Normal Ketiga (3NF)**:
+   Bentuk 3NF mensyaratkan tidak adanya ketergantungan transitif (non-kunci tidak boleh bergantung pada non-kunci lainnya). Karena seluruh atribut non-kunci di 2NF sudah secara langsung bergantung penuh pada primary key masing-masing tabel tanpa transitivitas, maka struktur tabel hasil 2NF di atas telah memenuhi kriteria **3NF** dan siap diimplementasikan ke PostgreSQL.
+
+#### 5.1.4.2 Diagram Hubungan Entitas
+Diagram Hubungan Entitas (ERD) menggambarkan korelasi relasional antartabel dalam basis data:
+
+```mermaid
+erDiagram
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar role
+        timestamp email_verified_at
+        varchar password
+        varchar google_id
+        text avatar
+    }
+    CATEGORIES {
+        bigint id PK
+        varchar name
+    }
+    KOLEKSIS {
+        bigint id PK
+        varchar title
+        text description
+        varchar photo
+        bigint category_id FK
+        varchar kerajaan
+        varchar divisi
+        varchar kelas
+        varchar order
+        varchar famili
+        varchar genus
+        varchar spesies
+        varchar otoritas_1
+        varchar otoritas_2
+    }
+    MAP_MARKERS {
+        bigint id PK
+        varchar name
+        decimal latitude
+        decimal longitude
+        varchar type
+        text description
+        varchar photo
+        varchar color
+        varchar geometry_type
+        text geojson
+    }
+    PENDAFTARAN_PENGUNJUNGS {
+        bigint id PK
+        bigint user_id FK
+        varchar nama_lengkap
+        varchar no_identitas
+        varchar nomor_hp
+        date tanggal_kunjungan
+        integer jumlah_rombongan
+        text keperluan
+        varchar status
+        varchar instansi
+        json rombongan_details
+    }
+    PENDAFTARAN_PENELITIS {
+        bigint id PK
+        bigint user_id FK
+        varchar nama_lengkap
+        varchar no_identitas
+        varchar nomor_hp
+        varchar institusi
+        varchar program_studi
+        varchar jenjang
+        varchar judul_penelitian
+        varchar bidang_penelitian
+        date tanggal_mulai
+        date tanggal_selesai
+        integer jumlah_anggota
+        text tujuan_penelitian
+        text surat_pengantar
+        varchar status
+        text catatan_admin
+        varchar status_penelitian
+    }
+
+    USERS ||--o{ PENDAFTARAN_PENGUNJUNGS : "registers"
+    USERS ||--o{ PENDAFTARAN_PENELITIS : "registers"
+    CATEGORIES ||--o{ KOLEKSIS : "categorizes"
+```
+
+#### 5.1.4.3 Spesifikasi Struktur Tabel Database
+Berikut adalah rincian detail spesifikasi teknis dari masing-masing struktur tabel database dalam sistem WebGIS Kebun Raya Sambas:
+
+##### Tabel 5.1 Spesifikasi Tabel `users`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `name` | varchar(100) | Nama lengkap pengguna |
+| `email` | varchar(150) | Email pengguna, unik |
+| `role` | varchar(30) | Hak akses pengguna (admin / user) |
+| `email_verified_at`| timestamp | Waktu verifikasi email |
+| `password` | varchar(255) | Hash kata sandi pengguna |
+| `google_id` | varchar(255) | ID login Google, nullable |
+| `avatar` | text | URL/Path foto profil Google, nullable |
+| `remember_token` | varchar(100) | Token sesi login, nullable |
+
+##### Tabel 5.2 Spesifikasi Tabel `categories`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `name` | varchar(100) | Nama kategori koleksi flora |
+
+##### Tabel 5.3 Spesifikasi Tabel `koleksis`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `title` | varchar(255) | Nama lokal/umum tanaman |
+| `description` | text | Deskripsi lengkap flora |
+| `photo` | varchar(255) | Path file foto tanaman (.avif) |
+| `category_id` | bigint | Foreign Key ke tabel `categories`, nullable |
+| `kerajaan` | varchar(100) | Klasifikasi Kerajaan (Kingdom) |
+| `divisi` | varchar(100) | Klasifikasi Divisi (Division) |
+| `kelas` | varchar(100) | Klasifikasi Kelas (Class) |
+| `order` | varchar(100) | Klasifikasi Bangsa (Order) |
+| `famili` | varchar(100) | Klasifikasi Suku (Family) |
+| `genus` | varchar(100) | Klasifikasi Marga (Genus) |
+| `spesies` | varchar(100) | Klasifikasi Jenis (Species) |
+| `otoritas_1` | varchar(100) | Nama penemu taksonomi 1 |
+| `otoritas_2` | varchar(100) | Nama penemu taksonomi 2 |
+
+##### Tabel 5.4 Spesifikasi Tabel `map_markers`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `name` | varchar(255) | Nama objek spasial |
+| `latitude` | decimal(10,8) | Koordinat lintang (point), nullable |
+| `longitude` | decimal(11,8) | Koordinat bujur (point), nullable |
+| `type` | varchar(50) | Tipe marker (area_koleksi, fasilitas_umum, dll.) |
+| `description` | text | Deskripsi detail lokasi |
+| `photo` | varchar(255) | Path berkas foto lokasi (.avif), nullable |
+| `color` | varchar(7) | Kode Hex warna penanda (e.g. #064e3b) |
+| `geometry_type` | varchar(20) | Tipe geometri (point, polyline, polygon) |
+| `geojson` | text | JSON koordinat koordinat path/area |
+
+##### Tabel 5.5 Spesifikasi Tabel `pendaftaran_pengunjungs`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `user_id` | bigint | Foreign Key ke tabel `users`, nullable |
+| `nama_lengkap` | varchar(255) | Nama lengkap pendaftar rombongan |
+| `no_identitas` | varchar(50) | NIK/KTP/SIM pendaftar |
+| `nomor_hp` | varchar(20) | Nomor kontak WhatsApp pendaftar |
+| `tanggal_kunjungan`| date | Tanggal pelaksanaan kunjungan |
+| `jumlah_rombongan`| int | Total orang dalam rombongan |
+| `keperluan` | text | Keperluan kunjungan (wisata/edukasi) |
+| `status` | varchar(30) | Status (pending, disetujui, ditolak) |
+| `instansi` | varchar(255) | Asal instansi/domisili |
+| `rombongan_details`| json | List nama & HP anggota rombongan |
+
+##### Tabel 5.6 Spesifikasi Tabel `pendaftaran_penelitis`
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | bigint | Primary Key, Auto Increment |
+| `user_id` | bigint | Foreign Key ke tabel `users` |
+| `nama_lengkap` | varchar(255) | Nama lengkap peneliti utama |
+| `no_identitas` | varchar(50) | NIK/NIM/NIDN pendaftar |
+| `nomor_hp` | varchar(20) | Nomor kontak WhatsApp peneliti |
+| `institusi` | varchar(255) | Kampus atau Instansi asal |
+| `program_studi` | varchar(255) | Program studi asal |
+| `jenjang` | varchar(20) | Jenjang akademik (S1, S2, S3, Dosen, dll.) |
+| `judul_penelitian` | varchar(500) | Judul penelitian botani |
+| `bidang_penelitian`| varchar(500) | Bidang kajian penelitian |
+| `tanggal_mulai` | date | Tanggal mulai penelitian |
+| `tanggal_selesai` | date | Tanggal perkiraan selesai penelitian |
+| `jumlah_anggota` | int | Jumlah anggota peneliti |
+| `tujuan_penelitian`| text | Tujuan dan luaran hasil penelitian |
+| `surat_pengantar` | text | JSON path dokumen surat izin & CV |
+| `status` | varchar(30) | Status persetujuan (pending, disetujui, dll.) |
+| `catatan_admin` | text | Catatan alasan penolakan/masukan |
+| `status_penelitian`| varchar(30) | Status riset (sedang, selesai) |
+
+---
+
+## 5.2 Demonstrasi
+Tahap demonstrasi memaparkan implementasi nyata perancangan program dalam bentuk kode program dan antarmuka sistem (frontend).
+
+### 5.2.1 Implementasi Perancangan Logika Sistem (Leaflet.js)
+Logika pemrograman sistem dikembangkan menggunakan arsitektur model MVC Laravel, di mana controller bertindak sebagai pengatur logika bisnis dan integrasi pustaka pemetaan Leaflet.js.
+
+#### 5.2.1.1 Implementasi Koneksi Database PostgreSQL
+Koneksi basis data relasional dikonfigurasikan pada berkas environment `.env` dan dibaca secara global oleh kernel Laravel melalui `config/database.php`. Potongan kode konfigurasi database PostgreSQL (`pgsql`) diatur sebagai berikut:
+
+```php
+'pgsql' => [
+    'driver' => 'pgsql',
+    'url' => env('DB_URL'),
+    'host' => env('DB_HOST', '127.0.0.1'),
+    'port' => env('DB_PORT', '5432'),
+    'database' => env('DB_DATABASE', 'webkrsv3'),
+    'username' => env('DB_USERNAME', 'postgres'),
+    'password' => env('DB_PASSWORD', 'secret'),
+    'charset' => env('DB_CHARSET', 'utf8'),
+    'prefix' => '',
+    'prefix_indexes' => true,
+    'search_path' => 'public',
+    'sslmode' => 'prefer',
+],
+```
+
+Konfigurasi ini memungkinkan Eloquent ORM menjalankan operasi kueri spasial dan relasional dengan cepat menggunakan driver PDO PostgreSQL (`pdo_pgsql`).
+
+#### 5.2.1.2 Implementasi Autentikasi dan Otoritas Pengguna
+Autentikasi menggunakan pustaka bawaan Laravel Auth. Keamanan otorisasi hak akses (Role Management) dipisahkan antara peran `admin` dan `user` menggunakan middleware kustom `AdminMiddleware`. Berikut adalah contoh implementasi logika autentikasi login manual pada `AuthController::store`:
+
+```php
+public function store(Request $request)
+{
+    // Validasi input email dan password
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    // Memproses upaya login
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate(); // Mencegah serangan session fixation
+
+        // Pemeriksaan otoritas peran (role)
+        if (Auth::user()->role === 'admin') {
+            return redirect()->intended('/admin/dashboard');
+        }
+
+        return redirect()->intended('/dashboard');
+    }
+
+    // Mengembalikan error jika login gagal
+    return back()->withErrors([
+        'email' => 'Email atau password salah.',
+    ])->onlyInput('email');
+}
+```
+
+#### 5.2.1.3 Implementasi Registrasi Pengguna
+Registrasi pengguna baru dilakukan secara manual melalui `AuthController::storeRegister` yang mengenkripsi password dengan algoritma bcrypt secara otomatis sebelum menyimpannya ke database, kemudian memicu pengiriman email verifikasi:
+
+```php
+public function storeRegister(Request $request)
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:100'],
+        'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
+        'password' => ['required', 'confirmed', 'min:8'],
+    ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'role' => 'user',
+        'password' => Hash::make($request->password), // Enkripsi password bcrypt
+    ]);
+
+    Auth::login($user); // Autologin setelah registrasi
+
+    // Memicu pengiriman email verifikasi secara asinkron
+    $user->sendEmailVerificationNotification();
+
+    return redirect()->route('verification.notice');
+}
+```
+
+---
+
+### 5.2.2 Implementasi Perancangan Interface Web (Frontend)
+Halaman antarmuka dirancang responsif menggunakan Tailwind CSS dan Leaflet.js untuk peta interaktif. Sub-bab ini mendemonstrasikan tampilan utama sistem.
+
+#### 5.2.2.1 Implementasi Halaman Beranda
+Halaman beranda merupakan pintu utama aplikasi. Bagian atas menyajikan navigasi header (Beranda, Profil, Katalog Koleksi, Peta Interaktif, serta tombol Login/Register). Pada bagian utama (hero section) terdapat ringkasan profil Kebun Raya Sambas, visualisasi 4 koleksi tanaman terpopuler, serta peta mini interaktif yang merender data spasial awal.
+
+#### 5.2.2.2 Implementasi Halaman Profil
+Halaman ini menyajikan informasi lengkap UPTD Kebun Raya Sambas untuk kebutuhan edukasi publik. Konten memuat sejarah pendirian kawasan konservasi (sejak tahun 2007 hingga peresmian tahun 2023), visi dan misi organisasi, serta struktur organisasi manajemen UPTD (dari pimpinan hingga staf pelaksana teknis di lapangan).
+
+#### 5.2.2.3 Implementasi Halaman Peta Interaktif
+Halaman ini adalah inti dari visualisasi WebGIS. Merender peta dasar OpenStreetMap secara dinamis menggunakan Leaflet.js. Sistem secara otomatis membaca koordinat bertipe Point, Polyline, dan Polygon dari database dalam format GeoJSON. 
+Fitur pendukung peta ini meliputi:
+- *Color-coded markers*: Warna penanda dibedakan otomatis berdasarkan tipe objek spasial (area koleksi, fasilitas umum, kantor pengelola, pos keamanan).
+- *Popup info*: Mengeklik objek peta akan memunculkan informasi ringkas berupa nama lokasi, deskripsi, koordinat geografis, serta foto lokasi berformat AVIF.
+- *Live Geolocation*: Tombol khusus untuk mendeteksi lokasi GPS terkini perangkat pengguna secara langsung di atas peta (sangat berguna saat pengguna berada di dalam area blank spot Kebun Raya Sambas).
+
+#### 5.2.2.4 Implementasi Halaman Katalog Koleksi Flora
+Halaman ini menyajikan daftar katalog flora secara terstruktur. Pengguna dapat melakukan pencarian cepat menggunakan kata kunci berdasarkan nama lokal tanaman, nama ilmiah (genus/spesies), atau famili. Halaman ini juga dilengkapi penyaringan (*filtering*) berdasarkan kategori klasifikasi tanaman.
+
+#### 5.2.2.5 Implementasi Halaman Detail Koleksi Flora
+Tampilan detail flora menampilkan informasi botani tanaman secara mendalam untuk kebutuhan edukasi dan penelitian. Informasi yang disajikan meliputi nama lokal, foto spesimen resolusi tinggi, deskripsi botani, serta tabel klasifikasi taksonomi botani (Kerajaan, Divisi, Kelas, Order, Famili, Genus, Spesies, serta Otoritas takson).
+
+#### 5.2.2.6 Implementasi Halaman Pendaftaran Pengunjung
+Formulir pendaftaran kunjungan rombongan secara online. Pengguna yang telah terverifikasi dapat menginput data rombongan secara dinamis (nama-nama anggota rombongan beserta kontak WhatsApp dan instansi) yang kemudian dikemas otomatis ke dalam tipe data JSON di database.
+
+#### 5.2.2.7 Implementasi Halaman Pendaftaran Peneliti
+Formulir permohonan izin riset botani bagi instansi eksternal (peneliti/mahasiswa). Halaman ini menyediakan form isian detail riset (institusi asal, judul, bidang riset, rentang tanggal pelaksanaan) serta fitur unggah dokumen (Surat Izin Instansi & CV) yang akan divalidasi langsung oleh sistem.
+
+#### 5.2.2.8 Implementasi Halaman Dashboard User
+Halaman dasbor pribadi pengunjung/peneliti. Pengguna dapat melihat daftar seluruh pengajuan kunjungan atau permohonan riset yang pernah diajukan beserta status persetujuannya. Selama status pendaftaran masih berstatus `pending`, pengguna diberikan akses tombol edit untuk mengubah data atau menghapus/membatalkan pendaftaran.
+
+#### 5.2.2.9 Implementasi Halaman Dashboard Admin
+Halaman panel kendali utama administrator. Menampilkan visualisasi ringkasan statistik operasional berupa kartu grafik (*stat cards*) interaktif (total user terdaftar, total koleksi tanaman, total marker peta) serta grafik diagram status pendaftaran kunjungan dan perkembangan riset peneliti.
+
+#### 5.2.2.10 Implementasi Halaman Kelola Pengguna
+Panel manajemen data pengguna untuk admin. Admin dapat melihat seluruh daftar akun yang terdaftar di sistem, memantau metode autentikasi login (manual / Google), serta mengubah data pengguna, menambahkan staf admin baru, atau menghapus akun user.
+
+#### 5.2.2.11 Implementasi Halaman Kelola Koleksi Flora
+Panel manajemen koleksi tanaman. Admin dapat menambah koleksi flora baru dengan menginput detail data taksonomi botani secara dinamis, mengunggah foto spesimen (yang otomatis dikompres ke AVIF), serta mengaitkan koleksi ke kategori tertentu.
+
+#### 5.2.2.12 Implementasi Halaman Kelola Peta/Markers
+Panel visual manajemen spasial peta. Admin dapat menambahkan marker penanda baru langsung dengan mengeklik dan menggambar di peta interaktif Leaflet yang disediakan di panel admin. Sistem secara otomatis merekam koordinat geografis tersebut menjadi string GeoJSON untuk disimpan ke basis data PostgreSQL.
+
+#### 5.2.2.13 Implementasi Halaman Kelola Pendaftaran Pengunjung
+Halaman verifikasi pendaftaran kunjungan rombongan. Admin dapat memeriksa data rombongan yang masuk, kemudian mengeklik tombol setujui (*approve*) atau tolak (*reject*). Halaman ini dilengkapi fitur ekspor rekapitulasi data pendaftar rombongan ke format CSV/Excel.
+
+#### 5.2.2.14 Implementasi Halaman Kelola Pendaftaran Peneliti
+Halaman verifikasi perizinan riset peneliti. Admin dapat mengunduh dan memeriksa file dokumen Surat Izin dan CV yang diunggah peneliti, memperbarui status perizinan, menuliskan catatan masukan admin, serta memantau progres pelaksanaan penelitian (mengubah status riset dari *sedang berjalan* menjadi *selesai*).
+
+---
+
+## 5.3 Evaluasi
+Evaluasi dilakukan untuk menjamin keandalan sistem yang dibangun dari aspek internal kode pemrograman dan fungsionalitas antarmuka.
+
+### 5.3.1 Pengujian White-Box (Basis Path Testing)
+Pengujian white-box difokuskan pada analisis logika internal alur eksekusi kode menggunakan metode Basis Path Testing. Pengujian dilakukan dengan memetakan potongan kode ke dalam Control Flow Graph (CFG), menghitung kompleksitas siklomatis ($V(G)$), menentukan jalur independen (*independent paths*), dan menguji kasus uji (*test cases*).
+
+#### Kasus 1: Evaluasi Logika Autentikasi Login (`AuthController::store`)
+Fungsi `store` pada `AuthController` menangani validasi kredensial login manual, otentikasi kecocokan password, verifikasi role pengguna, dan pengalihan rute.
+
+##### a. Pemetaan Node Control Flow Graph (CFG)
+1. **Node 1**: Inisialisasi request parameter login.
+2. **Node 2**: Menjalankan kueri validasi input `email` dan `password`.
+3. **Node 3**: Percabangan `if (Auth::attempt($credentials))` (Otentikasi).
+4. **Node 4**: Melakukan regenerasi session ID (`session()->regenerate()`).
+5. **Node 5**: Percabangan `if (Auth::user()->role === 'admin')` (Verifikasi Peran).
+6. **Node 6**: Redirect ke halaman admin `/admin/dashboard`.
+7. **Node 7**: Redirect ke halaman dashboard user `/dashboard`.
+8. **Node 8**: Mengembalikan error ke halaman login `back()->withErrors()`.
+9. **Node 9**: Terminasi/Exit fungsi.
+
+##### b. Hubungan Alir Kendali antar Node (Edges)
+1 -> 2 -> 3  
+3 -> 4 (Kondisi Otentikasi True)  
+3 -> 8 (Kondisi Otentikasi False)  
+4 -> 5  
+5 -> 6 (Kondisi Role Admin True)  
+5 -> 7 (Kondisi Role Admin False)  
+6 -> 9  
+7 -> 9  
+8 -> 9  
+
+##### c. Representasi Visual Control Flow Graph (CFG)
+```mermaid
+graph TD
+    n1((1)) --> n2((2))
+    n2 --> n3{3}
+    n3 -->|True| n4((4))
+    n3 -->|False| n8((8))
+    n4 --> n5{5}
+    n5 -->|True| n6((6))
+    n5 -->|False| n7((7))
+    n6 --> n9((9))
+    n7 --> n9
+    n8 --> n9
+```
+
+##### d. Perhitungan Kompleksitas Siklomatis ($V(G)$)
+Perhitungan nilai $V(G)$ menggunakan rumus berdasarkan jumlah Edge ($E$) dan Node ($N$):
+$E = 9$  
+$N = 9$  
+$V(G) = E - N + 2 = 9 - 9 + 2 = 2$  
+
+Perhitungan berdasarkan jumlah Predicate Node ($P$, yaitu titik keputusan bercabang 3 dan 5):
+$P = 2$  
+$V(G) = P + 1 = 2 + 1 = 3$  
+
+Perhitungan secara konsisten menghasilkan nilai kompleksitas siklomatis **$V(G) = 3$**, yang menandakan terdapat tepat 3 jalur independen yang wajib diuji.
+
+##### e. Penentuan Jalur Independen (Independent Paths)
+- **Jalur 1 (Kredensial Salah)**: Node 1 -> 2 -> 3 -> 8 -> 9.
+- **Jalur 2 (Login Sukses - Role Admin)**: Node 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 9.
+- **Jalur 3 (Login Sukses - Role User)**: Node 1 -> 2 -> 3 -> 4 -> 5 -> 7 -> 9.
+
+##### f. Matriks Kasus Uji (Test Cases)
+| Kasus Uji | Jalur | Input (Email, Password) | Output Harapan | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | `users` | `id`<br>`name`<br>`email`<br>`role`<br>`email_verified_at`<br>`password`<br>`google_id`<br>`remember_token`<br>`created_at`<br>`updated_at` | BigInt<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Timestamp<br>Varchar(255)<br>Varchar(255)<br>Varchar(100)<br>Timestamp<br>Timestamp | PK, Auto Increment<br>Nama akun user/admin<br>Email unik user/admin<br>Role ('admin' / 'user')<br>Waktu verifikasi email<br>Hash password bcrypt<br>Google OAuth ID<br>Token remember login<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 2 | `categories` | `id`<br>`name`<br>`created_at`<br>`updated_at` | BigInt<br>Varchar(255)<br>Timestamp<br>Timestamp | PK, Auto Increment<br>Nama kategori flora<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 3 | `koleksis` | `id`<br>`category_id`<br>`name`<br>`genus`<br>`species`<br>`family`<br>`description`<br>`photo`<br>`coordinates`<br>`created_at`<br>`updated_at` | BigInt<br>BigInt<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Text<br>Varchar(255)<br>Varchar(255)<br>Timestamp<br>Timestamp | PK, Auto Increment<br>FK ke `categories`<br>Nama lokal flora<br>Genus taksonomi flora<br>Spesies taksonomi flora<br>Famili taksonomi flora<br>Deskripsi ilmiah flora<br>Nama berkas foto AVIF<br>Koordinat lokasi flora<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 4 | `map_markers` | `id`<br>`name`<br>`type`<br>`color`<br>`photo`<br>`geom`<br>`created_at`<br>`updated_at` | BigInt<br>Varchar(255)<br>Varchar(255)<br>Varchar(50)<br>Varchar(255)<br>Text<br>Timestamp<br>Timestamp | PK, Auto Increment<br>Nama lokasi marker<br>Tipe area (Point/Polygon/dll)<br>Warna representasi marker<br>Foto lokasi marker<br>GeoJSON spasial marker<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 5 | `pendaftaran_pengunjungs` | `id`<br>`user_id`<br>`nama_lengkap`<br>`no_identitas`<br>`nomor_hp`<br>`tanggal_kunjungan`<br>`jumlah_rombongan`<br>`keperluan`<br>`instansi`<br>`rombongan_details`<br>`status`<br>`created_at`<br>`updated_at` | BigInt<br>BigInt<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Date<br>Integer<br>Text<br>Varchar(255)<br>Text (JSON)<br>Varchar(50)<br>Timestamp<br>Timestamp | PK, Auto Increment<br>FK ke `users` (nullable)<br>Nama perwakilan rombongan<br>NIK/No Identitas perwakilan<br>No HP perwakilan rombongan<br>Tanggal kunjungan umum<br>Total jumlah anggota rombongan<br>Tujuan/keperluan berkunjung<br>Instansi asal rombongan<br>JSON nama & HP rombongan<br>Status ('pending'/'disetujui'/'ditolak')<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 6 | `pendaftaran_penelitis` | `id`<br>`user_id`<br>`nama_lengkap`<br>`no_identitas`<br>`nomor_hp`<br>`institusi`<br>`program_studi`<br>`jenjang`<br>`judul_penelitian`<br>`bidang_penelitian`<br>`tanggal_mulai`<br>`tanggal_selesai`<br>`jumlah_anggota`<br>`tujuan_penelitian`<br>`surat_pengantar`<br>`status`<br>`created_at`<br>`updated_at` | BigInt<br>BigInt<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Varchar(255)<br>Varchar(50)<br>Varchar(500)<br>Varchar(500)<br>Date<br>Date<br>Integer<br>Text<br>Text (JSON)<br>Varchar(50)<br>Timestamp<br>Timestamp | PK, Auto Increment<br>FK ke `users` (nullable)<br>Nama peneliti utama<br>NIK/No Identitas peneliti<br>No HP peneliti utama<br>Institusi/Kampus asal peneliti<br>Program studi peneliti<br>Jenjang ('S1'/'S2'/'Dosen'/dll)<br>Judul riset penelitian<br>Bidang riset penelitian<br>Tanggal mulai penelitian<br>Tanggal selesai penelitian<br>Total jumlah anggota peneliti<br>Tujuan pelaksanaan penelitian<br>JSON jalur berkas CV & Izin<br>Status ('pending'/'disetujui'/'ditolak')<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 7 | `koleksi_locations` | `id`<br>`koleksi_id`<br>`location_description`<br>`created_at`<br>`updated_at` | BigInt<br>BigInt<br>Text<br>Timestamp<br>Timestamp | PK, Auto Increment<br>FK ke `koleksis`<br>Deskripsi lokasi fisik tanaman<br>Waktu baris dibuat<br>Waktu baris diperbarui |
-| 8 | `koleksi_map_marker` | `koleksi_id`<br>`map_marker_id` | BigInt<br>BigInt | Composite PK & FK ke `koleksis`<br>Composite PK & FK ke `map_markers` |
+| TC-WB-01-01 | Jalur 1 | Email/Password tidak cocok / salah | Kembali ke form + Pesan Error "Email atau password salah." | Lolos |
+| TC-WB-01-02 | Jalur 2 | admin@kebunrayasambas.go.id, pass: admin123 | Login berhasil, redirect ke `/admin/dashboard` | Lolos |
+| TC-WB-01-03 | Jalur 3 | pengunjung@gmail.com, pass: user123 | Login berhasil, redirect ke `/dashboard` | Lolos |
 
-Penjelasan mengenai struktur penyimpanan data inti sistem WebGIS berdasarkan Tabel 5.2:
-1. Tabel `users` menyimpan kredensial akun pengguna, termasuk token unik dari Google ID untuk fungsionalitas Google Sign-In, serta kolom `role` untuk membedakan hak akses admin dan user.
-2. Tabel `categories` menyimpan nama-nama kelompok klasifikasi tanaman koleksi sebagai data master.
-3. Tabel `koleksis` menyimpan data spesimen flora lengkap dengan klasifikasi taksonominya, deskripsi ilmiah, nama berkas foto tanaman, serta koordinat lokasi penanamannya.
-4. Tabel `map_markers` menyimpan data spasial geografis koordinat penanda lokasi. Kolom `geom` bertipe data khusus spasial (seperti teks JSON/Geometry) untuk menampung koordinat spasial berbentuk titik, garis, maupun area poligon batas wilayah.
-5. Tabel `pendaftaran_pengunjungs` dan `pendaftaran_penelitis` menyimpan data transaksi pendaftaran rencana kunjungan dan izin penelitian. Kolom status bertipe string untuk menyimpan status validasi ('pending', 'disetujui', 'ditolak').
-6. Tabel `koleksi_map_marker` bertindak sebagai tabel penghubung (*pivot table*) yang menjembatani hubungan banyak-ke-banyak (*many-to-many*) antara data katalog flora dengan titik spasial koordinatnya di peta.
-7. Tabel `koleksi_locations` menyimpan catatan rinci deskripsi lokasi penempatan tanaman di area fisik kebun raya.
+---
 
-##### 5.1.4.3 Diagram Hubungan Entitas (ERD)
-Diagram Hubungan Entitas (ERD) menunjukkan hubungan keterkaitan logis dan derajat relasi (*cardinality*) antar-tabel relasional di dalam basis data PostgreSQL pada sistem WebGIS. Hubungan ini memetakan bagaimana data master, data transaksi pendaftaran, dan data koordinat spasial peta Leaflet terintegrasi dalam sistem.
+#### Kasus 2: Evaluasi Logika Menyimpan Pendaftaran Pengunjung (`PendaftaranController::storePengunjung`)
+Fungsi `storePengunjung` bertugas memvalidasi input rombongan, mengkalkulasi total jumlah anggota rombongan, dan menyimpan data ke database.
 
-Visualisasi dari diagram relasi database ini disajikan pada Gambar 5.21.
-![Gambar 5.21 Entity Relationship Diagram Database WebGIS](public/images/erd_database.png)
+##### a. Pemetaan Node Control Flow Graph (CFG)
+1. **Node A**: Menerima request input pendaftaran rombongan.
+2. **Node B**: Percabangan validasi kriteria input (nama, nomor HP, tanggal kunjungan).
+3. **Node C**: Menghitung jumlah rombongan dinamis (`1 + count($rombonganDetails)`).
+4. **Node D**: Melakukan kueri penyimpanan database `PendaftaranPengunjung::create()`.
+5. **Node E**: Mengembalikan respon redirect ke dasbor dengan flash success.
+6. **Node F**: Mengembalikan error validasi ke halaman form.
+7. **Node G**: Terminasi/Exit fungsi.
 
-Deskripsi relasi utama berdasarkan Gambar 5.21 adalah sebagai berikut:
-1. Hubungan satu-ke-banyak (*one-to-many*) terjalin antara tabel `users` dengan tabel `pendaftaran_pengunjungs` dan `pendaftaran_penelitis`. Satu pengguna dapat memiliki banyak data riwayat pendaftaran kunjungan umum maupun permohonan penelitian di Kebun Raya Sambas.
-2. Hubungan satu-ke-banyak (*one-to-many*) terjalin antara tabel `categories` dengan tabel `koleksis`. Satu kategori kelompok tanaman dapat mengelompokkan banyak data tanaman koleksi.
-3. Hubungan satu-ke-satu (*one-to-one*) terjalin antara tabel `koleksis` dengan tabel `koleksi_locations`. Setiap spesimen koleksi flora memiliki satu deskripsi lokasi penempatan fisik yang spesifik.
-4. Hubungan banyak-ke-banyak (*many-to-many*) terjalin antara tabel `koleksis` dengan tabel `map_markers` yang dijembatani oleh tabel pivot `koleksi_map_marker`. Hubungan ini memungkinkan satu tanaman koleksi dikaitkan dengan beberapa penanda koordinat lokasi di peta Leaflet, serta satu marker lokasi dapat menandai lokasi keberadaan beberapa tanaman koleksi sekaligus.
+##### b. Hubungan Alir Kendali antar Node (Edges)
+A -> B  
+B -> C (Validasi Sukses)  
+B -> F (Validasi Gagal)  
+C -> D -> E -> G  
+F -> G  
 
-Penerapan rancangan database yang terstruktur ini memungkinkan sistem WebGIS untuk mengelola pencarian katalog flora secara cepat, merender koordinat spasial peta secara akurat, serta memproses administrasi transaksi pendaftaran pengunjung dan peneliti secara terintegrasi dan aman.
+##### c. Representasi Visual Control Flow Graph (CFG)
+```mermaid
+graph TD
+    nA((A)) --> nB{B}
+    nB -->|Valid| nC((C))
+    nB -->|Invalid| nF((F))
+    nC --> nD((D))
+    nD --> nE((E))
+    nE --> nG((G))
+    nF --> nG
+```
+
+##### d. Perhitungan Kompleksitas Siklomatis ($V(G)$)
+$E = 6$  
+$N = 7$  
+$V(G) = E - N + 2 = 6 - 7 + 2 = 1$ (Kalkulasi Node sederhana).  
+Menggunakan rumus Predicate Node ($P = 1$, yaitu Node B):  
+$V(G) = P + 1 = 1 + 1 = 2$.  
+Diperoleh nilai **$V(G) = 2$** jalur independen yang wajib diuji.
+
+##### e. Penentuan Jalur Independen (Independent Paths)
+- **Jalur 1 (Validasi Gagal)**: Node A -> B -> F -> G.
+- **Jalur 2 (Pendaftaran Sukses)**: Node A -> B -> C -> D -> E -> G.
+
+##### f. Matriks Kasus Uji (Test Cases)
+| Kasus Uji | Jalur | Input (Tanggal, HP, Rombongan) | Output Harapan | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-WB-02-01 | Jalur 1 | Tanggal: kemarin, HP: salahformat | Validasi gagal, kembali ke form + error | Lolos |
+| TC-WB-02-02 | Jalur 2 | Tanggal: besok, HP: 081234567890, Rombongan: 3 orang | Berhasil disimpan ke DB dengan status 'pending', redirect ke dasbor | Lolos |
+
+---
+
+## 5.4 Komunikasi
+Tahap komunikasi merupakan langkah pengenalan dan pelatihan penggunaan Sistem WebGIS Berbasis PWA Pada Kebun Raya Sambas kepada para pemangku kepentingan (*stakeholders*). Sosialisasi difokuskan pada dua kategori pengguna:
+
+a. **Sosialisasi Sisi Administrator (Staff Kantor Pengelola UPTD)**:
+   Pelatihan intensif dilakukan untuk membekali staff admin UPTD Kebun Raya Sambas mengenai cara mengoperasikan panel admin. Materi mencakup penambahan titik/area spasial di peta Leaflet secara presisi, pengunggahan foto spesimen flora yang secara otomatis dioptimalkan ke format AVIF, serta prosedur verifikasi berkas izin penelitian dan verifikasi kunjungan rombongan pengunjung. Staf administrasi kini dapat beralih sepenuhnya dari pencatatan logbook fisik konvensional ke database digital.
+
+b. **Sosialisasi Sisi Pengguna (Pengunjung Umum & Peneliti)**:
+   Pengenalan fitur Progressive Web App (PWA) kepada pengunjung di kawasan Kebun Raya Sambas. Pengunjung diberikan panduan visual untuk menginstal aplikasi ke layar utama smartphone mereka (*Add to Home Screen*) tanpa melalui Google Play Store. Melalui sosialisasi ini, pengunjung memahami manfaat caching offline, di mana mereka tetap dapat membuka katalog flora dan melacak posisi GPS mereka di peta interaktif meskipun berada di area blank spot konservasi hutan Kebun Raya Sambas yang minim sinyal internet.
+
+

@@ -7,13 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Kebun Raya Sambas') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS_square.png') }}" />
 
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS.png') }}" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />
 
@@ -61,9 +61,14 @@
 
         {{-- Static sidebar for lg+ (always visible) --}}
         <aside class="hidden lg:flex w-64 flex-col border-r border-zinc-200/80 bg-white/70 backdrop-blur-xl h-full shadow-sm relative z-20 shrink-0">
-            <div class="h-16 flex items-center px-5 border-b border-zinc-200/80 gap-2 shrink-0">
-                <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-7 w-auto">
-                <span class="font-bold text-xs sm:text-sm tracking-wider font-space text-zinc-900 uppercase">KEBUN RAYA SAMBAS</span>
+            <div class="h-16 flex items-center px-5 border-b border-zinc-200/80 gap-2.5 shrink-0">
+                <div class="flex items-center justify-center p-1 bg-zinc-100 border border-zinc-200/60 rounded-xl">
+                    <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-heading font-extrabold tracking-wider text-[10px] sm:text-xs text-zinc-900 leading-none">KEBUN RAYA</span>
+                    <span class="text-[8px] sm:text-[9px] tracking-widest font-bold text-emerald-600 uppercase leading-none mt-0.5">SAMBAS</span>
+                </div>
             </div>
             <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
                 {{ $sidebar ?? '' }}
@@ -89,9 +94,14 @@
                style="display: none;">
 
             <div class="h-16 flex items-center justify-between px-5 border-b border-zinc-200/80 shrink-0">
-                <div class="flex items-center gap-2">
-                    <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-7 w-auto">
-                    <span class="font-bold text-xs sm:text-sm tracking-wider font-space text-zinc-900 uppercase">KEBUN RAYA SAMBAS</span>
+                <div class="flex items-center gap-2.5">
+                    <div class="flex items-center justify-center p-1 bg-zinc-100 border border-zinc-200/60 rounded-xl">
+                        <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-heading font-extrabold tracking-wider text-[10px] sm:text-xs text-zinc-900 leading-none">KEBUN RAYA</span>
+                        <span class="text-[8px] sm:text-[9px] tracking-widest font-bold text-emerald-600 uppercase leading-none mt-0.5">SAMBAS</span>
+                    </div>
                 </div>
                 <button @click="sidebarOpen = false"
                         class="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-all focus:outline-none"

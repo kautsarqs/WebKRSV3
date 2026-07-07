@@ -9,14 +9,11 @@
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS.png') }}" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-white text-zinc-900 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500/30" 
@@ -54,7 +51,30 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registered successfully!', reg))
+                    .then(reg => {
+                        console.log('Service Worker registered successfully!', reg);
+                        
+                        // Sync authentication state with service worker cache
+                        const currentUserId = @json(Auth::id() ?? 'guest');
+                        const cachedUserId = localStorage.getItem('auth_user_id');
+                        
+                        if (cachedUserId && cachedUserId !== String(currentUserId)) {
+                            localStorage.setItem('auth_user_id', currentUserId);
+                            
+                            // Send message to Service Worker to clear the cached pages
+                            if (navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_PAGE_CACHE' });
+                                console.log('[Auth Sync] Sent CLEAR_PAGE_CACHE to Service Worker');
+                                
+                                // Reload page to fetch correct state and cache it
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 50);
+                            }
+                        } else if (!cachedUserId) {
+                            localStorage.setItem('auth_user_id', currentUserId);
+                        }
+                    })
                     .catch(err => console.error('Service Worker registration failed:', err));
             });
         }

@@ -20,10 +20,16 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
         <a href="/" 
-           class="flex items-center gap-2 sm:gap-3 font-heading font-bold text-sm sm:text-base lg:text-xl tracking-wider shrink-0 transition-colors duration-300 {{ $isHome ? 'text-white' : 'text-zinc-900' }}"
+           class="flex items-center gap-2.5 sm:gap-3.5 tracking-wider shrink-0 transition-colors duration-300 {{ $isHome ? 'text-white' : 'text-zinc-900' }}"
            :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900' : 'text-white'">
-            <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-8 sm:h-10 lg:h-12 w-auto">
-            <span class="pt-1 lg:pt-2">KEBUN RAYA SAMBAS</span>
+            <div class="relative flex items-center justify-center p-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-xs transition-all duration-300 hover:scale-105"
+                 :class="(scrolled || mobileMenuOpen) ? 'bg-zinc-100 border-zinc-200/60' : 'bg-white/10 border-white/20'">
+                <img src="{{ asset('storage/images/logoKRS_square.png') }}" alt="Logo Kebun Raya Sambas" class="h-7 sm:h-9 lg:h-10 w-auto object-contain" width="40" height="40">
+            </div>
+            <div class="flex flex-col">
+                <span class="font-heading font-black tracking-widest text-xs sm:text-sm lg:text-base leading-none">KEBUN RAYA</span>
+                <span class="text-[8px] sm:text-[9px] tracking-[0.25em] font-bold text-emerald-500 uppercase leading-none mt-1">SAMBAS</span>
+            </div>
         </a>
 
         {{-- Tampilkan menu desktop hanya di ukuran Large (lg) ke atas agar di tablet tidak berantakan --}}
@@ -137,7 +143,7 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
             <div class="lg:hidden flex items-center">
                 <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="transition-colors duration-300 focus:outline-none {{ $isHome ? 'text-white hover:text-zinc-200' : 'text-zinc-900 hover:text-zinc-600' }}" 
                     :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900 hover:text-zinc-600' : 'text-white hover:text-zinc-200'"
-                    aria-controls="mobile-menu" aria-expanded="false">
+                    aria-controls="mobile-menu" aria-expanded="false" aria-label="Buka menu">
                     <span class="sr-only">Buka menu utama</span>
                     {{-- Ikon Hamburger --}}
                     <svg x-show="!mobileMenuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">

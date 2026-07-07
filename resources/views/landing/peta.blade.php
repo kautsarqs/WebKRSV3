@@ -64,6 +64,37 @@
     }
     .map-wrapper { position: relative; }
     
+    @media (max-width: 640px) {
+        .map-left-controls {
+            top: 0.5rem !important;
+            left: 0.5rem !important;
+            max-width: 140px !important;
+        }
+        .map-controls {
+            top: 0.5rem !important;
+            right: 0.5rem !important;
+        }
+        .map-control-btn, .map-left-controls button {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 9px !important;
+            border-radius: 0.75rem !important;
+            min-width: auto !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .map-control-btn span span, 
+        .map-control-btn svg:last-child,
+        .map-left-controls button span {
+            display: none !important;
+        }
+        .map-left-controls {
+            max-width: 45px !important;
+        }
+        .map-controls {
+            max-width: 45px !important;
+        }
+    }
+    
     /* Premium Leaflet Popup styles */
     .leaflet-popup-content-wrapper { 
         padding: 0; 
@@ -144,7 +175,7 @@
 <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-10">
         <h1 class="font-heading text-4xl font-bold mb-2">Peta Digital Kawasan</h1>
-        <p class="text-zinc-500">Sistem Informasi Geografis (WebGIS) persebaran koleksi tumbuhan.</p>
+        <p class="text-zinc-650 font-normal">Sistem Informasi Geografis (WebGIS) persebaran koleksi tumbuhan.</p>
     </div>
 
     <div class="p-2.5 bg-white border border-zinc-200 rounded-[2.5rem] shadow-2xl shadow-zinc-250/30">
@@ -195,7 +226,7 @@
                             <h3 class="font-heading font-extrabold text-zinc-900 text-base leading-tight" x-text="destinationName">Nama Bangunan</h3>
                         </div>
                     </div>
-                    <button @click="cancelNavigation()" class="p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90">
+                    <button @click="cancelNavigation()" class="p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90" aria-label="Batalkan Navigasi">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
@@ -225,33 +256,179 @@
                 </div>
             </div>
             
-            <!-- Left Controls: GPS & Offline Caching -->
-            <div class="map-left-controls">
-                <!-- GPS status -->
-                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-1">
-                    <span class="text-[9px] font-bold text-zinc-450 uppercase tracking-widest">Status GPS</span>
-                    <div id="gps-status">
-                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
-                            GPS Menghubungkan...
-                        </span>
+            <!-- Left Controls: Settings Modal Trigger -->
+            <div class="map-left-controls" 
+                 x-data="{ 
+                     showSettingsModal: false, 
+                     showNotification: false,
+                     notificationTitle: '',
+                     notificationMessage: '',
+                     notificationType: 'info',
+                     confirmCallback: null
+                 }"
+                 @map-alert.window="
+                     notificationTitle = $event.detail.title;
+                     notificationMessage = $event.detail.message;
+                     notificationType = $event.detail.type;
+                     confirmCallback = $event.detail.confirmCallback;
+                     showNotification = true;
+                 ">
+                <!-- Trigger Button -->
+                <button @click="showSettingsModal = true" 
+                        class="px-3 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-md flex items-center gap-1.5 text-[10px] font-bold text-zinc-700 hover:bg-white transition-all cursor-pointer select-none">
+                    <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Pengaturan Peta</span>
+                </button>
+
+                <!-- Settings Modal (Responsive) -->
+                <div x-show="showSettingsModal" 
+                     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     x-cloak>
+                    
+                    <!-- Overlay -->
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="showSettingsModal = false"></div>
+
+                    <!-- Modal Card -->
+                    <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-200/50 p-6 flex flex-col gap-4 text-zinc-800 transform transition-all duration-300"
+                         x-show="showSettingsModal"
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                        
+                        <!-- Header -->
+                        <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <h3 class="font-heading font-bold text-base text-zinc-900">Pengaturan Peta</h3>
+                            </div>
+                            <button @click="showSettingsModal = false" class="text-zinc-400 hover:text-zinc-600 transition-colors p-1 rounded-lg hover:bg-zinc-100 cursor-pointer" aria-label="Tutup Pengaturan">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="flex flex-col gap-4 py-2">
+                            <!-- GPS Status Section -->
+                            <div class="flex flex-col gap-1.5">
+                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Status GPS</span>
+                                <div id="gps-status" class="bg-zinc-50 border border-zinc-100 rounded-2xl p-3.5 flex items-center justify-between">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
+                                        GPS Menghubungkan...
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Offline Caching Section -->
+                            <div class="flex flex-col gap-1.5">
+                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Peta Offline</span>
+                                <div class="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 flex flex-col gap-3">
+                                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer shadow-sm hover:shadow-md">
+                                        Unduh Peta
+                                    </button>
+                                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer">
+                                        Hapus Cache
+                                    </button>
+                                    
+                                    <div id="download-progress" class="hidden mt-1">
+                                        <div class="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden">
+                                            <div id="progress-bar" class="bg-emerald-500 h-1.5 w-0 transition-all duration-150"></div>
+                                        </div>
+                                        <p id="progress-text" class="text-[9px] text-zinc-500 mt-1.5 text-center font-semibold"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Cache Map offline -->
-                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl p-3 shadow-md flex flex-col gap-2">
-                    <span class="text-[9px] font-bold text-zinc-450 uppercase tracking-widest">Peta Offline</span>
-                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-1.5 px-2.5 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-[9px] font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer">
-                        Unduh Peta
-                    </button>
-                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-1 px-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-[9px] font-bold transition-all duration-200 cursor-pointer">
-                        Hapus Cache
-                    </button>
+                <!-- Custom Alert/Confirm Modal -->
+                <div x-show="showNotification" 
+                     class="fixed inset-0 z-[10005] flex items-center justify-center p-4"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     x-cloak>
                     
-                    <div id="download-progress" class="hidden">
-                        <div class="w-full bg-zinc-100 rounded-full h-1 mt-1 overflow-hidden">
-                            <div id="progress-bar" class="bg-emerald-500 h-1 w-0 transition-all duration-150"></div>
+                    <!-- Overlay -->
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="if (notificationType !== 'confirm') showNotification = false"></div>
+
+                    <!-- Card -->
+                    <div class="relative w-full max-w-xs bg-white rounded-3xl shadow-2xl p-6 flex flex-col gap-4 text-center text-zinc-800"
+                         x-show="showNotification"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95">
+                        
+                        <!-- Icon based on type -->
+                        <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center shadow-inner"
+                             :class="{
+                                 'bg-emerald-50 text-emerald-600': notificationType === 'success',
+                                 'bg-red-50 text-red-600': notificationType === 'error',
+                                 'bg-amber-50 text-amber-600': notificationType === 'confirm' || notificationType === 'warning'
+                             }">
+                            <!-- Success Check Icon -->
+                            <template x-if="notificationType === 'success'">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            </template>
+                            <!-- Error Close Icon -->
+                            <template x-if="notificationType === 'error'">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </template>
+                            <!-- Confirm/Warning Icon -->
+                            <template x-if="notificationType === 'confirm' || notificationType === 'warning'">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            </template>
                         </div>
-                        <p id="progress-text" class="text-[8px] text-zinc-500 mt-1 text-center font-semibold"></p>
+
+                        <div>
+                            <h4 class="font-heading font-bold text-sm text-zinc-900" x-text="notificationTitle"></h4>
+                            <p class="text-xs text-zinc-500 font-inter mt-1.5 leading-relaxed" x-text="notificationMessage"></p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2 mt-2">
+                            <template x-if="notificationType === 'confirm'">
+                                <div class="flex w-full gap-2">
+                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(false);" 
+                                            class="flex-1 py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
+                                        Batal
+                                    </button>
+                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(true);" 
+                                            class="flex-1 py-2.5 px-3 bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
+                                        Ya, Lanjut
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="notificationType !== 'confirm'">
+                                <button @click="showNotification = false" 
+                                        class="w-full py-2.5 px-3 bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
+                                    Oke
+                                </button>
+                            </template>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -385,6 +562,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // Custom URL generator to bypass Leaflet's getTileUrl map-zoom caching bug
+    function getTileUrlForCoords(layer, coords) {
+        var url = layer._url;
+        url = url.replace('{z}', coords.z)
+                 .replace('{x}', coords.x)
+                 .replace('{y}', coords.y);
+        if (url.indexOf('{s}') !== -1 && layer.options.subdomains) {
+            var subdomains = layer.options.subdomains;
+            var index = Math.abs(coords.x + coords.y) % subdomains.length;
+            var s = typeof subdomains === 'string' ? subdomains[index] : subdomains[index];
+            url = url.replace('{s}', s);
+        }
+        return url;
+    }
+
     // Custom Tile Layer to cache map tiles in IndexedDB via localForage
     L.TileLayer.Offline = L.TileLayer.extend({
         getTileKey: function(coords) {
@@ -394,14 +586,12 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         createTile: function(coords, done) {
             var tile = document.createElement('img');
-            var url = this.getTileUrl(coords);
+            var url = getTileUrlForCoords(this, coords);
             var key = this.getTileKey(coords);
 
-            // Cek data cache di IndexedDB
             localforage.getItem(key).then(function(blob) {
                 if (blob) {
                     var objectUrl = URL.createObjectURL(blob);
-                    tile.src = objectUrl;
                     tile.onload = function() {
                         URL.revokeObjectURL(objectUrl);
                         done(null, tile);
@@ -409,6 +599,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     tile.onerror = function() {
                         done(new Error("Gagal render blob tile"), tile);
                     };
+                    tile.src = objectUrl;
                 } else {
                     // Coba unduh jika tidak ada di cache
                     fetch(url)
@@ -419,7 +610,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         .then(function(blob) {
                             localforage.setItem(key, blob);
                             var objectUrl = URL.createObjectURL(blob);
-                            tile.src = objectUrl;
                             tile.onload = function() {
                                 URL.revokeObjectURL(objectUrl);
                                 done(null, tile);
@@ -427,17 +617,28 @@ document.addEventListener("DOMContentLoaded", function () {
                             tile.onerror = function() {
                                 done(new Error("Gagal render downloaded tile"), tile);
                             };
+                            tile.src = objectUrl;
                         })
                         .catch(function(err) {
                             console.warn("Offline fallback ke normal image src:", url);
+                            tile.onload = function() {
+                                done(null, tile);
+                            };
+                            tile.onerror = function() {
+                                done(err, tile);
+                            };
                             tile.src = url;
-                            done(err, tile);
                         });
                 }
             }).catch(function(err) {
                 console.error(err);
+                tile.onload = function() {
+                    done(null, tile);
+                };
+                tile.onerror = function() {
+                    done(err, tile);
+                };
                 tile.src = url;
-                done(err, tile);
             });
 
             return tile;
@@ -458,9 +659,9 @@ document.addEventListener("DOMContentLoaded", function () {
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     // Gunakan Offline Layer untuk melayani tile dengan offline support
-    var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
     var satelliteLayer = L.tileLayer.offline('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 18, attribution: '&copy; Esri', crossOrigin: true });
-    var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
+    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
         maxNativeZoom: 17, 
         maxZoom: 17, 
         attribution: 'Map data: &copy; OpenStreetMap contributors',
@@ -469,6 +670,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     var currentLayer = roadLayer.addTo(map);
+
+    // Auto-clear old corrupted cache from previous buggy version once
+    if (!localStorage.getItem('tile_cache_cleaned_v3')) {
+        localforage.clear().then(function() {
+            localStorage.setItem('tile_cache_cleaned_v3', 'true');
+            if (typeof currentLayer !== 'undefined' && currentLayer.redraw) {
+                currentLayer.redraw();
+            }
+        }).catch(function(err) {
+            console.error("Gagal auto-clear cache:", err);
+        });
+    }
 
     window.switchLayer = function(mode) {
         map.removeLayer(currentLayer);
@@ -592,7 +805,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return tiles;
     }
 
-    function downloadVisibleArea() {
+    window.showMapAlert = function(title, message, type = 'info', confirmCallback = null) {
+        window.dispatchEvent(new CustomEvent('map-alert', {
+            detail: { title: title, message: message, type: type, confirmCallback: confirmCallback }
+        }));
+    };
+
+    window.downloadVisibleArea = function() {
+        // Custom URL generator to bypass Leaflet's getTileUrl map-zoom caching bug
+        function getTileUrlForQueue(layer, tile) {
+            var url = layer._url;
+            url = url.replace('{z}', tile.z)
+                     .replace('{x}', tile.x)
+                     .replace('{y}', tile.y);
+            if (url.indexOf('{s}') !== -1 && layer.options.subdomains) {
+                var subdomains = layer.options.subdomains;
+                var index = Math.abs(tile.x + tile.y) % subdomains.length;
+                var s = typeof subdomains === 'string' ? subdomains[index] : subdomains[index];
+                url = url.replace('{s}', s);
+            }
+            return url;
+        }
+
         var bounds = map.getBounds();
         var currentZoom = map.getZoom();
         var zoomsToDownload = [currentZoom - 1, currentZoom, currentZoom + 1];
@@ -606,78 +840,134 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tiles.length === 0) return;
 
-        if (tiles.length > 250) {
-            var confirmDl = confirm(`Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`);
-            if (!confirmDl) return;
-        }
+        var startDownload = function() {
+            var downloaded = 0;
+            var failed = 0;
+            var progressDiv = document.getElementById('download-progress');
+            var bar = document.getElementById('progress-bar');
+            var text = document.getElementById('progress-text');
+            var btn = document.getElementById('download-btn');
 
-        var downloaded = 0;
-        var progressDiv = document.getElementById('download-progress');
-        var bar = document.getElementById('progress-bar');
-        var text = document.getElementById('progress-text');
-        var btn = document.getElementById('download-btn');
+            progressDiv.classList.remove('hidden');
+            btn.disabled = true;
+            btn.innerText = "Mengunduh...";
 
-        progressDiv.classList.remove('hidden');
-        btn.disabled = true;
-        btn.innerText = "Mengunduh...";
+            function updateProgress() {
+                var totalProcessed = downloaded + failed;
+                var percentage = Math.round((totalProcessed / tiles.length) * 100);
+                bar.style.width = percentage + '%';
+                text.innerText = `Mengunduh: ${totalProcessed}/${tiles.length} (${percentage}%)`;
 
-        function updateProgress() {
-            var percentage = Math.round((downloaded / tiles.length) * 100);
-            bar.style.width = percentage + '%';
-            text.innerText = `Mengunduh: ${downloaded}/${tiles.length} (${percentage}%)`;
-
-            if (downloaded === tiles.length) {
-                setTimeout(function() {
-                    progressDiv.classList.add('hidden');
-                    btn.disabled = false;
-                    btn.innerText = "Unduh Area Peta";
-                    alert("Selesai! Peta berhasil disimpan secara offline.");
-                }, 1000);
-            }
-        }
-
-        tiles.forEach(function(tile) {
-            var url = currentLayer.getTileUrl(tile);
-            var key = currentLayer.getTileKey(tile);
-
-            localforage.getItem(key).then(function(val) {
-                if (val) {
-                    downloaded++;
-                    updateProgress();
-                } else {
-                    fetch(url)
-                        .then(function(r) { return r.blob(); })
-                        .then(function(blob) {
-                            localforage.setItem(key, blob).then(function() {
-                                downloaded++;
-                                updateProgress();
-                            });
-                        })
-                        .catch(function(e) {
-                            downloaded++;
-                            updateProgress();
-                        });
+                if (totalProcessed === tiles.length) {
+                    setTimeout(function() {
+                        progressDiv.classList.add('hidden');
+                        btn.disabled = false;
+                        btn.innerText = "Unduh Peta";
+                        if (downloaded > 0) {
+                            var successMsg = `Selesai! ${downloaded} petak peta berhasil disimpan offline.` + (failed > 0 ? ` (${failed} petak gagal diunduh).` : '');
+                            window.showMapAlert("Unduhan Selesai", successMsg, "success");
+                        } else {
+                            window.showMapAlert("Unduhan Gagal", "Gagal mengunduh peta. Periksa koneksi internet Anda atau coba lagi.", "error");
+                        }
+                    }, 1000);
                 }
-            });
-        });
+            }
+
+            // Implement a queue with concurrency of 3 to avoid rate limits
+            var index = 0;
+            var maxConcurrency = 3;
+            var activeRequests = 0;
+
+            function downloadNext() {
+                if (index >= tiles.length) return;
+
+                var tile = tiles[index++];
+                var url = getTileUrlForQueue(satelliteLayer, tile);
+                var key = satelliteLayer.getTileKey(tile);
+
+                activeRequests++;
+
+                localforage.getItem(key).then(function(val) {
+                    if (val) {
+                        downloaded++;
+                        activeRequests--;
+                        updateProgress();
+                        downloadNext();
+                    } else {
+                        // 50ms delay between fetches to respect tile servers and prevent rate limit blocks
+                        setTimeout(function() {
+                            fetch(url)
+                                .then(function(r) { 
+                                    if (!r.ok) throw new Error("Gagal load tile");
+                                    return r.blob(); 
+                                })
+                                .then(function(blob) {
+                                    return localforage.setItem(key, blob);
+                                })
+                                .then(function() {
+                                    downloaded++;
+                                    activeRequests--;
+                                    updateProgress();
+                                    downloadNext();
+                                })
+                                .catch(function(e) {
+                                    failed++;
+                                    activeRequests--;
+                                    updateProgress();
+                                    downloadNext();
+                                });
+                        }, 50);
+                    }
+                }).catch(function(err) {
+                    failed++;
+                    activeRequests--;
+                    updateProgress();
+                    downloadNext();
+                });
+            }
+
+            for (var i = 0; i < Math.min(maxConcurrency, tiles.length); i++) {
+                downloadNext();
+            }
+        };
+
+        if (tiles.length > 250) {
+            window.showMapAlert(
+                "Konfirmasi Unduhan", 
+                `Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`, 
+                "confirm", 
+                function(approved) {
+                    if (approved) startDownload();
+                }
+            );
+        } else {
+            startDownload();
+        }
     }
 
-    function clearCachedMap() {
-        if (confirm("Hapus semua peta offline yang tersimpan di browser ini?")) {
-            var btn = document.getElementById('clear-btn');
-            btn.disabled = true;
-            btn.innerText = "Menghapus...";
+    window.clearCachedMap = function() {
+        window.showMapAlert(
+            "Hapus Cache Peta",
+            "Apakah Anda yakin ingin menghapus semua peta offline yang tersimpan di browser ini?",
+            "confirm",
+            function(approved) {
+                if (approved) {
+                    var btn = document.getElementById('clear-btn');
+                    btn.disabled = true;
+                    btn.innerText = "Menghapus...";
 
-            localforage.clear().then(function() {
-                alert("Cache dibersihkan.");
-                btn.disabled = false;
-                btn.innerText = "Hapus Cache Peta";
-                currentLayer.redraw();
-            }).catch(function(err) {
-                btn.disabled = false;
-                btn.innerText = "Hapus Cache Peta";
-            });
-        }
+                    localforage.clear().then(function() {
+                        window.showMapAlert("Sukses", "Cache berhasil dibersihkan.", "success");
+                        btn.disabled = false;
+                        btn.innerText = "Hapus Cache";
+                        currentLayer.redraw();
+                    }).catch(function(err) {
+                        btn.disabled = false;
+                        btn.innerText = "Hapus Cache";
+                    });
+                }
+            }
+        );
     }
 
     // --- Auto-download Kebun Raya Sambas tiles on page load (background) ---
@@ -693,8 +983,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         tiles.forEach(function(tile) {
-            var url = roadLayer.getTileUrl(tile);
-            var key = roadLayer.getTileKey(tile);
+            var url = satelliteLayer.getTileUrl(tile);
+            var key = satelliteLayer.getTileKey(tile);
 
             localforage.getItem(key).then(function(val) {
                 if (!val) {

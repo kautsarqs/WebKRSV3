@@ -1,13 +1,16 @@
-const CACHE_NAME = 'krs-cache-v2';
+const CACHE_NAME = 'krs-cache-1783394000';
 const ASSETS_TO_CACHE = [
   '/',
-  '/peta',
-  '/manifest.json',
-  '/storage/images/logoKRS.png',
+  '/build/assets/app-C-XiN5r0.css',
+  '/build/assets/app-CiZ6hk-B.js',
   '/favicon.ico',
+  '/manifest.json',
+  '/peta',
+  '/storage/images/logoKRS.png',
+  '/storage/images/logoKRS_square.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js'
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 ];
 
 // Self-install event
@@ -69,8 +72,9 @@ self.addEventListener('fetch', event => {
       // Return cached response if found, and fetch update in the background
       const fetchPromise = fetch(event.request).then(networkResponse => {
         if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, networkResponse.clone());
+            cache.put(event.request, responseToCache);
           });
         }
         return networkResponse;
@@ -81,4 +85,22 @@ self.addEventListener('fetch', event => {
       return cachedResponse || fetchPromise;
     })
   );
+});
+
+// Listen to message events from the client (clear cache on login/logout)
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'CLEAR_PAGE_CACHE') {
+    caches.open(CACHE_NAME).then(cache => {
+      cache.keys().then(requests => {
+        requests.forEach(request => {
+          const url = new URL(request.url);
+          // Delete cached HTML page routes (which typically don't have a file extension)
+          if (url.pathname === '/' || url.pathname === '/peta' || !url.pathname.includes('.')) {
+            cache.delete(request);
+            console.log('[Service Worker] Cleared cached page:', url.pathname);
+          }
+        });
+      });
+    });
+  }
 });

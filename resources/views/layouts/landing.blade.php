@@ -5,24 +5,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Kebun Raya Sambas')</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <meta name="description" content="Kebun Raya Sambas - Kawasan Konservasi & Pusat Penelitian Flora di Sambas, Kalimantan Barat. Pelestarian keanekaragaman hayati tumbuhan lokal Kalimantan." />
+    <link rel="canonical" href="{{ request()->url() }}" />
+    <meta name="robots" content="index, follow" />
 
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS.png') }}" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        h1, h2, h3, .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+            scroll-behavior: smooth; 
+        }
+        h1, h2, h3, .font-heading { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+            font-weight: 800; 
+        }
         .img-zoom { transition: transform 0.7s ease; }
         .group:hover .img-zoom { transform: scale(1.05); }
     </style>
@@ -61,7 +67,30 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registered successfully!', reg))
+                    .then(reg => {
+                        console.log('Service Worker registered successfully!', reg);
+                        
+                        // Sync authentication state with service worker cache
+                        const currentUserId = @json(Auth::id() ?? 'guest');
+                        const cachedUserId = localStorage.getItem('auth_user_id');
+                        
+                        if (cachedUserId && cachedUserId !== String(currentUserId)) {
+                            localStorage.setItem('auth_user_id', currentUserId);
+                            
+                            // Send message to Service Worker to clear the cached pages
+                            if (navigator.serviceWorker.controller) {
+                                navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_PAGE_CACHE' });
+                                console.log('[Auth Sync] Sent CLEAR_PAGE_CACHE to Service Worker');
+                                
+                                // Reload page to fetch correct state and cache it
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 50);
+                            }
+                        } else if (!cachedUserId) {
+                            localStorage.setItem('auth_user_id', currentUserId);
+                        }
+                    })
                     .catch(err => console.error('Service Worker registration failed:', err));
             });
         }

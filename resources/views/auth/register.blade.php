@@ -29,19 +29,41 @@
                 <p class="text-zinc-300 mt-2 text-sm">Bergabung dengan Kebun Raya Sambas</p>
             </div>
 
-            <form method="POST" action="{{ route('register.store') }}" class="space-y-4">
+            <form method="POST" action="{{ route('register.store') }}" class="space-y-4" novalidate>
                 @csrf
+
+                @if ($errors->any())
+                    <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
+                        <div class="flex items-center gap-2 font-semibold mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                            </svg>
+                            <span>Gagal Mendaftar</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-0.5 text-xs opacity-90 pl-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <div class="space-y-1.5">
                     <label for="name" class="block text-sm font-bold text-zinc-300 font-space pl-1">Nama Lengkap</label>
-                    <input id="name" type="text" name="name" :value="old('name')" required autofocus placeholder="Nama Anda"
-                        class="w-full px-5 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none text-white placeholder-zinc-500 shadow-inner" />
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus placeholder="Nama Anda"
+                        class="w-full px-5 py-3 bg-white/5 border @error('name') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white placeholder-zinc-500 shadow-inner" />
+                    @error('name')
+                        <p class="text-xs text-red-400 mt-1 pl-1 font-medium font-inter">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="space-y-1.5">
                     <label for="email" class="block text-sm font-bold text-zinc-300 font-space pl-1">Email</label>
-                    <input id="email" type="email" name="email" :value="old('email')" required placeholder="nama@contoh.com"
-                        class="w-full px-5 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none text-white placeholder-zinc-500 shadow-inner" />
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required placeholder="nama@contoh.com"
+                        class="w-full px-5 py-3 bg-white/5 border @error('email') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white placeholder-zinc-500 shadow-inner" />
+                    @error('email')
+                        <p class="text-xs text-red-400 mt-1 pl-1 font-medium font-inter">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="space-y-1.5" x-data="{ show: false }">
@@ -56,7 +78,7 @@
                             name="password" 
                             required 
                             autocomplete="new-password"
-                            class="w-full px-5 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none text-white placeholder-zinc-550 shadow-inner pr-12"
+                            class="w-full px-5 py-3 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white placeholder-zinc-550 shadow-inner pr-12"
                         />
                         
                         <button type="button" @click="show = !show" class="absolute right-4 top-3 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
@@ -69,6 +91,9 @@
                             </svg>
                         </button>
                     </div>
+                    @error('password')
+                        <p class="text-xs text-red-400 mt-1 pl-1 font-medium font-inter">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="space-y-1.5" x-data="{ showConfirm: false }">
@@ -82,7 +107,7 @@
                             x-bind:type="showConfirm ? 'text' : 'password'" 
                             name="password_confirmation" 
                             required 
-                            class="w-full px-5 py-3 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none text-white shadow-inner pr-12"
+                            class="w-full px-5 py-3 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12"
                         />
                          <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 top-3 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!showConfirm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">

@@ -23,6 +23,10 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
         ]);
 
         // 2. Coba Login
@@ -50,12 +54,24 @@ class AuthController extends Controller
     }
 
     public function storeRegister(Request $request)
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:100'],
-        'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
-        'password' => ['required', 'confirmed', 'min:8'],
-    ]);
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama maksimal 100 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.string' => 'Email harus berupa teks.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email maksimal 150 karakter.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'password.required' => 'Password wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal terdiri dari 8 karakter.',
+        ]);
 
     $user = User::create([
         'name' => $request->name,
