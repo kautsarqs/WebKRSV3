@@ -105,6 +105,9 @@
         background: white; 
     }
     .leaflet-popup-content { margin: 0 !important; width: 320px !important; line-height: 1.5; }
+    @media (max-width: 640px) {
+        .leaflet-popup-content { width: 250px !important; }
+    }
     .leaflet-popup-tip { background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
     .leaflet-container a.leaflet-popup-close-button { 
         top: 14px; 
@@ -212,45 +215,45 @@
                  x-transition:leave="transition ease-in duration-250"
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 translate-y-12 scale-95"
-                 class="absolute bottom-6 left-1/2 -translate-x-1/2 z-[1001] w-[92%] max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/60 rounded-[2rem] p-5 shadow-2xl flex flex-col gap-4">
+                 class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[1001] w-[88%] sm:w-[92%] max-w-[320px] sm:max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/60 rounded-2xl sm:rounded-[2rem] p-4 sm:p-5 shadow-2xl flex flex-col gap-3 sm:gap-4">
                 
                 <div class="flex items-start justify-between">
-                    <div class="flex items-start gap-3.5">
-                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100/50">
-                            <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <div class="flex items-start gap-3">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100/50 shrink-0">
+                            <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                         <div>
-                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 mb-0.5">
+                            <span class="text-[8px] sm:text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 mb-0.5">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Navigasi Aktif
                             </span>
-                            <h3 class="font-heading font-extrabold text-zinc-900 text-base leading-tight" x-text="destinationName">Nama Bangunan</h3>
+                            <h3 class="font-heading font-extrabold text-zinc-900 text-sm sm:text-base leading-tight line-clamp-1" x-text="destinationName">Nama Bangunan</h3>
                         </div>
                     </div>
-                    <button @click="cancelNavigation()" class="p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90" aria-label="Batalkan Navigasi">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <button @click="cancelNavigation()" class="p-1.5 sm:p-2 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-650 rounded-full transition-all duration-200 hover:rotate-90" aria-label="Batalkan Navigasi">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
                 
                 <div class="h-px bg-zinc-200/60 w-full"></div>
                 
-                <div class="grid grid-cols-2 gap-4 text-zinc-700">
-                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 text-zinc-700">
+                    <div class="flex items-center gap-2.5 sm:gap-3 bg-zinc-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-zinc-100/75">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs shrink-0">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Sisa Jarak</span>
-                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingDistance">---</span>
+                            <span class="text-[7px] sm:text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Sisa Jarak</span>
+                            <span class="font-extrabold text-zinc-900 text-xs sm:text-sm" x-text="remainingDistance">---</span>
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-3 bg-zinc-50/50 p-3 rounded-2xl border border-zinc-100/75">
-                        <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-xs">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="flex items-center gap-2.5 sm:gap-3 bg-zinc-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-zinc-100/75">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Waktu Tempuh</span>
-                            <span class="font-extrabold text-zinc-900 text-sm" x-text="remainingTime">---</span>
+                            <span class="text-[7px] sm:text-[8px] font-bold text-zinc-450 uppercase tracking-wider">Waktu Tempuh</span>
+                            <span class="font-extrabold text-zinc-900 text-xs sm:text-sm" x-text="remainingTime">---</span>
                         </div>
                     </div>
                 </div>
@@ -1444,9 +1447,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 iconAnchor: [11, 11],
                 popupAnchor: [0, -10]
             });
+            var isMobilePopup = window.innerWidth < 640;
             leafletLayer = L.marker([marker.latitude, marker.longitude], { icon: customIcon })
                 .addTo(map)
-                .bindPopup(popupContent, { closeButton: true, maxWidth: 320, minWidth: 300 });
+                .bindPopup(popupContent, { closeButton: true, maxWidth: isMobilePopup ? 260 : 320, minWidth: isMobilePopup ? 240 : 300 });
         } else if (marker.geojson) {
             try {
                 var coordinates = JSON.parse(marker.geojson);

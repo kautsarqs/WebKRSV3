@@ -1,8 +1,8 @@
-const CACHE_NAME = 'krs-cache-1783394000';
+const CACHE_NAME = 'krs-cache-1783397000';
 const ASSETS_TO_CACHE = [
   '/',
-  '/build/assets/app-C-XiN5r0.css',
   '/build/assets/app-CiZ6hk-B.js',
+  '/build/assets/app-x6z_NZ11.css',
   '/favicon.ico',
   '/manifest.json',
   '/peta',
