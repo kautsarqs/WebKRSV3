@@ -681,9 +681,9 @@
                          x-transition:leave-start="opacity-100 scale-100" 
                          x-transition:leave-end="opacity-0 scale-95" 
                          class="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-2xl py-1.5 z-[2000]">
-                        <a @click="selected = 'road'; switchLayer('road'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Default</a>
-                        <a @click="selected = 'satellite'; switchLayer('satellite'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Satelit</a>
-                        <a @click="selected = 'terrain'; switchLayer('terrain'); open = false" href="#" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Lapisan Medan</a>
+                        <button type="button" @click="selected = 'road'; switchLayer('road'); open = false" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition rounded-xl cursor-pointer">Lapisan Default</button>
+                        <button type="button" @click="selected = 'satellite'; switchLayer('satellite'); open = false" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition rounded-xl cursor-pointer">Lapisan Satelit</button>
+                        <button type="button" @click="selected = 'terrain'; switchLayer('terrain'); open = false" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition rounded-xl cursor-pointer">Lapisan Medan</button>
                     </div>
                 </div>
             </div>
@@ -832,7 +832,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Gunakan Offline Layer untuk melayani tile dengan offline support
     var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
-    var satelliteLayer = L.tileLayer.offline('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxNativeZoom: 18, maxZoom: 18, attribution: '&copy; Esri', crossOrigin: true });
+    var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
     var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
         maxNativeZoom: 17, 
         maxZoom: 17, 
