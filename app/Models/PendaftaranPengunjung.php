@@ -20,6 +20,8 @@ class PendaftaranPengunjung extends Model
         'status',
         'instansi',
         'rombongan_details',
+        'catatan_admin',
+        'parent_id',
     ];
 
     protected $casts = [
@@ -30,5 +32,10 @@ class PendaftaranPengunjung extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function editedVersion()
+    {
+        return $this->hasOne(self::class, 'parent_id');
     }
 }

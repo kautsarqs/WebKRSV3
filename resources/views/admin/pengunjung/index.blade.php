@@ -67,7 +67,7 @@
                                 <input type="checkbox" id="check-all" class="rounded border-zinc-300" onchange="toggleAll(this)">
                             </th>
                             <th class="px-6 py-4">Nama Perwakilan</th>
-                            <th class="px-6 py-4">Instansi</th>
+                            <th class="px-6 py-4">Asal Daerah / Instansi</th>
                             <th class="px-6 py-4">Tanggal Kunjungan</th>
                             <th class="px-6 py-4 text-center">Jumlah Rombongan</th>
                             <th class="px-6 py-4">Tujuan</th>
@@ -133,7 +133,6 @@
                                                 class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Hapus
                                         </button>
-                                        {{-- Hidden form for actual delete --}}
                                         <form id="delete-form-{{ $row->id }}" method="POST" action="{{ route('admin.pengunjung.destroy', $row->id) }}" style="display:none;">
                                             @csrf
                                             @method('DELETE')
@@ -146,12 +145,18 @@
                                                 <input type="hidden" name="status" value="disetujui">
                                                 <button type="submit" class="w-full px-2 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Setujui</button>
                                             </form>
-                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" class="col-span-1">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="ditolak">
-                                                <button type="submit" class="w-full px-2 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Tolak</button>
-                                            </form>
+                                            <button type="button"
+                                                    onclick="openTolakPengunjungModal('{{ route('admin.pengunjung.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
+                                                    class="col-span-1 px-2 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                Tolak
+                                            </button>
+                                        @endif
+                                        @if($row->status === 'ditolak')
+                                            <button type="button"
+                                                    onclick="openEditCatatanPengunjungModal('{{ route('admin.pengunjung.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }}, {{ json_encode($row->catatan_admin) }})"
+                                                    class="col-span-2 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                Alasan Penolakan
+                                            </button>
                                         @endif
                                     </div>
                                 </td>
@@ -229,6 +234,29 @@
         </div>
     </div>
 
+    {{-- ===== TOLAK MODAL (Pengunjung) ===== --}}
+    <div id="modal-tolak-pengunjung" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:460px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
+            <p id="modal-tolak-title-pengunjung" style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;font-family:'Space Grotesk',sans-serif;">Tolak Pendaftaran Pengunjung</p>
+            <p id="tolak-subtitle-pengunjung" style="font-size:13px;color:#71717a;margin:0 0 18px 0;">Berikan alasan penolakan.</p>
+            <form id="tolak-form-pengunjung" method="POST" action="">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="status" value="ditolak">
+                <div style="margin-bottom:16px;">
+                    <label style="font-size:12px;font-weight:700;color:#3f3f46;display:block;margin-bottom:6px;">Catatan / Alasan Penolakan</label>
+                    <textarea name="catatan_admin" id="tolak-catatan-pengunjung" rows="4" required
+                              style="width:100%;border:1px solid #e5e5e5;border-radius:12px;padding:10px 14px;font-size:13px;resize:none;box-sizing:border-box;outline:none;"
+                              placeholder="Contoh: Tanggal kunjungan penuh atau keperluan tidak sesuai."></textarea>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button type="button" onclick="closeTolakPengunjungModal()" style="padding:8px 18px;background:#f4f4f5;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#3f3f46;cursor:pointer;">Batal</button>
+                    <button type="submit" id="modal-tolak-submit-btn-pengunjung" style="padding:8px 18px;background:#dc2626;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tolak Permohonan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
     var _deleteTargetId = null;
 
@@ -300,7 +328,7 @@
                     '<div>' +
                     '<div style="font-size:14px;font-weight:700;color:#18181b;">' + (m.nama || '-') + '</div>' +
                     '<div style="font-size:12px;color:#71717a;margin-top:3px;">HP: ' + (m.nomor_hp || '-') + '</div>' +
-                    '<div style="font-size:11px;color:#a1a1aa;margin-top:2px;">Instansi: ' + (m.instansi || '-') + '</div>' +
+                    '<div style="font-size:11px;color:#a1a1aa;margin-top:2px;">Asal Daerah / Instansi: ' + (m.instansi || '-') + '</div>' +
                     '</div>' +
                     '<span style="padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;white-space:nowrap;' +
                     (isPerwakilan ? 'background:#18181b;color:#fff;border-color:#18181b;' : 'background:#fff;color:#52525b;border-color:#e5e5e5;') +
@@ -314,6 +342,27 @@
         document.getElementById('rombongan-modal').style.display = 'none';
     }
 
+    // Tolak Pengunjung Modal
+    function openTolakPengunjungModal(url, nama) {
+        document.getElementById('tolak-form-pengunjung').action = url;
+        document.getElementById('tolak-subtitle-pengunjung').textContent = 'Berikan alasan penolakan untuk pengunjung: ' + nama;
+        document.getElementById('tolak-catatan-pengunjung').value = '';
+        document.getElementById('modal-tolak-title-pengunjung').textContent = 'Tolak Pendaftaran Pengunjung';
+        document.getElementById('modal-tolak-submit-btn-pengunjung').textContent = 'Tolak Pendaftaran';
+        document.getElementById('modal-tolak-pengunjung').style.display = 'flex';
+    }
+    function openEditCatatanPengunjungModal(url, nama, catatan) {
+        document.getElementById('tolak-form-pengunjung').action = url;
+        document.getElementById('tolak-subtitle-pengunjung').textContent = 'Edit alasan penolakan untuk pengunjung: ' + nama;
+        document.getElementById('tolak-catatan-pengunjung').value = catatan || '';
+        document.getElementById('modal-tolak-title-pengunjung').textContent = 'Edit Alasan Penolakan';
+        document.getElementById('modal-tolak-submit-btn-pengunjung').textContent = 'Simpan Perubahan';
+        document.getElementById('modal-tolak-pengunjung').style.display = 'flex';
+    }
+    function closeTolakPengunjungModal() {
+        document.getElementById('modal-tolak-pengunjung').style.display = 'none';
+    }
+
     // Close modals on backdrop click
     document.getElementById('modal-confirm-delete').addEventListener('click', function(e) {
         if (e.target === this) closeConfirmDelete();
@@ -323,6 +372,9 @@
     });
     document.getElementById('rombongan-modal').addEventListener('click', function(e) {
         if (e.target === this) closeRombonganModal();
+    });
+    document.getElementById('modal-tolak-pengunjung').addEventListener('click', function(e) {
+        if (e.target === this) closeTolakPengunjungModal();
     });
     </script>
 </x-dashboard-layout>

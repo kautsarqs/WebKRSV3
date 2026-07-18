@@ -7,12 +7,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Kebun Raya Sambas') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/logoKRS_square.png') }}" />
 
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logoKRS_square.png') }}" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />
@@ -63,7 +63,7 @@
         <aside class="hidden lg:flex w-64 flex-col border-r border-zinc-200/80 bg-white/70 backdrop-blur-xl h-full shadow-sm relative z-20 shrink-0">
             <div class="h-16 flex items-center px-5 border-b border-zinc-200/80 gap-2.5 shrink-0">
                 <div class="flex items-center justify-center p-1 bg-zinc-100 border border-zinc-200/60 rounded-xl">
-                    <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
+                    <img src="{{ asset('images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
                 </div>
                 <div class="flex flex-col">
                     <span class="font-heading font-extrabold tracking-wider text-[10px] sm:text-xs text-zinc-900 leading-none">KEBUN RAYA</span>
@@ -96,7 +96,7 @@
             <div class="h-16 flex items-center justify-between px-5 border-b border-zinc-200/80 shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="flex items-center justify-center p-1 bg-zinc-100 border border-zinc-200/60 rounded-xl">
-                        <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
+                        <img src="{{ asset('images/logoKRS.png') }}" alt="Logo" class="h-6 w-auto object-contain">
                     </div>
                     <div class="flex flex-col">
                         <span class="font-heading font-extrabold tracking-wider text-[10px] sm:text-xs text-zinc-900 leading-none">KEBUN RAYA</span>
@@ -145,6 +145,19 @@
                     </div>
                 </div>
 
+                <!-- Offline Sync Status Badge -->
+                <div class="flex items-center gap-3 shrink-0 mr-2 border-r border-zinc-200/80 pr-4">
+                    <div id="offline-sync-badge" class="hidden flex items-center gap-2">
+                        <span id="offline-sync-count" class="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                        <span id="offline-status-text" class="text-xs font-bold text-zinc-500 hidden sm:inline">Offline</span>
+                        <button id="offline-sync-btn" class="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200" title="Sinkronkan Data Offline">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- User Menu -->
                 <div class="flex items-center gap-3 shrink-0">
                     <div class="relative" x-data="{ open: false }">
@@ -189,5 +202,43 @@
             });
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script src="{{ asset('js/offline-sync.js') }}"></script>
+
+    {{-- ===== SUCCESS REGISTRATION POPUP MODAL (Root Level) ===== --}}
+    @if(session('pendaftaran_sukses'))
+        <div x-data="{ showSuccessRegModal: true }" x-show="showSuccessRegModal" class="fixed inset-0 z-[99999] flex items-center justify-center bg-zinc-950/60 backdrop-blur-sm transition-opacity" x-cloak>
+            <div class="bg-white rounded-3xl p-8 max-w-md w-[90%] border border-zinc-100 shadow-2xl transform transition-all text-center space-y-6 animate-fade-in"
+                 @click.away="showSuccessRegModal = false">
+                
+                {{-- Icon --}}
+                <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100 shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                
+                {{-- Content --}}
+                <div class="space-y-2">
+                    <h3 class="text-xl font-bold text-zinc-900 font-space">Pendaftaran Dikirim!</h3>
+                    <p class="text-sm text-zinc-500 leading-relaxed">
+                        {{ session('pendaftaran_sukses') }}
+                    </p>
+                    <div class="mt-4 p-4 bg-zinc-50 border border-zinc-200/60 rounded-2xl text-left">
+                        <p class="text-xs font-semibold text-zinc-700 flex items-center gap-1.5">
+                            💡 Info Verifikasi:
+                        </p>
+                        <p class="text-[11px] text-zinc-500 mt-1 leading-relaxed">
+                            Mohon tunggu persetujuan dari admin. Anda dapat memantau apakah pendaftaran Anda disetujui atau ditolak secara berkala pada tabel riwayat pendaftaran pada dashboard.
+                        </p>
+                    </div>
+                </div>
+                
+                {{-- Action --}}
+                <button @click="showSuccessRegModal = false"
+                        class="w-full py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-2xl transition-all font-space text-sm">
+                    Mengerti
+                </button>
+            </div>
+        </div>
+    @endif
 </body>
 </html>

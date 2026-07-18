@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Kebun Raya Sambas') }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/logoKRS.png') }}" />
     
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logoKRS_square.png') }}" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />
@@ -45,7 +45,7 @@
     </main>
 
     <footer class="relative z-10 py-6 text-center text-sm text-zinc-400 border-t border-zinc-100">
-        &copy; {{ date('Y') }} Kebun Raya Sambas - Light Mode
+        &copy; {{ date('Y') }} Kebun Raya Sambas
     </footer>
     <script>
         if ('serviceWorker' in navigator) {

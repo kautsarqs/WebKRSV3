@@ -24,7 +24,7 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
            :class="(scrolled || mobileMenuOpen) ? 'text-zinc-900' : 'text-white'">
             <div class="relative flex items-center justify-center p-1 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-xs transition-all duration-300 hover:scale-105"
                  :class="(scrolled || mobileMenuOpen) ? 'bg-zinc-100 border-zinc-200/60' : 'bg-white/10 border-white/20'">
-                <img src="{{ asset('storage/images/logoKRS_square.png') }}" alt="Logo Kebun Raya Sambas" class="h-7 sm:h-9 lg:h-10 w-auto object-contain" width="40" height="40">
+                <img src="{{ asset('images/logoKRS_square.png') }}" alt="Logo Kebun Raya Sambas" class="h-7 sm:h-9 lg:h-10 w-auto object-contain" width="40" height="40">
             </div>
             <div class="flex flex-col">
                 <span class="font-heading font-black tracking-widest text-xs sm:text-sm lg:text-base leading-none">KEBUN RAYA</span>

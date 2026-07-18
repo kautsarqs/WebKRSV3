@@ -131,7 +131,6 @@
     <div class="wrapper">
         <div class="container">
             <div class="header">
-                <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo Kebun Raya Sambas">
                 <h1>Kebun Raya Sambas</h1>
             </div>
             <div class="content">

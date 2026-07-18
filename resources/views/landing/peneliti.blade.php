@@ -6,6 +6,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/css/intlTelInput.css">
 <style>
     .iti { width: 100% !important; }
+    .iti__selected-dial-code {
+        font-size: 0.875rem !important;
+        color: #27272a !important;
+        font-weight: 500;
+    }
 </style>
 @endpush
 
@@ -227,11 +232,24 @@
         const iti = window.intlTelInput(phoneDisplay, {
             initialCountry: "id",
             preferredCountries: ["id", "my", "sg"],
+            separateDialCode: true,
+            formatOnDisplay: false,
             utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/js/utils.js"
         });
 
         function updatePhoneValue() {
-            phoneHidden.value = iti.getNumber();
+            const countryData = iti.getSelectedCountryData();
+            const dialCode = countryData.dialCode || '';
+            let nationalNumber = phoneDisplay.value.replace(/\D/g, '');
+            if (nationalNumber.startsWith('0')) {
+                nationalNumber = nationalNumber.substring(1);
+            }
+            
+            if (nationalNumber) {
+                phoneHidden.value = '+' + dialCode + nationalNumber;
+            } else {
+                phoneHidden.value = '';
+            }
         }
 
         phoneDisplay.addEventListener('change', updatePhoneValue);
@@ -240,6 +258,9 @@
 
         phoneDisplay.addEventListener('input', function() {
             this.value = this.value.replace(/\D/g, '');
+            if (this.value.startsWith('0')) {
+                this.value = this.value.substring(1);
+            }
             const countryData = iti.getSelectedCountryData();
             let maxLen = 13;
             if (countryData.dialCode === '62') {
@@ -253,6 +274,11 @@
 
         if (phoneHidden.value) {
             iti.setNumber(phoneHidden.value);
+            phoneDisplay.value = phoneDisplay.value.replace(/[\s-]/g, '');
+            if (phoneDisplay.value.startsWith('0')) {
+                phoneDisplay.value = phoneDisplay.value.substring(1);
+            }
+            updatePhoneValue();
         }
 
         function toggleError(input, hasError, message) {
@@ -318,6 +344,9 @@
                 toggleError(endInput, true, 'Tanggal selesai tidak boleh kurang dari tanggal mulai.');
                 return;
             }
+
+            // Force update phone hidden input before validation
+            phoneDisplay.dispatchEvent(new Event('input'));
 
             if (!phoneHidden.value || phoneHidden.value.trim() === '') {
                 e.preventDefault();

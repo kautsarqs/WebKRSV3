@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="flex justify-center mb-4">
-                    <img src="{{ asset('storage/images/logoKRS.png') }}" alt="Logo" class="h-16 w-auto drop-shadow-md">
+                    <img src="{{ asset('images/logoKRS.png') }}" alt="Logo" class="h-16 w-auto drop-shadow-md">
                 </div>
                 <h1 class="text-3xl font-bold tracking-tight font-space text-white">Daftar Akun</h1>
                 <p class="text-zinc-300 mt-2 text-sm">Bergabung dengan Kebun Raya Sambas</p>
@@ -119,6 +119,10 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="text-xs text-zinc-400 mt-2 pl-1">
+                    Dengan mendaftar, Anda menyetujui <a href="{{ route('syarat') }}" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline">Syarat & Ketentuan</a> serta <a href="{{ route('privasi') }}" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline">Kebijakan Privasi</a> kami.
                 </div>
 
                 <button type="submit" 

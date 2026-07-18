@@ -497,99 +497,14 @@
                      notificationType: 'info',
                      confirmCallback: null
                  }"
-                 @map-alert.window="
-                     notificationTitle = $event.detail.title;
-                     notificationMessage = $event.detail.message;
-                     notificationType = $event.detail.type;
-                     confirmCallback = $event.detail.confirmCallback;
-                     showNotification = true;
-                 ">
-                <!-- Trigger Button -->
-                <button @click="showSettingsModal = true; $dispatch('close-layer-dropdown')" 
-                        class="px-3 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-md flex items-center gap-1.5 text-[10px] font-bold text-zinc-700 hover:bg-white transition-all cursor-pointer select-none">
-                    <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>Pengaturan Peta</span>
-                </button>
+                  @map-alert.window="
+                      notificationTitle = $event.detail.title;
+                      notificationMessage = $event.detail.message;
+                      notificationType = $event.detail.type;
+                      confirmCallback = $event.detail.confirmCallback;
+                      showNotification = true;
+                  ">
 
-                <!-- Settings Modal (Responsive) -->
-                <template x-teleport="body">
-                <div x-show="showSettingsModal" 
-                     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     x-cloak>
-                    
-                    <!-- Overlay -->
-                    <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="showSettingsModal = false"></div>
-
-                    <!-- Modal Card -->
-                    <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-200/50 p-6 flex flex-col gap-4 text-zinc-800 transform transition-all duration-300"
-                         x-show="showSettingsModal"
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                        
-                        <!-- Header -->
-                        <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <h3 class="font-heading font-bold text-base text-zinc-900">Pengaturan Peta</h3>
-                            </div>
-                            <button @click="showSettingsModal = false" class="text-zinc-400 hover:text-zinc-600 transition-colors p-1 rounded-lg hover:bg-zinc-100 cursor-pointer" aria-label="Tutup Pengaturan">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <!-- Body -->
-                        <div class="flex flex-col gap-4 py-2">
-                            <!-- GPS Status Section -->
-                            <div class="flex flex-col gap-1.5">
-                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Status GPS</span>
-                                <div id="gps-status" class="bg-zinc-50 border border-zinc-100 rounded-2xl p-3.5 flex items-center justify-between">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
-                                        GPS Menghubungkan...
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Offline Caching Section -->
-                            <div class="flex flex-col gap-1.5">
-                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Peta Offline</span>
-                                <div class="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 flex flex-col gap-3">
-                                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer shadow-sm hover:shadow-md">
-                                        Unduh Peta
-                                    </button>
-                                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer">
-                                        Hapus Cache
-                                    </button>
-                                    
-                                    <div id="download-progress" class="hidden mt-1">
-                                        <div class="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden">
-                                            <div id="progress-bar" class="bg-emerald-500 h-1.5 w-0 transition-all duration-150"></div>
-                                        </div>
-                                        <p id="progress-text" class="text-[9px] text-zinc-500 mt-1.5 text-center font-semibold"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </template>
 
                 <!-- Custom Alert/Confirm Modal -->
                 <template x-teleport="body">
@@ -737,93 +652,9 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- LocalForage library for IndexedDB caching -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+<script src="{{ asset('js/offline-maps.js') }}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Custom URL generator to bypass Leaflet's getTileUrl map-zoom caching bug
-    function getTileUrlForCoords(layer, coords) {
-        var url = layer._url;
-        url = url.replace('{z}', coords.z)
-                 .replace('{x}', coords.x)
-                 .replace('{y}', coords.y);
-        if (url.indexOf('{s}') !== -1 && layer.options.subdomains) {
-            var subdomains = layer.options.subdomains;
-            var index = Math.abs(coords.x + coords.y) % subdomains.length;
-            var s = typeof subdomains === 'string' ? subdomains[index] : subdomains[index];
-            url = url.replace('{s}', s);
-        }
-        return url;
-    }
-
-    // Custom Tile Layer to cache map tiles in IndexedDB via localForage
-    L.TileLayer.Offline = L.TileLayer.extend({
-        getTileKey: function(coords) {
-            var cleanUrl = (this._url || "").replace(/[^a-zA-Z0-9]/g, "").substring(0, 20);
-            return `${cleanUrl}_tile_${coords.z}_${coords.x}_${coords.y}`;
-        },
-        createTile: function(coords, done) {
-            var tile = document.createElement('img');
-            var url = getTileUrlForCoords(this, coords);
-            var key = this.getTileKey(coords);
-
-            localforage.getItem(key).then(function(blob) {
-                if (blob) {
-                    var objectUrl = URL.createObjectURL(blob);
-                    tile.onload = function() {
-                        URL.revokeObjectURL(objectUrl);
-                        done(null, tile);
-                    };
-                    tile.onerror = function() {
-                        done(new Error("Gagal render blob tile"), tile);
-                    };
-                    tile.src = objectUrl;
-                } else {
-                    fetch(url)
-                        .then(function(res) {
-                            if (!res.ok) throw new Error("Gagal mengambil tile");
-                            return res.blob();
-                        })
-                        .then(function(blob) {
-                            localforage.setItem(key, blob);
-                            var objectUrl = URL.createObjectURL(blob);
-                            tile.onload = function() {
-                                URL.revokeObjectURL(objectUrl);
-                                done(null, tile);
-                            };
-                            tile.onerror = function() {
-                                done(new Error("Gagal render downloaded tile"), tile);
-                            };
-                            tile.src = objectUrl;
-                        })
-                        .catch(function(err) {
-                            console.warn("Offline fallback ke normal image src:", url);
-                            tile.onload = function() {
-                                done(null, tile);
-                            };
-                            tile.onerror = function() {
-                                done(err, tile);
-                            };
-                            tile.src = url;
-                        });
-                }
-            }).catch(function(err) {
-                console.error(err);
-                tile.onload = function() {
-                    done(null, tile);
-                };
-                tile.onerror = function() {
-                    done(err, tile);
-                };
-                tile.src = url;
-            });
-
-            return tile;
-        }
-    });
-
-    L.tileLayer.offline = function(urlTemplate, options) {
-        return new L.TileLayer.Offline(urlTemplate, options);
-    };
-
     var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]); // Batas Kalimantan Barat
     var map = L.map('home-map', { 
         scrollWheelZoom: true,
@@ -835,9 +666,9 @@ document.addEventListener("DOMContentLoaded", function () {
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     // Gunakan Offline Layer untuk melayani tile dengan offline support
-    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+    var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
     var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
-    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
+    var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
         maxNativeZoom: 17, 
         maxZoom: 17, 
         attribution: 'Map data: &copy; OpenStreetMap contributors',
@@ -1144,37 +975,13 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    function autoDownloadKRS() {
-        if (!navigator.onLine) return; // Jangan download jika offline
-        
-        var bounds = L.latLngBounds([1.2599, 109.4751], [1.2799, 109.4951]);
-        var zooms = [13, 14, 15, 16, 17];
-        var tiles = [];
-
-        zooms.forEach(function(z) {
-            tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
-        });
-
-        tiles.forEach(function(tile) {
-            var url = satelliteLayer.getTileUrl(tile);
-            var key = satelliteLayer.getTileKey(tile);
-
-            localforage.getItem(key).then(function(val) {
-                if (!val) {
-                    fetch(url)
-                        .then(function(r) { return r.blob(); })
-                        .then(function(blob) {
-                            localforage.setItem(key, blob);
-                        })
-                        .catch(function(e) {
-                            // Abaikan
-                        });
-                }
-            });
-        });
-    }
-
-    setTimeout(autoDownloadKRS, 3000);
+    // --- Auto-download Kebun Raya Sambas tiles on page load (background) ---
+    // Jalankan otomatis 3 detik setelah halaman termuat
+    setTimeout(function() {
+        if (window.autoDownloadKRS) {
+            window.autoDownloadKRS(map, [roadLayer, satelliteLayer, terrainLayer]);
+        }
+    }, 3000);
 
     var markers = @json($markers ?? []);
     var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
@@ -1183,10 +990,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var roadPolylines = [];
     markers.forEach(function(marker) {
         if ((marker.geometry_type === 'polyline' || marker.geometry_type === 'linestring') && marker.geojson) {
-            // Jangan gunakan garis batas wilayah/batas KRS sebagai jalur jalan navigasi
-            var nameLower = (marker.name || "").toLowerCase();
-            var typeLower = (marker.type || "").toLowerCase();
-            if (nameLower.includes("batas") || typeLower.includes("batas")) {
+            var nameLower = (marker.name || '').toLowerCase();
+            var typeLower = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
+            // Kecualikan batas wilayah
+            if (nameLower.includes('batas') || typeLower.includes('batas')) {
+                return;
+            }
+            // Hanya gunakan jalan_utama dan jalan_lain untuk navigasi
+            if (typeLower !== 'jalan_utama' && typeLower !== 'jalan_lain') {
                 return;
             }
             try {
@@ -1197,14 +1008,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     roadPolylines.push({
                         id: marker.id,
+                        type: typeLower,
                         path: path
                     });
                 }
             } catch(e) {
-                console.error("Gagal memproses jalan kustom untuk rute:", e);
+                console.error('Gagal memproses jalan kustom untuk rute:', e);
             }
         }
     });
+
+
 
     // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
     function getHaversineDistance(p1, p2) {
@@ -1319,22 +1133,39 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         
-        var nodeKeys = Object.keys(keyToCoord);
-        for (var i = 0; i < nodeKeys.length; i++) {
-            for (var j = i + 1; j < nodeKeys.length; j++) {
-                var k1 = nodeKeys[i];
-                var k2 = nodeKeys[j];
-                var p1 = keyToCoord[k1];
-                var p2 = keyToCoord[k2];
-                var d = getHaversineDistance(p1, p2);
-                if (d < 5.0) {
-                    if (!adj[k1]) adj[k1] = {};
-                    if (!adj[k2]) adj[k2] = {};
-                    adj[k1][k2] = d;
-                    adj[k2][k1] = d;
+        // Koneksi antar jalan: proyeksikan tiap vertex ke segmen jalan lain.
+        // Hubungkan vertex (termasuk endpoint) hanya jika jarak ke jalan lain < 30m
+        // CATATAN: Endpoint tidak boleh "selalu" terhubung tanpa batas jarak,
+        // karena ini menyebabkan rute lurus langsung ke destinasi via endpoint terjauh.
+        roadPolylines.forEach(function(polyline, i) {
+            polyline.path.forEach(function(v, vIdx) {
+                var closestDist = Infinity;
+                var closestPoint = null;
+                var closestSegment = null;
+
+                roadPolylines.forEach(function(otherPolyline, j) {
+                    if (i === j) return;
+                    for (var k = 0; k < otherPolyline.path.length - 1; k++) {
+                        var a = otherPolyline.path[k];
+                        var b = otherPolyline.path[k+1];
+                        var projection = projectPointOnSegment(v, a, b);
+                        if (projection.distance < closestDist) {
+                            closestDist = projection.distance;
+                            closestPoint = projection.point;
+                            closestSegment = { a: a, b: b };
+                        }
+                    }
+                });
+
+                var shouldConnect = closestPoint && closestDist < 30.0;
+                if (shouldConnect) {
+                    registerCoord(closestPoint);
+                    addEdge(v, closestPoint);
+                    addEdge(closestSegment.a, closestPoint);
+                    addEdge(closestPoint, closestSegment.b);
                 }
-            }
-        }
+            });
+        });
         
         registerCoord(snapS.point);
         var sSeg = snapS.segment;
@@ -1609,10 +1440,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 var coordinates = JSON.parse(marker.geojson);
                 if (coordinates.length > 0) {
                     if (geomType === 'polyline' || geomType === 'linestring') {
-                        leafletLayer = L.polyline(coordinates, { 
-                            color: marker.color, 
-                            weight: 4.5 
-                        }).addTo(map);
+                        var lineColor = marker.color;
+                        var lineWidth = 4.5;
+                        var lineDash = '';
+                        
+                        if (marker.type === 'jalan_utama') {
+                            lineColor = '#808080'; // Abu-abu tebal
+                            lineWidth = 6;
+                        } else if (marker.type === 'jalan_lain') {
+                            lineColor = '#808080'; // Abu-abu tipis
+                            lineWidth = 3;
+                        }
+                        
+                        var polyOptions = { color: lineColor, weight: lineWidth };
+                        if (lineDash) polyOptions.dashArray = lineDash;
+
+                        leafletLayer = L.polyline(coordinates, polyOptions).addTo(map);
                     } else if (geomType === 'polygon') {
                         leafletLayer = L.polygon(coordinates, { 
                             color: marker.color, 

@@ -34,6 +34,22 @@ class PendaftaranController extends Controller
             return redirect()->route('verification.notice');
         }
 
+        // Clean phone numbers
+        $cleanRombongan = [];
+        if ($request->has('rombongan')) {
+            foreach ($request->rombongan as $idx => $member) {
+                if (isset($member['nomor_hp'])) {
+                    $member['nomor_hp'] = str_replace([' ', '-', '(', ')', '/'], '', $member['nomor_hp']);
+                }
+                $cleanRombongan[$idx] = $member;
+            }
+        }
+
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+            'rombongan' => $cleanRombongan,
+        ]);
+
         $request->validate([
             'nama_lengkap'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
             'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/',
@@ -106,6 +122,22 @@ class PendaftaranController extends Controller
             return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
         }
 
+        // Clean phone numbers
+        $cleanRombongan = [];
+        if ($request->has('rombongan')) {
+            foreach ($request->rombongan as $idx => $member) {
+                if (isset($member['nomor_hp'])) {
+                    $member['nomor_hp'] = str_replace([' ', '-', '(', ')', '/'], '', $member['nomor_hp']);
+                }
+                $cleanRombongan[$idx] = $member;
+            }
+        }
+
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+            'rombongan' => $cleanRombongan,
+        ]);
+
         $request->validate([
             'nama_lengkap'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
             'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/',
@@ -137,18 +169,36 @@ class PendaftaranController extends Controller
 
         $jumlahRombongan = 1 + count($rombonganDetails);
 
-        $pengunjung->update([
-            'nama_lengkap'      => $request->nama_lengkap,
-            'nomor_hp'          => $request->nomor_hp,
-            'tanggal_kunjungan' => $request->tanggal_kunjungan,
-            'jumlah_rombongan'  => $jumlahRombongan,
-            'keperluan'         => $request->keperluan,
-            'instansi'          => $request->instansi,
-            'rombongan_details' => $rombonganDetails,
-            'status'            => 'pending', // Reset to pending if user edits it
-        ]);
+        if ($pengunjung->status === 'ditolak') {
+            PendaftaranPengunjung::create([
+                'user_id'           => Auth::id(),
+                'nama_lengkap'      => $request->nama_lengkap,
+                'no_identitas'      => $pengunjung->no_identitas ?? '0000000000000000',
+                'nomor_hp'          => $request->nomor_hp,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'jumlah_rombongan'  => $jumlahRombongan,
+                'keperluan'         => $request->keperluan,
+                'instansi'          => $request->instansi,
+                'rombongan_details' => $rombonganDetails,
+                'status'            => 'pending',
+                'parent_id'         => $pengunjung->id,
+            ]);
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil diperbarui.');
+            return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung baru berhasil dikirim dari perbaikan pendaftaran sebelumnya.');
+        } else {
+            $pengunjung->update([
+                'nama_lengkap'      => $request->nama_lengkap,
+                'nomor_hp'          => $request->nomor_hp,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'jumlah_rombongan'  => $jumlahRombongan,
+                'keperluan'         => $request->keperluan,
+                'instansi'          => $request->instansi,
+                'rombongan_details' => $rombonganDetails,
+                'status'            => 'pending',
+            ]);
+
+            return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil diperbarui.');
+        }
     }
 
     /** Batal/Hapus Pendaftaran Pengunjung (User) */
@@ -186,6 +236,10 @@ class PendaftaranController extends Controller
         if (!Auth::user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice');
         }
+
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+        ]);
 
         $request->validate([
             'nama_lengkap'         => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
@@ -272,6 +326,10 @@ class PendaftaranController extends Controller
             return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
         }
 
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+        ]);
+
         $request->validate([
             'nama_lengkap'         => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
             'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/',
@@ -296,7 +354,7 @@ class PendaftaranController extends Controller
 
         $izinPath = $existingPaths['surat_izin'] ?? null;
         if ($request->hasFile('surat_izin_meneliti')) {
-            if ($izinPath) {
+            if ($izinPath && $peneliti->status !== 'ditolak') {
                 Storage::disk('public')->delete($izinPath);
             }
             $izinPath = $request->file('surat_izin_meneliti')->store('surat_pengantar', 'public');
@@ -304,7 +362,7 @@ class PendaftaranController extends Controller
 
         $cvPath = $existingPaths['cv'] ?? null;
         if ($request->hasFile('cv')) {
-            if ($cvPath) {
+            if ($cvPath && $peneliti->status !== 'ditolak') {
                 Storage::disk('public')->delete($cvPath);
             }
             $cvPath = $request->file('cv')->store('surat_pengantar', 'public');
@@ -315,22 +373,53 @@ class PendaftaranController extends Controller
             'cv' => $cvPath
         ]);
 
-        $peneliti->update([
-            'nama_lengkap'      => $request->nama_lengkap,
-            'nomor_hp'          => $request->nomor_hp,
-            'institusi'         => $request->institusi,
-            'program_studi'     => $request->program_studi,
-            'jenjang'           => $request->jenjang,
-            'judul_penelitian'  => $request->judul_penelitian,
-            'bidang_penelitian' => $request->bidang_penelitian,
-            'tanggal_mulai'     => $request->tanggal_mulai,
-            'tanggal_selesai'   => $request->tanggal_selesai,
-            'tujuan_penelitian' => $request->tujuan_penelitian,
-            'surat_pengantar'   => $suratPengantarPaths,
-            'status'            => 'pending', // Reset to pending if edited
-        ]);
+        if ($peneliti->status === 'ditolak') {
+            $newPeneliti = PendaftaranPeneliti::create([
+                'user_id'           => Auth::id(),
+                'nama_lengkap'      => $request->nama_lengkap,
+                'no_identitas'      => $peneliti->no_identitas ?? '0000000000000000',
+                'nomor_hp'          => $request->nomor_hp,
+                'institusi'         => $request->institusi,
+                'program_studi'     => $request->program_studi,
+                'jenjang'           => $request->jenjang,
+                'judul_penelitian'  => $request->judul_penelitian,
+                'bidang_penelitian' => $request->bidang_penelitian,
+                'tanggal_mulai'     => $request->tanggal_mulai,
+                'tanggal_selesai'   => $request->tanggal_selesai,
+                'jumlah_anggota'    => $peneliti->jumlah_anggota ?? 1,
+                'tujuan_penelitian' => $request->tujuan_penelitian,
+                'surat_pengantar'   => $suratPengantarPaths,
+                'status'            => 'pending',
+                'parent_id'         => $peneliti->id,
+            ]);
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran peneliti berhasil diperbarui.');
+            // Kirim email notifikasi ke admin
+            $adminEmail = env('ADMIN_EMAIL', config('mail.from.address'));
+            try {
+                Mail::to($adminEmail)->send(new \App\Mail\PendaftaranPenelitiMail($newPeneliti));
+            } catch (\Exception $e) {
+                Log::error('Gagal mengirim email notifikasi peneliti: ' . $e->getMessage());
+            }
+
+            return redirect()->route('dashboard')->with('success', 'Permohonan penelitian baru berhasil dikirim dari perbaikan permohonan sebelumnya.');
+        } else {
+            $peneliti->update([
+                'nama_lengkap'      => $request->nama_lengkap,
+                'nomor_hp'          => $request->nomor_hp,
+                'institusi'         => $request->institusi,
+                'program_studi'     => $request->program_studi,
+                'jenjang'           => $request->jenjang,
+                'judul_penelitian'  => $request->judul_penelitian,
+                'bidang_penelitian' => $request->bidang_penelitian,
+                'tanggal_mulai'     => $request->tanggal_mulai,
+                'tanggal_selesai'   => $request->tanggal_selesai,
+                'tujuan_penelitian' => $request->tujuan_penelitian,
+                'surat_pengantar'   => $suratPengantarPaths,
+                'status'            => 'pending', // Reset to pending if edited
+            ]);
+
+            return redirect()->route('dashboard')->with('success', 'Pendaftaran peneliti berhasil diperbarui.');
+        }
     }
 
     /** Batal/Hapus Pendaftaran Peneliti (User) */

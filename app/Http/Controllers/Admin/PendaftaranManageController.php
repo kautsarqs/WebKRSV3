@@ -29,11 +29,13 @@ class PendaftaranManageController extends Controller
     {
         $request->validate([
             'status' => 'required|in:disetujui,ditolak',
+            'catatan_admin' => 'nullable|string|max:500',
         ]);
 
         $pengunjung = PendaftaranPengunjung::findOrFail($id);
         $pengunjung->update([
             'status' => $request->status,
+            'catatan_admin' => $request->status === 'ditolak' ? $request->catatan_admin : null,
         ]);
 
         return back()->with('success', 'Status pendaftaran pengunjung berhasil diperbarui.');

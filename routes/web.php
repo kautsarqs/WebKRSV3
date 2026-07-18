@@ -8,6 +8,7 @@ use App\Http\Controllers\KoleksiController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\PasswordResetController;
 use App\Models\Koleksi;
 use App\Models\MapMarker;
 use App\Models\User;
@@ -31,6 +32,12 @@ Route::get('/', function () {
 Route::get('/tentang-kami', function () {
     return view('landing.profil');
 })->name('profil');
+Route::get('/kebijakan-privasi', function () {
+    return view('landing.privasi');
+})->name('privasi');
+Route::get('/syarat-ketentuan', function () {
+    return view('landing.syarat');
+})->name('syarat');
 Route::get('/koleksi', [KoleksiController::class, 'publicIndex'])->name('koleksi');
 Route::get('/koleksi/{koleksi}', [KoleksiController::class, 'show'])->name('koleksi.show');
 Route::get('/peta', function () {
@@ -57,6 +64,12 @@ Route::middleware('guest')->group(function () {
     // Register Manual
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'storeRegister'])->name('register.store');
+
+    // Lupa Password
+    Route::get('/forgot-password', [PasswordResetController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'store'])->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 
     // Google Login (Socialite)
     Route::get('/auth/google', [SocialiteController::class, 'redirect'])->name('auth.google');
@@ -105,8 +118,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
-        $pengunjungRegistrations = \App\Models\PendaftaranPengunjung::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
-        $penelitiRegistrations = \App\Models\PendaftaranPeneliti::where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
+        $pengunjungRegistrations = \App\Models\PendaftaranPengunjung::with('editedVersion')->where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
+        $penelitiRegistrations = \App\Models\PendaftaranPeneliti::with('editedVersion')->where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
 
         return view('dashboard.index', compact('pengunjungRegistrations', 'penelitiRegistrations'));
     })->name('dashboard');
@@ -153,6 +166,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // CRUD Peta
         Route::resource('maps', MapController::class)->names('admin.maps');
+        Route::post('/api/maps/sync', [MapController::class, 'syncOffline'])->name('admin.maps.sync');
 
         // CRUD Koleksi
         Route::resource('koleksi', KoleksiController::class)->names('admin.koleksi');

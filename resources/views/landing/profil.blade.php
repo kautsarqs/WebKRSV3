@@ -13,7 +13,7 @@
 
 <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
     <div class="rounded-3xl overflow-hidden shadow-2xl shadow-zinc-200">
-        <img src="{{ asset('storage/images/KRSprofil.avif') }}" alt="Kebun Raya" class="w-full h-[400px] object-cover hover:scale-105 transition duration-700" loading="lazy" decoding="async" width="600" height="400">
+        <img src="{{ asset('images/KRSprofil.avif') }}" alt="Kebun Raya" class="w-full h-[400px] object-cover hover:scale-105 transition duration-700" loading="lazy" decoding="async" width="600" height="400">
     </div>
     <div class="space-y-6">
         <h2 class="font-heading text-3xl font-bold">Sejarah Singkat</h2>

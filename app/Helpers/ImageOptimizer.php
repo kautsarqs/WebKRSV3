@@ -30,13 +30,19 @@ class ImageOptimizer
             return $file->store($directory, $disk);
         }
 
-        // Check if GD extension is loaded and imageavif is available
-        if (!extension_loaded('gd') || !function_exists('imageavif')) {
-            // Fallback: store original file
+        // Check if GD extension is loaded
+        if (!extension_loaded('gd')) {
             return $file->store($directory, $disk);
         }
 
+        // Increase memory limit for processing large images
+        @ini_set('memory_limit', '512M');
+
         $tempPath = $file->getRealPath();
+        if (!$tempPath || !file_exists($tempPath)) {
+            return $file->store($directory, $disk);
+        }
+
         $image = null;
 
         // Load image based on mime type
@@ -99,28 +105,38 @@ class ImageOptimizer
         imagealphablending($image, false);
         imagesavealpha($image, true);
 
-        // Generate temporary path for converted AVIF
-        $tempAvif = tempnam(sys_get_temp_dir(), 'avif_');
-        
-        // Convert to AVIF
-        $success = @imageavif($image, $tempAvif, $quality);
-        imagedestroy($image);
-
-        if ($success) {
-            // Generate unique filename with .avif extension
-            $filename = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.avif';
+        // Try AVIF conversion first if supported
+        if (function_exists('imageavif')) {
+            $tempAvif = tempnam(sys_get_temp_dir(), 'avif_');
+            $success = @imageavif($image, $tempAvif, $quality);
             
-            // Put file in Laravel Storage using Laravel's File class representation
-            $storedPath = Storage::disk($disk)->putFileAs($directory, new \Illuminate\Http\File($tempAvif), $filename);
-            
-            // Delete temp file
+            if ($success) {
+                imagedestroy($image);
+                $filename = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.avif';
+                $storedPath = Storage::disk($disk)->putFileAs($directory, new \Illuminate\Http\File($tempAvif), $filename);
+                @unlink($tempAvif);
+                return $storedPath;
+            }
             @unlink($tempAvif);
-            
-            return $storedPath;
         }
 
-        // Cleanup and fallback on failure
-        @unlink($tempAvif);
+        // Fallback to WEBP if AVIF is unsupported or fails
+        if (function_exists('imagewebp')) {
+            $tempWebp = tempnam(sys_get_temp_dir(), 'webp_');
+            $success = @imagewebp($image, $tempWebp, $quality);
+            
+            if ($success) {
+                imagedestroy($image);
+                $filename = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.webp';
+                $storedPath = Storage::disk($disk)->putFileAs($directory, new \Illuminate\Http\File($tempWebp), $filename);
+                @unlink($tempWebp);
+                return $storedPath;
+            }
+            @unlink($tempWebp);
+        }
+
+        // Cleanup and fallback to original file if all conversions fail
+        imagedestroy($image);
         return $file->store($directory, $disk);
     }
 }

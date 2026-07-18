@@ -40,7 +40,8 @@ class MapController extends Controller
     public function create()
     {
         $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
-        return view('admin.maps.create', compact('existingTypes'));
+        $existingMarkers = MapMarker::all();
+        return view('admin.maps.create', compact('existingTypes', 'existingMarkers'));
     }
 
     /**
@@ -85,7 +86,8 @@ class MapController extends Controller
     public function edit(MapMarker $map)
     {
         $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
-        return view('admin.maps.edit', compact('map', 'existingTypes'));
+        $existingMarkers = MapMarker::where('id', '!=', $map->id)->get();
+        return view('admin.maps.edit', compact('map', 'existingTypes', 'existingMarkers'));
     }
 
     /**
@@ -146,5 +148,30 @@ class MapController extends Controller
     public function publicShow(MapMarker $map)
     {
         return view('landing.peta_show', compact('map'));
+    }
+
+    public function syncOffline(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
+            'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
+            'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
+            'type' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = ImageOptimizer::convertToAvif($request->file('photo'), 'map_markers');
+        }
+
+        MapMarker::create($data);
+
+        return response()->json(['success' => true]);
     }
 }

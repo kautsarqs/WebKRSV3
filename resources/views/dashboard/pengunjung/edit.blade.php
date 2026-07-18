@@ -4,6 +4,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/css/intlTelInput.css">
 <style>
     .iti { width: 100% !important; }
+    .iti__selected-dial-code {
+        font-size: 0.875rem !important;
+        color: #27272a !important;
+        font-weight: 500;
+    }
+    .rombongan-row .iti__selected-dial-code {
+        font-size: 0.75rem !important;
+    }
 </style>
 @endpush
 
@@ -37,8 +45,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label for="instansi" class="text-sm font-medium text-zinc-700">Instansi / Lembaga <span class="text-red-500">*</span></label>
-                    <input type="text" name="instansi" id="instansi" value="{{ old('instansi', $pengunjung->instansi) }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('instansi') border-red-500 @enderror" placeholder="Contoh: Universitas, Sekolah, Keluarga, Umum" required>
+                    <label for="instansi" class="text-sm font-medium text-zinc-700">Asal Daerah / Instansi <span class="text-red-500">*</span></label>
+                    <input type="text" name="instansi" id="instansi" value="{{ old('instansi', $pengunjung->instansi) }}" class="w-full rounded-xl border-zinc-200 focus:border-zinc-900 focus:ring-zinc-900 text-sm px-4 py-3 @error('instansi') border-red-500 @enderror" placeholder="Contoh: Sambas, Pontianak, Universitas Tanjungpura, dll." required>
                     @error('instansi')<p class="text-xs text-red-600 mt-1 server-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="space-y-2">
@@ -91,7 +99,7 @@
                                         <input type="hidden" name="rombongan[{{ $idx }}][nomor_hp]" value="{{ $member['nomor_hp'] ?? '' }}" class="row-phone-hidden">
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-xs font-semibold text-zinc-650">Instansi</label>
+                                        <label class="text-xs font-semibold text-zinc-650">Asal Daerah / Instansi</label>
                                         <input type="text" name="rombongan[{{ $idx }}][instansi]" value="{{ $member['instansi'] ?? '' }}" class="row-instansi w-full rounded-lg border-zinc-200 focus:ring-zinc-900 focus:border-zinc-900 text-xs px-3 py-2" placeholder="Kosongkan jika sama">
                                     </div>
                                 </div>
@@ -135,11 +143,24 @@
             const iti = window.intlTelInput(input, {
                 initialCountry: "id",
                 preferredCountries: ["id", "my", "sg"],
+                separateDialCode: true,
+                formatOnDisplay: false,
                 utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/js/utils.js"
             });
             
             function updateValue() {
-                hiddenInput.value = iti.getNumber();
+                const countryData = iti.getSelectedCountryData();
+                const dialCode = countryData.dialCode || '';
+                let nationalNumber = input.value.replace(/\D/g, '');
+                if (nationalNumber.startsWith('0')) {
+                    nationalNumber = nationalNumber.substring(1);
+                }
+                
+                if (nationalNumber) {
+                    hiddenInput.value = '+' + dialCode + nationalNumber;
+                } else {
+                    hiddenInput.value = '';
+                }
             }
             
             input.addEventListener('change', updateValue);
@@ -148,6 +169,9 @@
             
             input.addEventListener('input', function() {
                 this.value = this.value.replace(/\D/g, '');
+                if (this.value.startsWith('0')) {
+                    this.value = this.value.substring(1);
+                }
                 const countryData = iti.getSelectedCountryData();
                 let maxLen = 13;
                 if (countryData.dialCode === '62') {
@@ -161,6 +185,12 @@
 
             if (hiddenInput.value) {
                 iti.setNumber(hiddenInput.value);
+                input.value = input.value.replace(/[\s-]/g, '');
+                if (input.value.startsWith('0')) {
+                    input.value = input.value.substring(1);
+                }
+                // Update the hidden field synchronously with the cleaned formatted value
+                updateValue();
             }
         }
 
@@ -203,7 +233,7 @@
                             <input type="hidden" name="rombongan[${index}][nomor_hp]" class="row-phone-hidden">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-xs font-semibold text-zinc-650">Instansi</label>
+                            <label class="text-xs font-semibold text-zinc-650">Asal Daerah / Instansi</label>
                             <input type="text" name="rombongan[${index}][instansi]" class="row-instansi w-full rounded-lg border-zinc-200 focus:ring-zinc-900 focus:border-zinc-900 text-xs px-3 py-2" placeholder="Kosongkan jika sama">
                         </div>
                     </div>
@@ -280,6 +310,12 @@
         form.addEventListener('submit', function(e) {
             nameInput.dispatchEvent(new Event('input'));
             dateInput.dispatchEvent(new Event('input'));
+
+            // Force update main phone and rombongan phone hidden inputs before validation
+            phoneDisplay.dispatchEvent(new Event('input'));
+            document.querySelectorAll('.row-phone-display').forEach(el => {
+                el.dispatchEvent(new Event('input'));
+            });
 
             // Phone validation
             if (!phoneHidden.value || phoneHidden.value.trim() === '') {

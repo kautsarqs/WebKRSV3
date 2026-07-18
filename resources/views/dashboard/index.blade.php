@@ -36,6 +36,8 @@
             </div>
         @endif
 
+
+
         {{-- ── HERO GREETING ────────────────────────────────────────────── --}}
         <div class="relative overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-emerald-950 rounded-3xl p-8 text-white shadow-xl shadow-zinc-950/20">
             {{-- Decorative blobs --}}
@@ -143,12 +145,12 @@
                     <p class="text-xs text-zinc-400 mt-1">Silakan gunakan menu Aksi Cepat di atas untuk melakukan pendaftaran pertama Anda.</p>
                 </div>
             @else
-                <div class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {{-- Riwayat Kunjungan --}}
-                    @if($pengunjungRegistrations->isNotEmpty())
-                        <div>
-                            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Pendaftaran Kunjungan</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Kunjungan</h3>
+                        @if($pengunjungRegistrations->isNotEmpty())
+                            <div class="grid grid-cols-1 gap-4">
                                 @foreach($pengunjungRegistrations as $reg)
                                     <div class="bg-zinc-50/60 border border-zinc-200/60 rounded-2xl p-5 flex flex-col justify-between hover:border-zinc-300 transition-colors">
                                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -179,7 +181,20 @@
                                             </p>
                                         @endif
 
-                                        @if($reg->status !== 'disetujui')
+                                        @if($reg->catatan_admin)
+                                             <div class="mt-2 text-xs text-red-800 bg-red-55/15 border border-red-200/40 p-2.5 rounded-xl">
+                                                 <p class="font-bold">Catatan Admin:</p>
+                                                 <p class="mt-0.5">{{ $reg->catatan_admin }}</p>
+                                             </div>
+                                        @endif
+
+                                        @if($reg->status === 'ditolak' && $reg->editedVersion)
+                                             <div class="mt-4 flex items-center justify-end pt-3 border-t border-zinc-200/60">
+                                                 <span class="text-xs text-zinc-500 font-semibold italic flex items-center gap-1.5">
+                                                     🔄 Sudah diperbaiki / diajukan kembali
+                                                 </span>
+                                             </div>
+                                        @elseif($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
                                                 <a href="{{ route('dashboard.pengunjung.edit', $reg->id) }}" 
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
@@ -197,14 +212,18 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
-                    @endif
+                        @else
+                            <div class="p-5 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200 text-center">
+                                <p class="text-xs text-zinc-400 italic">Belum ada riwayat pendaftaran kunjungan.</p>
+                            </div>
+                        @endif
+                    </div>
 
                     {{-- Riwayat Penelitian --}}
-                    @if($penelitiRegistrations->isNotEmpty())
-                        <div>
-                            <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3 mt-2">Pendaftaran Penelitian</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="lg:border-l lg:border-zinc-200/60 lg:pl-8 pt-6 lg:pt-0 border-t lg:border-t-0 border-zinc-200/60">
+                        <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Penelitian</h3>
+                        @if($penelitiRegistrations->isNotEmpty())
+                            <div class="grid grid-cols-1 gap-4">
                                 @foreach($penelitiRegistrations as $reg)
                                     <div class="bg-zinc-50/60 border border-zinc-200/60 rounded-2xl p-5 flex flex-col justify-between hover:border-zinc-300 transition-colors">
                                         <div class="flex items-start justify-between gap-3 mb-3">
@@ -237,7 +256,13 @@
                                             </div>
                                         @endif
 
-                                        @if($reg->status !== 'disetujui')
+                                        @if($reg->status === 'ditolak' && $reg->editedVersion)
+                                             <div class="mt-4 flex items-center justify-end pt-3 border-t border-zinc-200/60">
+                                                 <span class="text-xs text-zinc-500 font-semibold italic flex items-center gap-1.5">
+                                                     🔄 Sudah diperbaiki / diajukan kembali
+                                                 </span>
+                                             </div>
+                                        @elseif($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
                                                 <a href="{{ route('dashboard.peneliti.edit', $reg->id) }}" 
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
@@ -255,8 +280,12 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
-                    @endif
+                        @else
+                            <div class="p-5 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200 text-center">
+                                <p class="text-xs text-zinc-400 italic">Belum ada riwayat pendaftaran penelitian.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @endif
         </div>

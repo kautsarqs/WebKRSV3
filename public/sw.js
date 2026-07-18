@@ -1,4 +1,4 @@
-const CACHE_NAME = 'krs-cache-1783397000';
+const CACHE_NAME = 'krs-cache-1783485551';
 const ASSETS_TO_CACHE = [
   '/',
   '/build/assets/app-CiZ6hk-B.js',
@@ -43,18 +43,30 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch event listener with Stale-While-Revalidate caching strategy
+// Fetch event listener with strategy switching
 self.addEventListener('fetch', event => {
   // Only cache GET requests
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
-  // 1. Skip caching for administrative panel, API routes, livewire, or POST/profile operations
-  if (url.pathname.startsWith('/admin') || 
+  // 1. Skip caching untuk halaman admin, API, Livewire, dan auth
+  //    PENGECUALIAN: /admin/maps/create di-cache karena admin bisa draft marker secara offline
+  //    (data disimpan ke IndexedDB via OfflineSync, lalu disync saat online kembali)
+  //    Semua endpoint POST/sync tetap butuh internet (SW tidak intercept non-GET)
+  const isAdminMapsCreate = url.pathname === '/admin/maps/create';
+  if ((url.pathname.startsWith('/admin') && !isAdminMapsCreate) ||
       url.pathname.startsWith('/api') || 
       url.pathname.includes('/livewire') || 
-      url.pathname.startsWith('/profile')) {
+      url.pathname.startsWith('/profile') ||
+      url.pathname.startsWith('/dashboard') ||
+      url.pathname.startsWith('/login') ||
+      url.pathname.startsWith('/logout') ||
+      url.pathname.startsWith('/register') ||
+      url.pathname.startsWith('/forgot-password') ||
+      url.pathname.startsWith('/reset-password') ||
+      url.pathname.startsWith('/email') ||
+      url.pathname.startsWith('/storage')) {
     return;
   }
 
@@ -67,6 +79,25 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // 3. For HTML navigation requests, use Network-First strategy (preventing stale dynamic lists)
+  if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // 4. Default: Stale-While-Revalidate caching strategy for static assets
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       // Return cached response if found, and fetch update in the background

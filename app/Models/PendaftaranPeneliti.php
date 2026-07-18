@@ -27,6 +27,7 @@ class PendaftaranPeneliti extends Model
         'status',
         'catatan_admin',
         'status_penelitian',
+        'parent_id',
     ];
 
     protected $casts = [
@@ -37,5 +38,10 @@ class PendaftaranPeneliti extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function editedVersion()
+    {
+        return $this->hasOne(self::class, 'parent_id');
     }
 }

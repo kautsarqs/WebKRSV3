@@ -34,7 +34,7 @@
                 <th style="width: 15%;">Tanggal</th>
                 <th style="width: 25%;">Nama Pengunjung</th>
                 <th style="width: 15%;">Nomor HP</th>
-                <th style="width: 20%;">Instansi</th>
+                <th style="width: 20%;">Asal Daerah / Instansi</th>
                 <th style="width: 20%;">Tujuan / Keperluan</th>
             </tr>
         </thead>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Akun Anda</title>
+    <title>Penyetelan Ulang Kata Sandi</title>
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -119,17 +119,17 @@
                 <h1>Kebun Raya Sambas</h1>
             </div>
             <div class="content">
-                <h2>Halo, {{ $user->name }}!</h2>
-                <p>Terima kasih telah melakukan registrasi di platform digital <strong>Kebun Raya Sambas</strong>. Silakan verifikasi alamat email Anda agar dapat menikmati seluruh akses navigasi, pendaftaran kunjungan, serta perizinan penelitian.</p>
+                <h2>Halo!</h2>
+                <p>Anda menerima email ini karena kami menerima permintaan penyetelan ulang kata sandi (reset password) untuk akun Anda di platform digital <strong>Kebun Raya Sambas</strong>.</p>
                 
                 <div class="button-wrapper">
-                    <a href="{{ $url }}" class="button">Verifikasi Alamat Email</a>
+                    <a href="{{ $url }}" class="button">Atur Ulang Kata Sandi</a>
                 </div>
                 
-                <p>Tautan verifikasi ini akan kedaluwarsa dalam 60 menit demi alasan keamanan akun Anda.</p>
+                <p>Tautan atur ulang kata sandi ini akan kedaluwarsa dalam 60 menit.</p>
                 
                 <div class="security-notice">
-                    <strong>Pemberitahuan Keamanan:</strong> Jika Anda tidak merasa membuat akun baru atau merasa salah menerima email ini, abaikan pesan ini dengan aman.
+                    <strong>Pemberitahuan Keamanan:</strong> Jika Anda tidak merasa melakukan permintaan penyetelan ulang kata sandi, maka tidak ada tindakan lebih lanjut yang perlu Anda lakukan. Pastikan akun Anda tetap aman.
                 </div>
             </div>
             <div class="footer">

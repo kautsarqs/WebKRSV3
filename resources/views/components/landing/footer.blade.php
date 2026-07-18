@@ -6,7 +6,7 @@
             <div class="lg:col-span-4 space-y-6">
                 <div class="flex items-center gap-3 text-zinc-900">
                     <div class="relative flex items-center justify-center p-1.5 bg-zinc-100/80 border border-zinc-200/50 rounded-2xl shadow-xs">
-                        <img src="{{ asset('storage/images/logoKRS_square.png') }}" alt="Logo Kebun Raya Sambas" class="h-10 w-auto object-contain" width="56" height="56">
+                        <img src="{{ asset('images/logoKRS_square.png') }}" alt="Logo Kebun Raya Sambas" class="h-10 w-auto object-contain" width="56" height="56">
                     </div>
                     <div class="flex flex-col">
                         <span class="font-heading font-black tracking-widest text-lg leading-none">KEBUN RAYA</span>
@@ -70,8 +70,8 @@
                 &copy; {{ date('Y') }} UPTD Kebun Raya Sambas. All rights reserved.
             </p>
             <div class="flex gap-6 text-sm text-zinc-500">
-                <a href="#" class="hover:text-zinc-900 transition">Kebijakan Privasi</a>
-                <a href="#" class="hover:text-zinc-900 transition">Syarat & Ketentuan</a>
+                <a href="{{ route('privasi') }}" class="hover:text-zinc-900 transition">Kebijakan Privasi</a>
+                <a href="{{ route('syarat') }}" class="hover:text-zinc-900 transition">Syarat & Ketentuan</a>
             </div>
         </div>
     </div>

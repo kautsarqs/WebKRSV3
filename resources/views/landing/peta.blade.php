@@ -478,6 +478,11 @@
                 @php
                     $color = $markersOfType->first()->color ?? '#3b82f6';
                     $firstGeomType = $markersOfType->first()->geometry_type ?? 'point';
+                    $typeNorm = strtolower(str_replace([' ', '-'], '_', $type));
+                    $isJalanUtama = ($typeNorm === 'jalan_utama');
+                    $isJalanLain  = ($typeNorm === 'jalan_lain');
+                    $lineColor = $isJalanUtama ? '#b8b8b8' : ($isJalanLain ? '#c8c8c8' : $color);
+                    $lineWidth = $isJalanUtama ? '5.0' : ($isJalanLain ? '2.0' : '2.5');
                 @endphp
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-zinc-200 shadow-xs">
                     @if($firstGeomType === 'point')
@@ -494,7 +499,7 @@
                         {{-- LineString: solid curved wavy line --}}
                         <svg class="w-7 h-5 shrink-0" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 18 C8 12, 12 5, 18 10 C24 15, 28 6, 33 8"
-                                  stroke="{{ $color }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                  stroke="{{ $lineColor }}" stroke-width="{{ $lineWidth }}" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     @endif
                     <span class="text-zinc-700">{{ Str::of($type)->replace('_', ' ')->title() }}</span>
@@ -1015,10 +1020,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var roadPolylines = [];
     markers.forEach(function(marker) {
         if ((marker.geometry_type === 'polyline' || marker.geometry_type === 'linestring') && marker.geojson) {
-            // Jangan gunakan garis batas wilayah/batas KRS sebagai jalur jalan navigasi
-            var nameLower = (marker.name || "").toLowerCase();
-            var typeLower = (marker.type || "").toLowerCase();
-            if (nameLower.includes("batas") || typeLower.includes("batas")) {
+            var nameLower = (marker.name || '').toLowerCase();
+            var typeLower = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
+            // Kecualikan batas wilayah
+            if (nameLower.includes('batas') || typeLower.includes('batas')) {
+                return;
+            }
+            // Hanya ambil jalan_utama dan jalan_lain
+            if (typeLower !== 'jalan_utama' && typeLower !== 'jalan_lain') {
                 return;
             }
             try {
@@ -1029,14 +1038,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                     roadPolylines.push({
                         id: marker.id,
+                        type: typeLower,
                         path: path
                     });
                 }
             } catch(e) {
-                console.error("Gagal memproses jalan kustom untuk rute:", e);
+                console.error('Gagal memproses jalan kustom untuk rute:', e);
             }
         }
     });
+    console.log('Road polylines extracted for routing:', roadPolylines.length, roadPolylines.map(function(r){ return r.type; }));
 
     // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
     function getHaversineDistance(p1, p2) {
@@ -1158,23 +1169,41 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         
-        // Hubungkan titik-titik persimpangan berdekatan (< 5 meter) sebagai node penghubung
-        var nodeKeys = Object.keys(keyToCoord);
-        for (var i = 0; i < nodeKeys.length; i++) {
-            for (var j = i + 1; j < nodeKeys.length; j++) {
-                var k1 = nodeKeys[i];
-                var k2 = nodeKeys[j];
-                var p1 = keyToCoord[k1];
-                var p2 = keyToCoord[k2];
-                var d = getHaversineDistance(p1, p2);
-                if (d < 5.0) {
-                    if (!adj[k1]) adj[k1] = {};
-                    if (!adj[k2]) adj[k2] = {};
-                    adj[k1][k2] = d;
-                    adj[k2][k1] = d;
+        // Koneksi antar jalan: proyeksikan tiap vertex ke segmen jalan lain.
+        // Semua vertex (termasuk endpoint) hanya dihubungkan jika jarak < 30m.
+        roadPolylines.forEach(function(polyline, i) {
+            var pathLen = polyline.path.length;
+            polyline.path.forEach(function(v, vIdx) {
+                var closestDist = Infinity;
+                var closestPoint = null;
+                var closestSegment = null;
+
+                roadPolylines.forEach(function(otherPolyline, j) {
+                    if (i === j) return;
+                    for (var k = 0; k < otherPolyline.path.length - 1; k++) {
+                        var a = otherPolyline.path[k];
+                        var b = otherPolyline.path[k+1];
+                        var projection = projectPointOnSegment(v, a, b);
+                        if (projection.distance < closestDist) {
+                            closestDist = projection.distance;
+                            closestPoint = projection.point;
+                            closestSegment = { a: a, b: b };
+                        }
+                    }
+                });
+
+                // Hubungkan vertex (termasuk endpoint) hanya jika jarak ke jalan lain < 30m
+                // CATATAN: Endpoint tidak boleh "selalu" terhubung tanpa batas jarak,
+                // karena ini menyebabkan rute lurus langsung ke destinasi via endpoint terjauh.
+                var shouldConnect = closestPoint && closestDist < 30.0;
+                if (shouldConnect) {
+                    registerCoord(closestPoint);
+                    addEdge(v, closestPoint);
+                    addEdge(closestSegment.a, closestPoint);
+                    addEdge(closestPoint, closestSegment.b);
                 }
-            }
-        }
+            });
+        });
         
         // Sisipkan titik SnapStart ke Graf
         registerCoord(snapS.point);
@@ -1319,8 +1348,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- State Navigasi Global ---
     window.currentNavTarget = null;
+    window.arrivalTimeout = null;
+
+    function playChime() {
+        try {
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            var ctx = new AudioContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctx.currentTime); // A5 note
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.5, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+            
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.8);
+        } catch (e) {
+            console.error("Gagal memutar chime:", e);
+        }
+    }
 
     window.startNavigation = function(id, name, lat, lng) {
+        if (window.arrivalTimeout) {
+            clearTimeout(window.arrivalTimeout);
+            window.arrivalTimeout = null;
+        }
         window.currentNavTarget = { id: id, name: name, lat: lat, lng: lng };
         map.closePopup();
         window.updateNavigationRouting();
@@ -1329,6 +1388,11 @@ document.addEventListener("DOMContentLoaded", function () {
     window.stopNavigation = function() {
         window.currentNavTarget = null;
         clearNavigationLayers();
+        window.dispatchEvent(new CustomEvent('stop-nav'));
+        if (window.arrivalTimeout) {
+            clearTimeout(window.arrivalTimeout);
+            window.arrivalTimeout = null;
+        }
     };
 
     function updateFloatingPanel(name, totalDistMeters) {
@@ -1363,10 +1427,11 @@ document.addEventListener("DOMContentLoaded", function () {
             window.dispatchEvent(new CustomEvent('start-nav', {
                 detail: {
                     name: window.currentNavTarget.name,
-                    distance: 'Mencari GPS...',
-                    time: '---'
+                    distance: 'Menunggu GPS...',
+                    time: 'Atau tap peta utk lokasi Anda'
                 }
             }));
+            window.showMapAlert("Informasi Navigasi", "Sistem sedang mencari lokasi GPS Anda. Jika Anda sedang offline atau GPS tidak tersedia, silakan TAP/KLIK di mana saja pada peta untuk menentukan posisi Anda saat ini secara manual.", "info");
             return;
         }
         
@@ -1386,6 +1451,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         updateFloatingPanel(window.currentNavTarget.name, totalDistMeters);
+
+        // Deteksi Kedatangan jika jarak <= 10 meter
+        if (totalDistMeters <= 10.0 && !window.arrivalTimeout) {
+            playChime();
+            
+            if ('speechSynthesis' in window) {
+                var speechMsg = new SpeechSynthesisUtterance("Sudah sampai di lokasi");
+                speechMsg.lang = 'id-ID';
+                window.speechSynthesis.speak(speechMsg);
+            }
+
+            window.dispatchEvent(new CustomEvent('map-alert', {
+                detail: {
+                    title: "Sampai di Lokasi",
+                    message: "Anda telah tiba di " + window.currentNavTarget.name + ". Navigasi akan dihentikan otomatis dalam 5 detik.",
+                    type: "success"
+                }
+            }));
+
+            window.arrivalTimeout = setTimeout(function() {
+                window.stopNavigation();
+            }, 5000);
+        }
     };
 
     // Simpan referensi layer peta berdasarkan marker id untuk fitur LIHAT PETA di legenda
@@ -1457,10 +1545,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 var coordinates = JSON.parse(marker.geojson);
                 if (coordinates.length > 0) {
                     if (geomType === 'polyline' || geomType === 'linestring') {
-                        leafletLayer = L.polyline(coordinates, { 
-                            color: marker.color, 
-                            weight: 4.5 
-                        }).addTo(map);
+                        var markerTypeNorm = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
+                        var lineColor = marker.color;
+                        var lineWidth = 4.5;
+                        
+                        if (markerTypeNorm === 'jalan_utama') {
+                            lineColor = '#b8b8b8'; // Abu-abu terang tebal
+                            lineWidth = 4;
+                        } else if (markerTypeNorm === 'jalan_lain') {
+                            lineColor = '#c8c8c8'; // Abu-abu terang tipis
+                            lineWidth = 2;
+                        }
+                        
+                        leafletLayer = L.polyline(coordinates, { color: lineColor, weight: lineWidth }).addTo(map);
                     } else if (geomType === 'polygon') {
                         leafletLayer = L.polygon(coordinates, { 
                             color: marker.color, 

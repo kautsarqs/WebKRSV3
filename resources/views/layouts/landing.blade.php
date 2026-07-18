@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Kebun Raya Sambas')</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/logoKRS_square.png') }}" />
     <meta name="description" content="Kebun Raya Sambas - Kawasan Konservasi & Pusat Penelitian Flora di Sambas, Kalimantan Barat. Pelestarian keanekaragaman hayati tumbuhan lokal Kalimantan." />
     <link rel="canonical" href="{{ request()->url() }}" />
     <meta name="robots" content="index, follow" />
@@ -13,7 +13,7 @@
     <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
-    <link rel="apple-touch-icon" href="{{ asset('storage/images/logoKRS_square.png') }}" />
+    <link rel="apple-touch-icon" href="{{ asset('images/logoKRS_square.png') }}" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KRS" />

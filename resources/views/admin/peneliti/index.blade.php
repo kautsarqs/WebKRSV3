@@ -181,6 +181,13 @@
                                                 Tolak
                                             </button>
                                         @endif
+                                        @if($row->status === 'ditolak')
+                                            <button type="button"
+                                                    onclick="openEditCatatanPenelitiModal('{{ route('admin.peneliti.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }}, {{ json_encode($row->catatan_admin) }})"
+                                                    class="col-span-2 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                Alasan Penolakan
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -246,7 +253,7 @@
     {{-- ===== TOLAK MODAL (Peneliti) ===== --}}
     <div id="modal-tolak-peneliti" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:460px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
-            <p style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;">Tolak Permohonan Penelitian</p>
+            <p id="modal-tolak-title-peneliti" style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;font-family:'Space Grotesk',sans-serif;">Tolak Permohonan Penelitian</p>
             <p id="tolak-subtitle" style="font-size:13px;color:#71717a;margin:0 0 18px 0;">Berikan alasan penolakan.</p>
             <form id="tolak-form-peneliti" method="POST" action="">
                 @csrf
@@ -254,13 +261,13 @@
                 <input type="hidden" name="status" value="ditolak">
                 <div style="margin-bottom:16px;">
                     <label style="font-size:12px;font-weight:700;color:#3f3f46;display:block;margin-bottom:6px;">Catatan / Alasan Penolakan</label>
-                    <textarea name="catatan_admin" rows="4" required
-                              style="width:100%;border:1px solid #e5e5e5;border-radius:12px;padding:10px 14px;font-size:13px;resize:none;box-sizing:border-box;"
+                    <textarea name="catatan_admin" id="tolak-catatan-peneliti" rows="4" required
+                              style="width:100%;border:1px solid #e5e5e5;border-radius:12px;padding:10px 14px;font-size:13px;resize:none;box-sizing:border-box;outline:none;"
                               placeholder="Contoh: Dokumen surat pengantar tidak valid. Mohon unggah kembali."></textarea>
                 </div>
                 <div style="display:flex;gap:10px;justify-content:flex-end;">
                     <button type="button" onclick="closeTolakModal()" style="padding:8px 18px;background:#f4f4f5;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#3f3f46;cursor:pointer;">Batal</button>
-                    <button type="submit" style="padding:8px 18px;background:#dc2626;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tolak Permohonan</button>
+                    <button type="submit" id="modal-tolak-submit-btn-peneliti" style="padding:8px 18px;background:#dc2626;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tolak Permohonan</button>
                 </div>
             </form>
         </div>
@@ -338,6 +345,17 @@
     function openTolakModal(url, nama) {
         document.getElementById('tolak-form-peneliti').action = url;
         document.getElementById('tolak-subtitle').textContent = 'Berikan alasan penolakan untuk peneliti: ' + nama;
+        document.getElementById('tolak-catatan-peneliti').value = '';
+        document.getElementById('modal-tolak-title-peneliti').textContent = 'Tolak Permohonan Penelitian';
+        document.getElementById('modal-tolak-submit-btn-peneliti').textContent = 'Tolak Permohonan';
+        document.getElementById('modal-tolak-peneliti').style.display = 'flex';
+    }
+    function openEditCatatanPenelitiModal(url, nama, catatan) {
+        document.getElementById('tolak-form-peneliti').action = url;
+        document.getElementById('tolak-subtitle').textContent = 'Edit alasan penolakan untuk peneliti: ' + nama;
+        document.getElementById('tolak-catatan-peneliti').value = catatan || '';
+        document.getElementById('modal-tolak-title-peneliti').textContent = 'Edit Alasan Penolakan';
+        document.getElementById('modal-tolak-submit-btn-peneliti').textContent = 'Simpan Perubahan';
         document.getElementById('modal-tolak-peneliti').style.display = 'flex';
     }
     function closeTolakModal() {

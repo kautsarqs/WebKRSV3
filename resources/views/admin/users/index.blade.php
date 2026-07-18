@@ -108,20 +108,20 @@
                                             </svg>
                                         </a>
 
-                                        <!-- Delete Form -->
-                                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" 
-                                              onsubmit="return confirm('Yakin ingin menghapus {{ $user->name }}? Data tidak bisa dikembalikan.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                                         <!-- Delete Button -->
+                                         <button type="button" 
+                                                 onclick="confirmDelete({{ $user->id }}, {{ json_encode($user->name) }})"
+                                                 class="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
+                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                             </svg>
+                                         </button>
+                                         <form id="delete-form-{{ $user->id }}" action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:none;">
+                                             @csrf
+                                             @method('DELETE')
+                                         </form>
+                                     </div>
+                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -137,4 +137,51 @@
         </div>
     </div>
 
+    {{-- ===== CONFIRM DELETE MODAL ===== --}}
+    <div id="modal-confirm-delete" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                <div style="width:44px;height:44px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <svg style="width:22px;height:22px;color:#dc2626;" fill="none" stroke="#dc2626" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </div>
+                <div>
+                    <p style="font-size:16px;font-weight:700;color:#18181b;margin:0;">Hapus User</p>
+                    <p style="font-size:13px;color:#71717a;margin:4px 0 0 0;" id="confirm-delete-name">Apakah Anda yakin?</p>
+                </div>
+            </div>
+            <p style="font-size:13px;color:#52525b;margin-bottom:22px;">Tindakan ini tidak dapat dibatalkan. Data user ini akan dihapus secara permanen.</p>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button onclick="closeConfirmDelete()" style="padding:8px 18px;background:#f4f4f5;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#3f3f46;cursor:pointer;">Batal</button>
+                <button id="btn-confirm-delete-yes" onclick="executeDelete()" style="padding:8px 18px;background:#dc2626;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    var _deleteTargetId = null;
+
+    function confirmDelete(id, name) {
+        _deleteTargetId = id;
+        var el = document.getElementById('confirm-delete-name');
+        if (el) el.textContent = 'Hapus user: ' + name;
+        var modal = document.getElementById('modal-confirm-delete');
+        modal.style.display = 'flex';
+    }
+
+    function closeConfirmDelete() {
+        document.getElementById('modal-confirm-delete').style.display = 'none';
+        _deleteTargetId = null;
+    }
+
+    function executeDelete() {
+        if (!_deleteTargetId) return;
+        var form = document.getElementById('delete-form-' + _deleteTargetId);
+        if (form) form.submit();
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('modal-confirm-delete').addEventListener('click', function(e) {
+        if (e.target === this) closeConfirmDelete();
+    });
+    </script>
 </x-dashboard-layout>
