@@ -35,7 +35,7 @@
 
 <div class="max-w-7xl mx-auto px-6 py-6 mb-12">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {{-- Card Visi --}}
+
         <div class="group p-8 rounded-3xl border border-zinc-200/80 bg-zinc-50/50 hover:bg-white hover:shadow-xl hover:border-emerald-250 transition duration-300">
             <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-650 flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -46,7 +46,6 @@
             </p>
         </div>
 
-        {{-- Card Misi --}}
         <div class="group p-8 rounded-3xl border border-zinc-200/80 bg-zinc-50/50 hover:bg-white hover:shadow-xl hover:border-emerald-250 transition duration-300">
             <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-650 flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
@@ -81,7 +80,6 @@
             Mendukung pengembangan ilmu pengetahuan melalui fasilitas penelitian yang memadai untuk para peneliti nasional maupun internasional.
         </p>
     </div>
-
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="p-8 rounded-3xl border border-zinc-200 bg-zinc-50/50 hover:bg-white hover:shadow-lg transition duration-300">

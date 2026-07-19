@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="max-w-7xl mx-auto px-6 py-8">
-        
-        <!-- Header Section -->
+
         <div class="text-center mb-8 relative">
             <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
                 Eksplorasi Tumbuhan
@@ -15,18 +14,16 @@
             </p>
         </div>
 
-
-        <!-- Search & Filter Controls -->
         <div class="max-w-3xl mx-auto mb-8 space-y-6">
             <form method="GET" action="{{ route('koleksi') }}" class="relative group">
                 <div class="flex items-center bg-white border border-zinc-200 focus-within:border-emerald-500 rounded-full p-1.5 pl-4 sm:p-2 sm:pl-6 shadow-md shadow-zinc-100 hover:shadow-lg focus-within:shadow-emerald-100/40 transition-all duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 text-zinc-400 group-focus-within:text-emerald-600 transition-colors mr-2 sm:mr-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <input type="text" name="search" value="{{ request('search') }}" 
-                        placeholder="Cari nama tumbuhan, genus, famili..." 
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari nama tumbuhan, genus, famili..."
                         class="w-full bg-transparent border-none outline-none text-zinc-800 text-xs sm:text-sm font-inter placeholder-zinc-400 pr-2 sm:pr-4" />
-                    
+
                     @if(request()->filled('search'))
                         <a href="{{ route('koleksi') }}" class="p-1.5 text-zinc-400 hover:text-zinc-600 mr-1 transition-colors shrink-0" title="Clear Search">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -40,7 +37,6 @@
             </form>
         </div>
 
-        <!-- Plant Cards Grid -->
         @if ($koleksis->isEmpty())
             <div class="text-center py-20 bg-zinc-50/50 border border-dashed border-zinc-200 rounded-3xl max-w-xl mx-auto px-6">
                 <div class="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4 text-zinc-400">
@@ -78,7 +74,7 @@
                                 </div>
                             @endif
                         </div>
-                        
+
                         <div class="p-3.5 sm:p-6 space-y-2 sm:space-y-3.5">
                             <div class="space-y-1">
                                 <h3 class="text-xs sm:text-lg font-bold text-zinc-900 group-hover:text-emerald-700 transition duration-300 font-heading leading-snug line-clamp-2">

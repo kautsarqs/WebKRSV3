@@ -67,7 +67,6 @@
                 @error('keperluan')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
-            {{-- ── TAMBAH ANGGOTA ROMBONGAN ─────────────────────────────────── --}}
             <div class="pt-6 border-t border-zinc-100">
                 <div class="flex items-center justify-between mb-4">
                     <div>
@@ -87,7 +86,7 @@
                                 <button type="button" class="btn-remove-row absolute top-4 right-4 text-zinc-400 hover:text-red-650 transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
-                                
+
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mr-6">
                                     <div class="space-y-1">
                                         <label class="text-xs font-semibold text-zinc-650">Nama Anggota <span class="text-red-500">*</span></label>
@@ -138,7 +137,6 @@
 
         let rombonganIndex = {{ !empty($pengunjung->rombongan_details) ? count($pengunjung->rombongan_details) : 0 }};
 
-        // Initialize phone country flags
         function initIntlPhone(input, hiddenInput) {
             const iti = window.intlTelInput(input, {
                 initialCountry: "id",
@@ -147,7 +145,7 @@
                 formatOnDisplay: false,
                 utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/js/utils.js"
             });
-            
+
             function updateValue() {
                 const countryData = iti.getSelectedCountryData();
                 const dialCode = countryData.dialCode || '';
@@ -155,18 +153,18 @@
                 if (nationalNumber.startsWith('0')) {
                     nationalNumber = nationalNumber.substring(1);
                 }
-                
+
                 if (nationalNumber) {
                     hiddenInput.value = '+' + dialCode + nationalNumber;
                 } else {
                     hiddenInput.value = '';
                 }
             }
-            
+
             input.addEventListener('change', updateValue);
             input.addEventListener('keyup', updateValue);
             input.addEventListener('countrychange', updateValue);
-            
+
             input.addEventListener('input', function() {
                 this.value = this.value.replace(/\D/g, '');
                 if (this.value.startsWith('0')) {
@@ -189,14 +187,13 @@
                 if (input.value.startsWith('0')) {
                     input.value = input.value.substring(1);
                 }
-                // Update the hidden field synchronously with the cleaned formatted value
+
                 updateValue();
             }
         }
 
         initIntlPhone(phoneDisplay, phoneHidden);
 
-        // Bind existing row elements
         document.querySelectorAll('.rombongan-row').forEach(row => {
             row.querySelector('.row-name').addEventListener('input', function() {
                 this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
@@ -221,7 +218,7 @@
                     <button type="button" class="btn-remove-row absolute top-4 right-4 text-zinc-400 hover:text-red-650 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mr-6">
                         <div class="space-y-1">
                             <label class="text-xs font-semibold text-zinc-650">Nama Anggota <span class="text-red-500">*</span></label>
@@ -242,18 +239,14 @@
             rombonganList.insertAdjacentHTML('beforeend', rowHtml);
             updateTotalCount();
 
-            // Bind listener to the newly created row
             const newRow = rombonganList.lastElementChild;
-            
-            // Name validation
+
             newRow.querySelector('.row-name').addEventListener('input', function() {
                 this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
             });
 
-            // Initialize dynamic intl-phone input
             initIntlPhone(newRow.querySelector('.row-phone-display'), newRow.querySelector('.row-phone-hidden'));
 
-            // Remove row button listener
             newRow.querySelector('.btn-remove-row').addEventListener('click', function() {
                 newRow.remove();
                 updateTotalCount();
@@ -281,7 +274,6 @@
             if (serverError) serverError.style.display = 'none';
         }
 
-        // Setup main fields constraints
         nameInput.addEventListener('input', function() {
             this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
             if (this.value.trim() === '') toggleError(this, true, 'Nama lengkap tidak boleh kosong.');
@@ -299,7 +291,7 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             selectedDate.setHours(0, 0, 0, 0);
-            
+
             if (selectedDate < today) {
                 toggleError(this, true, 'Tanggal kunjungan tidak boleh tanggal yang sudah lewat.');
             } else {
@@ -311,13 +303,11 @@
             nameInput.dispatchEvent(new Event('input'));
             dateInput.dispatchEvent(new Event('input'));
 
-            // Force update main phone and rombongan phone hidden inputs before validation
             phoneDisplay.dispatchEvent(new Event('input'));
             document.querySelectorAll('.row-phone-display').forEach(el => {
                 el.dispatchEvent(new Event('input'));
             });
 
-            // Phone validation
             if (!phoneHidden.value || phoneHidden.value.trim() === '') {
                 e.preventDefault();
                 alert('Nomor HP wajib diisi dengan format yang benar.');

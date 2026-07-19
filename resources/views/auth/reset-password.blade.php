@@ -1,5 +1,5 @@
 <x-app-layout>
-    {{-- Background Video layer --}}
+
     <div class="fixed inset-0 z-0 overflow-hidden">
         <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
             <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4" />
@@ -8,9 +8,9 @@
     </div>
 
     <div class="relative z-10 min-h-[85vh] flex items-center justify-center font-inter selection:bg-emerald-800 selection:text-white py-10">
-        
+
         <div class="relative w-full max-w-md p-8 bg-zinc-950/45 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl text-white">
-            
+
             <div class="text-center mb-8">
                 <div class="flex items-center justify-center gap-2 mb-3">
                     <span class="block h-px w-6 bg-white/20 rounded-full"></span>
@@ -61,7 +61,7 @@
                     <div class="relative">
                         <input id="password" x-bind:type="show ? 'text' : 'password'" name="password" required
                             class="w-full px-5 py-3.5 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
-                        
+
                         <button type="button" @click="show = !show" class="absolute right-4 top-3.5 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -79,7 +79,7 @@
                     <div class="relative">
                         <input id="password_confirmation" x-bind:type="show ? 'text' : 'password'" name="password_confirmation" required
                             class="w-full px-5 py-3.5 bg-white/5 border border-white/10 focus:ring-emerald-500 focus:border-emerald-500 rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
-                        
+
                         <button type="button" @click="show = !show" class="absolute right-4 top-3.5 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" 
+                    <button type="submit"
                         class="w-full py-3.5 px-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all transform hover:scale-[1.01] active:scale-[0.99] font-space shadow-xl shadow-emerald-950/40 focus:outline-none">
                         Simpan Sandi Baru
                     </button>

@@ -2,7 +2,7 @@
     <x-admin-sidebar />
 
     <div class="max-w-2xl mx-auto py-6">
-        
+
         <a href="{{ route('admin.maps.index') }}" class="inline-flex items-center text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors mb-6 font-space group">
             <div class="w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center mr-2 shadow-sm group-hover:bg-zinc-100 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -11,23 +11,22 @@
         </a>
 
         <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl shadow-xl shadow-zinc-200/40 p-8">
-            
+
             <div class="space-y-1 mb-8">
                 <h3 class="text-2xl font-bold font-space text-zinc-900 tracking-tight">Tambah Marker Peta</h3>
                 <p class="text-zinc-500 text-sm font-inter">Isi formulir berikut untuk menambahkan marker baru di peta digital.</p>
             </div>
-            
+
             <form method="POST" action="{{ route('admin.maps.store') }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
                 <div class="space-y-2">
                     <label for="name" class="block text-sm font-bold text-zinc-700 font-space ml-1">Nama Marker/Fitur</label>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus 
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Contoh: Area Koleksi A atau Batas KRS" />
                     @error('name') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Tipe Geometri -->
                 <div class="space-y-2">
                     <label for="geometry_type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Tipe Geometri</label>
                     <div class="relative">
@@ -43,13 +42,11 @@
                     @error('geometry_type') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Interactive Drawing Map -->
                 <div class="space-y-2">
                     <label class="block text-sm font-bold text-zinc-700 font-space ml-1">Gambar di Peta (Klik-Klik Seperti Pen Tool)</label>
                     <div class="border border-zinc-200 rounded-2xl overflow-hidden shadow-sm relative">
                         <div id="admin-map" style="height: 350px; width: 100%; z-index: 10;"></div>
-                        
-                        <!-- Layer Selector Overlay & Offline Sync -->
+
                         <div class="absolute top-2 right-2 z-[1000] flex items-center gap-2">
                             <button type="button" id="toggle-existing-btn" onclick="toggleExistingMarkers()" class="px-3 py-1.5 bg-white/95 border border-zinc-200 rounded-lg text-xs font-semibold shadow-md outline-none cursor-pointer text-zinc-700 hover:bg-zinc-50 transition-all flex items-center gap-1.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -84,15 +81,13 @@
                     </div>
                 </div>
 
-                <!-- Hidden Input untuk Koordinat Array Polyline/Polygon -->
                 <input type="hidden" id="geojson" name="geojson" value="{{ old('geojson') }}" />
 
-                <!-- Container Input Koordinat Point (Marker) -->
                 <div id="coords-input-container" class="space-y-6">
                     <div class="space-y-2">
                         <label for="coordinates" class="block text-sm font-bold text-zinc-700 font-space ml-1">Koordinat Manual (Latitude, Longitude)</label>
-                        <input id="coordinates" type="text" value="{{ old('coordinates') }}" 
-                            class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" 
+                        <input id="coordinates" type="text" value="{{ old('coordinates') }}"
+                            class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400"
                             placeholder="1.269936, 109.485157 atau klik peta di atas" />
                         <p class="text-xs text-zinc-400 ml-1">Otomatis terisi ketika Anda mengklik peta di atas.</p>
                     </div>
@@ -100,13 +95,13 @@
                     <div id="latlng-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="space-y-2">
                             <label for="latitude" class="block text-sm font-bold text-zinc-700 font-space ml-1">Latitude</label>
-                            <input id="latitude" type="number" step="any" name="latitude" value="{{ old('latitude') }}" 
+                            <input id="latitude" type="number" step="any" name="latitude" value="{{ old('latitude') }}"
                                 class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="1.269936" />
                             @error('latitude') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
                         <div class="space-y-2">
                             <label for="longitude" class="block text-sm font-bold text-zinc-700 font-space ml-1">Longitude</label>
-                            <input id="longitude" type="number" step="any" name="longitude" value="{{ old('longitude') }}" 
+                            <input id="longitude" type="number" step="any" name="longitude" value="{{ old('longitude') }}"
                                 class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="109.485157" />
                             @error('longitude') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
@@ -115,7 +110,7 @@
 
                 <div class="space-y-2" id="type-wrapper">
                     <label for="type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Kategori/Tipe Marker</label>
-                    <input id="type" type="text" name="type" list="types-list" value="{{ old('type') }}" required 
+                    <input id="type" type="text" name="type" list="types-list" value="{{ old('type') }}" required
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Ketik atau pilih kategori (misal: Area Koleksi, Spot Foto, dll.)" />
                     <datalist id="types-list">
                         @foreach($existingTypes ?? ['area_koleksi', 'fasilitas_umum', 'kantor_pengelola', 'pos_keamanan'] as $t)
@@ -135,7 +130,7 @@
 
                 <div class="space-y-2" id="desc-wrapper">
                     <label for="description" class="block text-sm font-bold text-zinc-700 font-space ml-1">Deskripsi (Opsional)</label>
-                    <textarea id="description" name="description" rows="3" 
+                    <textarea id="description" name="description" rows="3"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400 resize-none">{{ old('description') }}</textarea>
                     @error('description') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
@@ -143,10 +138,10 @@
                 <div class="space-y-2" id="color-wrapper">
                     <label for="color" class="block text-sm font-bold text-zinc-700 font-space ml-1">Warna Marker</label>
                     <div class="flex items-center gap-3">
-                        <input id="color" type="color" name="color" value="{{ old('color', '#3b82f6') }}" 
+                        <input id="color" type="color" name="color" value="{{ old('color', '#3b82f6') }}"
                             class="w-16 h-12 bg-white/50 border border-zinc-300 rounded-xl cursor-pointer" />
-                        <input id="color-text" type="text" value="{{ old('color', '#3b82f6') }}" 
-                            class="flex-1 px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400 font-mono text-sm" 
+                        <input id="color-text" type="text" value="{{ old('color', '#3b82f6') }}"
+                            class="flex-1 px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400 font-mono text-sm"
                             placeholder="#3b82f6" pattern="^#[0-9A-Fa-f]{6}$" readonly />
                     </div>
                     @error('color') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
@@ -155,7 +150,7 @@
 
                 <div class="space-y-2" id="photo-wrapper">
                     <label for="photo" class="block text-sm font-bold text-zinc-700 font-space ml-1">Foto Marker (Opsional)</label>
-                    <input id="photo" type="file" name="photo" accept="image/*" 
+                    <input id="photo" type="file" name="photo" accept="image/*"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
                     @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                     <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF (maks. 2MB)</p>
@@ -170,18 +165,16 @@
         </div>
     </div>
 
-    <!-- Leaflet JS & CSS for drawing -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="{{ asset('js/offline-maps.js') }}"></script>
     <script>
-        // Sync color picker dengan text input
+
         document.getElementById('color').addEventListener('input', function(e) {
             document.getElementById('color-text').value = e.target.value;
         });
 
-        // Auto-split coordinates
         document.getElementById('coordinates').addEventListener('input', function(e) {
             const value = e.target.value.trim();
             if (value.includes(',')) {
@@ -193,19 +186,16 @@
             }
         });
 
-        // --- Leaflet Drawing Engine ---
-        var mapCenter = [1.2706202914994014, 109.48517276551188]; // Center of KRS
+        var mapCenter = [1.2706202914994014, 109.48517276551188];
         var adminMap = L.map('admin-map', { zoomControl: false }).setView(mapCenter, 14);
         L.control.zoom({ position: 'bottomright' }).addTo(adminMap);
 
-        // Definisikan layer untuk Admin Map
         var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { minZoom: 8, maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
         var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 8, maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
         var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { minZoom: 8, maxNativeZoom: 17, maxZoom: 17, attribution: 'Map data: &copy; OpenStreetMap', subdomains: 'abc', crossOrigin: true });
 
         var currentLayer = roadLayer.addTo(adminMap);
 
-        // --- Layer untuk existing markers ---
         var existingLayerGroup = L.layerGroup().addTo(adminMap);
         var existingMarkersData = @json($existingMarkers ?? []);
 
@@ -252,7 +242,7 @@
         function toggleExistingMarkers() {
             showExisting = !showExisting;
             var btn = document.getElementById('toggle-existing-btn');
-            
+
             if (showExisting) {
                 adminMap.addLayer(existingLayerGroup);
                 btn.innerHTML = `
@@ -273,8 +263,6 @@
             }
         }
 
-
-
         function downloadAdminMap() {
             if (typeof window.downloadOfflineMaps === 'undefined') {
                 alert('Pustaka Offline Maps belum dimuat!');
@@ -284,7 +272,7 @@
             var text = document.getElementById('download-map-text');
             btn.disabled = true;
             text.innerText = "Loading...";
-            
+
             var currentZ = adminMap.getZoom();
             var zooms = [currentZ - 2, currentZ - 1, currentZ, currentZ + 1, currentZ + 2];
             window.downloadOfflineMaps(
@@ -293,13 +281,13 @@
                 zooms,
                 {
                     onProgress: function(d, f, t, p) { text.innerText = `${p}%`; },
-                    onSuccess: function() { 
-                        text.innerText = "Unduh Area"; 
+                    onSuccess: function() {
+                        text.innerText = "Unduh Area";
                         btn.disabled = false;
                         alert("Semua lapisan peta berhasil diunduh untuk area ini!");
                     },
                     onError: function(msg) {
-                        text.innerText = "Unduh Area"; 
+                        text.innerText = "Unduh Area";
                         btn.disabled = false;
                         alert(msg);
                     }
@@ -317,13 +305,12 @@
 
         var currentGeomType = 'point';
         var drawnItems = L.featureGroup().addTo(adminMap);
-        var clickedCoords = []; 
+        var clickedCoords = [];
 
         var tempMarker = null;
         var tempPolyline = null;
         var tempPolygon = null;
 
-        // Undo & Redo History State Management
         var historyStack = [];
         var redoStack = [];
 
@@ -334,13 +321,13 @@
                 markerCoords: tempMarker ? [tempMarker.getLatLng().lat, tempMarker.getLatLng().lng] : null
             };
             historyStack.push(state);
-            redoStack = []; // clear redo stack on new action
+            redoStack = [];
             updateUndoRedoButtons();
         }
 
         function undo() {
             if (historyStack.length === 0) return;
-            
+
             var currentState = {
                 geomType: currentGeomType,
                 coords: [...clickedCoords],
@@ -412,7 +399,7 @@
         function createDraggableMarker(latlng) {
             drawnItems.clearLayers();
             tempMarker = L.marker(latlng, { draggable: true }).addTo(drawnItems);
-            
+
             var dragStartLatLng = null;
             tempMarker.on('dragstart', function() {
                 dragStartLatLng = tempMarker.getLatLng();
@@ -422,7 +409,7 @@
                 var newLatLng = tempMarker.getLatLng();
                 var snapped = getSnappedLatLng(newLatLng);
                 tempMarker.setLatLng(snapped);
-                
+
                 var state = {
                     geomType: 'point',
                     coords: [],
@@ -438,40 +425,40 @@
 
         function changeGeometryType(type, clearHistory = true) {
             currentGeomType = type;
-            
+
             if (clearHistory) {
                 resetDrawing();
                 historyStack = [];
                 redoStack = [];
                 updateUndoRedoButtons();
             }
-            
+
             var coordsInputContainer = document.getElementById('coords-input-container');
             var drawInfo = document.getElementById('draw-info');
-            
+
             var typeWrapper = document.getElementById('type-wrapper');
             var jenisJalanWrapper = document.getElementById('jenis-jalan-wrapper');
             var descWrapper = document.getElementById('desc-wrapper');
             var colorWrapper = document.getElementById('color-wrapper');
             var photoWrapper = document.getElementById('photo-wrapper');
-            
+
             var typeInput = document.getElementById('type');
             var jenisJalanInput = document.getElementById('jenis_jalan');
 
             if (type === 'point') {
                 if(coordsInputContainer) coordsInputContainer.classList.remove('hidden');
                 drawInfo.innerText = "Klik pada peta untuk menempatkan titik marker (seret pin untuk menyesuaikan).";
-                
+
                 if (descWrapper) descWrapper.classList.remove('hidden');
                 if (photoWrapper) photoWrapper.classList.remove('hidden');
                 if (typeWrapper) typeWrapper.classList.remove('hidden');
                 if (colorWrapper) colorWrapper.classList.remove('hidden');
                 if (jenisJalanWrapper) jenisJalanWrapper.classList.add('hidden');
-                
+
                 if (typeInput.value === 'jalan_utama' || typeInput.value === 'jalan_lain') {
                     typeInput.value = '';
                 }
-                
+
                 document.getElementById('description').removeAttribute('disabled');
                 document.getElementById('photo').removeAttribute('disabled');
                 document.getElementById('coordinates').removeAttribute('disabled');
@@ -479,17 +466,16 @@
                 document.getElementById('longitude').removeAttribute('disabled');
             } else {
                 if(coordsInputContainer) coordsInputContainer.classList.add('hidden');
-                
-                // Sembunyikan form yang disable
+
                 if (descWrapper) descWrapper.classList.add('hidden');
                 if (photoWrapper) photoWrapper.classList.add('hidden');
-                
+
                 document.getElementById('description').setAttribute('disabled', 'true');
                 document.getElementById('photo').setAttribute('disabled', 'true');
                 document.getElementById('coordinates').setAttribute('disabled', 'true');
                 document.getElementById('latitude').setAttribute('disabled', 'true');
                 document.getElementById('longitude').setAttribute('disabled', 'true');
-                
+
                 if (type === 'polyline' || type === 'linestring') {
                     drawInfo.innerText = "Klik peta berulang kali (seperti pen tool) untuk menggambar garis rute/jalan.";
                     if (typeWrapper) typeWrapper.classList.add('hidden');
@@ -503,29 +489,25 @@
                     if (typeWrapper) typeWrapper.classList.remove('hidden');
                     if (colorWrapper) colorWrapper.classList.remove('hidden');
                     if (jenisJalanWrapper) jenisJalanWrapper.classList.add('hidden');
-                    
+
                     if (typeInput.value === 'jalan_utama' || typeInput.value === 'jalan_lain') {
                         typeInput.value = '';
                     }
                 }
             }
         }
-        
-        // Listener untuk Jenis Jalan
+
         document.getElementById('jenis_jalan').addEventListener('change', function(e) {
             document.getElementById('type').value = e.target.value;
             renderShape();
         });
 
-
-        // --- Leaflet Snapping Engine ---
-        var snapTolerance = 15; // pixels
+        var snapTolerance = 15;
         function getSnappedLatLng(latlng) {
             var minDistance = Infinity;
             var snappedLatLng = latlng;
             var clickPoint = adminMap.latLngToContainerPoint(latlng);
 
-            // Snapping to existing markers
             if (typeof existingLayerGroup !== 'undefined') {
                 existingLayerGroup.eachLayer(function(layer) {
                     if (layer instanceof L.Marker) {
@@ -550,7 +532,6 @@
                 });
             }
 
-            // Also snap to vertices of the current drawing!
             clickedCoords.forEach(function(coord) {
                 var ll = L.latLng(coord[0], coord[1]);
                 var p = adminMap.latLngToContainerPoint(ll);
@@ -564,7 +545,6 @@
             return snappedLatLng;
         }
 
-        // Tangani klik pada peta untuk menggambar
         adminMap.on('click', function(e) {
             var snapped = getSnappedLatLng(e.latlng);
             var lat = snapped.lat;
@@ -588,12 +568,12 @@
 
             // Gambar titik anchor (vertex)
             clickedCoords.forEach(function(coord, idx) {
-                L.circleMarker(coord, { 
-                    radius: 5, 
-                    color: '#1e293b', 
-                    fillColor: '#3b82f6', 
-                    fillOpacity: 1, 
-                    weight: 2 
+                L.circleMarker(coord, {
+                    radius: 5,
+                    color: '#1e293b',
+                    fillColor: '#3b82f6',
+                    fillOpacity: 1,
+                    weight: 2
                 }).addTo(drawnItems);
             });
 
@@ -622,7 +602,6 @@
             }
         }
 
-        // Jalankan sinkronisasi warna live pada garis/polygon yang sedang digambar
         document.getElementById('color').addEventListener('input', function() {
             renderShape();
         });
@@ -642,7 +621,6 @@
             resetDrawing();
         }
 
-        // Keyboard shortcut listener for Undo/Redo
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
                 e.preventDefault();
@@ -654,7 +632,6 @@
             }
         });
 
-        // Intercept Form Submit jika Offline
         document.querySelector('form').addEventListener('submit', async function(e) {
             if (currentGeomType === 'polyline' || currentGeomType === 'linestring') {
                 var roadType = document.getElementById('jenis_jalan').value;
@@ -668,11 +645,11 @@
                 const originalText = submitBtn.innerText;
                 submitBtn.innerText = 'Menyimpan Offline...';
                 submitBtn.disabled = true;
-                
+
                 try {
                     const formData = new FormData(this);
                     const data = {};
-                    
+
                     for (let [key, value] of formData.entries()) {
                         if (value instanceof File && value.size > 0) {
                             const reader = new FileReader();
@@ -706,7 +683,6 @@
             }
         });
 
-        // Inisialisasi awal
         changeGeometryType(document.getElementById('geometry_type').value, true);
 
         // Auto-download Kebun Raya Sambas tiles on page load (background)

@@ -28,7 +28,6 @@ class PendaftaranPengunjung extends Model
         'rombongan_details' => 'array',
     ];
 
-    // Relasi ke User (Opsional, untuk dashboard nanti)
     public function user()
     {
         return $this->belongsTo(User::class);

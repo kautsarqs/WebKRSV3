@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Auth\Events\Registered; // <-- TAMBAHKAN BARIS INI
+use Illuminate\Auth\Events\Registered;
 
 class SocialiteController extends Controller
 {
@@ -30,7 +30,7 @@ class SocialiteController extends Controller
                 ->first();
 
             if ($user) {
-                // --- LOGIKA: USER SUDAH ADA ---
+
                 $updateData = [];
                 if (!$user->google_id) {
                     $updateData['google_id'] = $googleUser->id;
@@ -48,7 +48,7 @@ class SocialiteController extends Controller
                     ? redirect()->route('admin.dashboard')
                     : redirect()->route('dashboard');
             } else {
-                // --- LOGIKA: USER BARU ---
+
                 $user = User::create([
                     'name' => $googleUser->name,
                     'email' => $googleUser->email,
@@ -56,10 +56,9 @@ class SocialiteController extends Controller
                     'avatar' => $googleUser->avatar,
                     'role' => 'user',
                     'password' => Hash::make('password_acak_' . str()->random(16)),
-                    'email_verified_at' => now(), // Otomatis terverifikasi karena dari Google
+                    'email_verified_at' => now(),
                 ]);
 
-                // Tidak perlu memicu event(new Registered($user)) karena sudah verified dari Google
                 Auth::login($user);
 
                 return redirect()->route('dashboard');

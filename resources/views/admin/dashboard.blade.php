@@ -2,7 +2,7 @@
     <x-admin-sidebar />
 
     <div class="space-y-8 py-4">
-        
+
         <div>
             <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Overview</h2>
             <p class="text-zinc-500 text-sm mt-1 font-inter">Ringkasan aktivitas dan statistik website Kebun Raya Sambas.</p>
@@ -10,7 +10,6 @@
 
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
 
-            {{-- Total User Widget --}}
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
                     <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Total User</h3>
@@ -23,7 +22,6 @@
                 </div>
             </div>
 
-            {{-- Total Koleksi Widget --}}
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
                     <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Total Koleksi</h3>
@@ -36,7 +34,6 @@
                 </div>
             </div>
 
-            {{-- Total Penanda Peta Widget --}}
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
                     <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Total Penanda</h3>
@@ -49,7 +46,6 @@
                 </div>
             </div>
 
-            {{-- Total Pengunjung Disetujui Widget --}}
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
                     <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Pengunjung</h3>
@@ -62,7 +58,6 @@
                 </div>
             </div>
 
-            {{-- Total Peneliti Disetujui Widget --}}
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
                     <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Peneliti</h3>
@@ -77,12 +72,11 @@
 
         </div>
 
-        {{-- Statistics & Diagrams Section --}}
         <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-8">
-            {{-- Visitor Stats --}}
+
             <div class="bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40">
                 <h4 class="text-xs font-bold text-zinc-400 font-space uppercase mb-6 tracking-wider">Status Registrasi Pengunjung</h4>
-                
+
                 <div class="space-y-5">
                     @php
                         $visitorTotal = $pengunjungPending + $pengunjungSetuju + $pengunjungTolak;
@@ -91,8 +85,7 @@
                         $setujuPct = round(($pengunjungSetuju / $visitorTotal) * 100);
                         $tolakPct = round(($pengunjungTolak / $visitorTotal) * 100);
                     @endphp
-                    
-                    {{-- Bar 1: Disetujui --}}
+
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Disetujui</span>
@@ -103,7 +96,6 @@
                         </div>
                     </div>
 
-                    {{-- Bar 2: Pending --}}
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Pending</span>
@@ -114,7 +106,6 @@
                         </div>
                     </div>
 
-                    {{-- Bar 3: Ditolak --}}
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Ditolak</span>
@@ -127,10 +118,9 @@
                 </div>
             </div>
 
-            {{-- Researcher Stats --}}
             <div class="bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40">
                 <h4 class="text-xs font-bold text-zinc-400 font-space uppercase mb-6 tracking-wider">Status & Aktivitas Peneliti</h4>
-                
+
                 <div class="space-y-5">
                     @php
                         $researchTotal = $penelitiPending + $penelitiSedang + $penelitiSelesai + $penelitiTolak;
@@ -140,8 +130,7 @@
                         $selesaiRPct = round(($penelitiSelesai / $researchTotal) * 100);
                         $tolakRPct = round(($penelitiTolak / $researchTotal) * 100);
                     @endphp
-                    
-                    {{-- Bar 1: Sedang Penelitian --}}
+
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Sedang Penelitian (Aktif)</span>
@@ -152,7 +141,6 @@
                         </div>
                     </div>
 
-                    {{-- Bar 2: Selesai Penelitian --}}
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400"></span>Selesai Penelitian</span>
@@ -163,7 +151,6 @@
                         </div>
                     </div>
 
-                    {{-- Bar 3: Pending --}}
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Pending</span>
@@ -174,7 +161,6 @@
                         </div>
                     </div>
 
-                    {{-- Bar 4: Ditolak --}}
                     <div>
                         <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
                             <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Ditolak</span>

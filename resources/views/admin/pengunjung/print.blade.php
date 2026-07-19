@@ -41,7 +41,7 @@
         <tbody>
             @php $counter = 1; @endphp
             @forelse($pengunjungs as $row)
-                {{-- 1. Main Person --}}
+
                 <tr>
                     <td class="text-center">{{ $counter++ }}</td>
                     <td>{{ \Carbon\Carbon::parse($row->tanggal_kunjungan)->translatedFormat('d-m-Y') }}</td>
@@ -50,7 +50,7 @@
                     <td>{{ $row->instansi ?? '-' }}</td>
                     <td>{{ $row->keperluan ?? '-' }}</td>
                 </tr>
-                {{-- 2. Friends / Rombongan --}}
+
                 @if(!empty($row->rombongan_details))
                     @foreach($row->rombongan_details as $friend)
                         <tr>

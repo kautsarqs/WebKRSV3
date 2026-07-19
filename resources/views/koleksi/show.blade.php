@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="max-w-6xl mx-auto px-6 py-8">
-        
-        <!-- Back Button -->
+
         <div class="mb-8">
             <a href="{{ route('koleksi') }}" class="inline-flex items-center text-sm font-semibold text-zinc-500 hover:text-emerald-700 transition-colors duration-250 font-space group">
                 <div class="w-8 h-8 rounded-full bg-white border border-zinc-200 flex items-center justify-center mr-2 shadow-xs group-hover:bg-emerald-50 group-hover:border-emerald-200 transition-colors">
@@ -15,10 +14,8 @@
             </a>
         </div>
 
-        <!-- Split Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
-            <!-- Left Column: Media & Gallery Preview -->
+
             <div class="lg:col-span-5 space-y-6">
                 <div class="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-zinc-50 shadow-lg group">
                     @if ($koleksi->photo)
@@ -32,7 +29,6 @@
                         </div>
                     @endif
 
-                    <!-- Famili Float Tag -->
                     @if ($koleksi->famili)
                     <div class="absolute bottom-4 left-4 z-10">
                         <span class="px-3.5 py-1.5 bg-black/60 backdrop-blur-md text-[10px] font-bold text-white rounded-full shadow-sm uppercase tracking-wider font-space">
@@ -42,7 +38,6 @@
                     @endif
                 </div>
 
-                <!-- Styled Thumbnail/Botanical Specimen Badges -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col items-center justify-center p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-2xl text-center space-y-1">
                         <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-space">Spesimen</span>
@@ -55,10 +50,8 @@
                 </div>
             </div>
 
-            <!-- Right Column: Detail Information -->
             <div class="lg:col-span-7 space-y-8">
-                
-                <!-- Main Titles -->
+
                 <div class="space-y-2">
                     <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-950 font-heading leading-tight">
                         {{ $koleksi->title }}
@@ -79,7 +72,6 @@
                     @endif
                 </div>
 
-                <!-- Description Card -->
                 <div class="space-y-3">
                     <h3 class="text-sm font-bold text-zinc-900 uppercase tracking-wider font-space">Deskripsi & Karakteristik</h3>
                     <div class="text-zinc-600 font-inter leading-relaxed font-light text-base text-justify whitespace-pre-line bg-zinc-50/50 p-6 rounded-2xl border border-zinc-200/60 shadow-xs">
@@ -87,10 +79,9 @@
                     </div>
                 </div>
 
-                <!-- Scientific Taxonomy Grid (Important Section) -->
                 <div class="space-y-4">
                     <h3 class="text-sm font-bold text-zinc-900 uppercase tracking-wider font-space">Klasifikasi Taksonomi (Scientific)</h3>
-                    
+
                     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 gap-3">
                         <div class="p-4 bg-white border border-zinc-200 rounded-2xl shadow-xs hover:border-emerald-200 hover:bg-emerald-50/10 transition-colors duration-250">
                             <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-space mb-1">Kerajaan</div>
@@ -142,8 +133,6 @@
                         @endif
                     </div>
                 </div>
-
-
 
             </div>
         </div>

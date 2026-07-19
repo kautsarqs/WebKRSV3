@@ -25,9 +25,6 @@ class Koleksi extends Model
         'otoritas_2',
     ];
 
-    /**
-     * Enforce Title/Lower Case for taxonomy fields according to botanical standards
-     */
     public function setAttribute($key, $value)
     {
         if (in_array($key, ['kerajaan', 'divisi', 'kelas', 'order', 'famili', 'genus']) && is_string($value)) {

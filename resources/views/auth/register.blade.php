@@ -1,5 +1,5 @@
 <x-app-layout>
-    {{-- Background Video layer (same as Hero) --}}
+
     <div class="fixed inset-0 z-0 overflow-hidden">
         <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
             <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4" />
@@ -8,11 +8,11 @@
     </div>
 
     <div class="relative z-10 min-h-[85vh] flex items-center justify-center font-inter selection:bg-emerald-800 selection:text-white py-10">
-        
+
         <div class="relative w-full max-w-md p-8 bg-zinc-950/45 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl text-white">
-            
+
             <div class="text-center mb-6">
-                <!-- Botanical leaf accent -->
+
                 <div class="flex items-center justify-center gap-2 mb-3">
                     <span class="block h-px w-6 bg-white/20 rounded-full"></span>
                     <svg class="w-4 h-4 text-emerald-400 opacity-80" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -70,17 +70,17 @@
                     <div class="flex items-center justify-between pl-1">
                         <label for="password" class="block text-sm font-bold text-zinc-300 font-space">Password</label>
                     </div>
-                    
+
                     <div class="relative">
-                        <input 
-                            id="password" 
-                            x-bind:type="show ? 'text' : 'password'" 
-                            name="password" 
-                            required 
+                        <input
+                            id="password"
+                            x-bind:type="show ? 'text' : 'password'"
+                            name="password"
+                            required
                             autocomplete="new-password"
                             class="w-full px-5 py-3 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white placeholder-zinc-550 shadow-inner pr-12"
                         />
-                        
+
                         <button type="button" @click="show = !show" class="absolute right-4 top-3 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -100,13 +100,13 @@
                     <div class="flex items-center justify-between pl-1">
                         <label for="password_confirmation" class="block text-sm font-bold text-zinc-300 font-space">Ulangi Password</label>
                     </div>
-                    
+
                     <div class="relative">
-                        <input 
-                            id="password_confirmation" 
-                            x-bind:type="showConfirm ? 'text' : 'password'" 
-                            name="password_confirmation" 
-                            required 
+                        <input
+                            id="password_confirmation"
+                            x-bind:type="showConfirm ? 'text' : 'password'"
+                            name="password_confirmation"
+                            required
                             class="w-full px-5 py-3 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12"
                         />
                          <button type="button" @click="showConfirm = !showConfirm" class="absolute right-4 top-3 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
@@ -125,7 +125,7 @@
                     Dengan mendaftar, Anda menyetujui <a href="{{ route('syarat') }}" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline">Syarat & Ketentuan</a> serta <a href="{{ route('privasi') }}" target="_blank" class="text-emerald-400 hover:text-emerald-300 hover:underline">Kebijakan Privasi</a> kami.
                 </div>
 
-                <button type="submit" 
+                <button type="submit"
                     class="w-full mt-2 py-3.5 px-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all transform hover:scale-[1.01] active:scale-[0.99] font-space shadow-xl shadow-emerald-950/40 focus:outline-none">
                     Daftar Sekarang
                 </button>
@@ -136,7 +136,7 @@
                 <div class="relative flex justify-center text-xs uppercase"><span class="bg-transparent px-2 text-zinc-400 font-bold backdrop-blur-sm rounded">Atau</span></div>
             </div>
 
-            <a href="{{ route('auth.google') }}" 
+            <a href="{{ route('auth.google') }}"
                class="flex items-center justify-center w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold rounded-2xl transition-all font-space group mb-6 shadow-sm hover:shadow-md">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" alt="Google">
                 Daftar dengan Google

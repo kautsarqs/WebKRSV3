@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Response;
 
 class PendaftaranManageController extends Controller
 {
-    // ─── Pengunjung ──────────────────────────────────────────────────────────
 
     public function indexPengunjung(Request $request)
     {
@@ -41,8 +40,6 @@ class PendaftaranManageController extends Controller
         return back()->with('success', 'Status pendaftaran pengunjung berhasil diperbarui.');
     }
 
-    // ─── Peneliti ─────────────────────────────────────────────────────────────
-
     public function indexPeneliti(Request $request)
     {
         $status = $request->get('status');
@@ -72,19 +69,17 @@ class PendaftaranManageController extends Controller
         return back()->with('success', 'Status pendaftaran peneliti berhasil diperbarui.');
     }
 
-    // ─── Export Fitur ─────────────────────────────────────────────────────────
-
     public function exportPengunjung(Request $request, $format)
     {
         $pengunjungs = PendaftaranPengunjung::with('user')->where('status', 'disetujui')->latest()->get();
 
         if ($format === 'excel' || $format === 'csv') {
             $filename = 'daftar-pengunjung-' . date('Y-m-d') . '.csv';
-            
-            $csvData = "\xEF\xBB\xBF"; // UTF-8 BOM
-            
+
+            $csvData = "\xEF\xBB\xBF";
+
             $headers_row = ['No', 'Nama Lengkap', 'Nomor HP', 'Instansi', 'Tanggal Kunjungan', 'Jumlah Rombongan', 'Tujuan / Keperluan'];
-            
+
             $csvData .= implode(';', array_map(function($val) {
                 return '"' . str_replace('"', '""', $val) . '"';
             }, $headers_row)) . "\r\n";
@@ -113,7 +108,6 @@ class PendaftaranManageController extends Controller
             ]);
         }
 
-        // Cetak PDF (Print View)
         return view('admin.pengunjung.print', compact('pengunjungs'));
     }
 
@@ -123,22 +117,22 @@ class PendaftaranManageController extends Controller
 
         if ($format === 'excel' || $format === 'csv') {
             $filename = 'daftar-peneliti-' . date('Y-m-d') . '.csv';
-            
-            $csvData = "\xEF\xBB\xBF"; // UTF-8 BOM
-            
+
+            $csvData = "\xEF\xBB\xBF";
+
             $headers_row = [
-                'No', 
-                'Nama Lengkap', 
-                'No NIK', 
-                'Nomor HP', 
-                'Institusi', 
-                'Program Studi', 
-                'Jenjang', 
-                'Judul Penelitian', 
-                'Mulai', 
+                'No',
+                'Nama Lengkap',
+                'No NIK',
+                'Nomor HP',
+                'Institusi',
+                'Program Studi',
+                'Jenjang',
+                'Judul Penelitian',
+                'Mulai',
                 'Selesai'
             ];
-            
+
             $csvData .= implode(';', array_map(function($val) {
                 return '"' . str_replace('"', '""', $val) . '"';
             }, $headers_row)) . "\r\n";
@@ -170,7 +164,6 @@ class PendaftaranManageController extends Controller
             ]);
         }
 
-        // Cetak PDF (Print View)
         return view('admin.peneliti.print', compact('penelitis'));
     }
 

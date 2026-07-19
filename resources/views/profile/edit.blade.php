@@ -2,7 +2,7 @@
     <x-admin-sidebar />
 
     <div class="space-y-8 py-4">
-        
+
         @if (session('status') === 'profile-updated' || session('status') === 'password-updated')
             <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
                  x-transition:enter="transition ease-out duration-300"
@@ -20,7 +20,7 @@
         @endif
 
         <div class="grid gap-8 md:grid-cols-2">
-            
+
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl shadow-xl shadow-zinc-200/40 p-8 h-fit">
                 <header class="mb-8 border-b border-zinc-200/60 pb-4">
                     <h2 class="text-xl font-bold text-zinc-900 font-space tracking-tight">Informasi Profil</h2>
@@ -28,9 +28,9 @@
                 </header>
 
                 <div class="flex items-center gap-4 mb-8 bg-white/40 p-3 rounded-2xl border border-zinc-100">
-                    <img 
-                        src="{{ Auth::user()->avatar_url }}" 
-                        alt="{{ Auth::user()->name }}" 
+                    <img
+                        src="{{ Auth::user()->avatar_url }}"
+                        alt="{{ Auth::user()->name }}"
                         class="h-14 w-14 rounded-full border-2 border-white object-cover shadow-md"
                     >
                     <div>
@@ -54,17 +54,17 @@
 
                     <div class="space-y-2">
                         <label for="name" class="block text-sm font-bold text-zinc-700 font-space ml-1">Nama Lengkap</label>
-                        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required autocomplete="name" 
+                        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required autocomplete="name"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" />
                         @error('name') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="space-y-2">
                         <label for="email" class="block text-sm font-bold text-zinc-700 font-space ml-1">Email</label>
-                        <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required autocomplete="username" 
+                        <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required autocomplete="username"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" />
                         @error('email') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
-                        
+
                         @if($user->google_id)
                             <div class="flex items-center gap-2 mt-2 text-zinc-500 text-xs bg-zinc-50 p-2 rounded-lg border border-zinc-100">
                                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
@@ -100,24 +100,24 @@
                     @if(!is_null($user->password))
                     <div class="space-y-2">
                         <label for="current_password" class="block text-sm font-bold text-zinc-700 font-space ml-1">Password Saat Ini</label>
-                        <input id="current_password" name="current_password" type="password" autocomplete="current-password" 
+                        <input id="current_password" name="current_password" type="password" autocomplete="current-password"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm" />
                         @error('current_password') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
                     </div>
                     @else
-                        <input type="hidden" name="current_password" value="password_acak"> 
+                        <input type="hidden" name="current_password" value="password_acak">
                     @endif
 
                     <div class="space-y-2">
                         <label for="update_password_password" class="block text-sm font-bold text-zinc-700 font-space ml-1">Password Baru</label>
-                        <input id="update_password_password" name="password" type="password" autocomplete="new-password" 
+                        <input id="update_password_password" name="password" type="password" autocomplete="new-password"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm" />
                         @error('password') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="space-y-2">
                         <label for="update_password_password_confirmation" class="block text-sm font-bold text-zinc-700 font-space ml-1">Ulangi Password Baru</label>
-                        <input id="update_password_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" 
+                        <input id="update_password_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm" />
                     </div>
 

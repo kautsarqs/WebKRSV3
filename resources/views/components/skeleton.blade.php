@@ -7,7 +7,7 @@
 
 @php
     $baseClass = "skeleton animate-skeleton " . $class;
-    
+
     if ($type === 'circle') {
         $baseClass .= " rounded-full";
     } elseif ($type === 'rect') {

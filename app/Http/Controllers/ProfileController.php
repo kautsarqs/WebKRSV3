@@ -8,7 +8,7 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    // Tampilkan Halaman Profile
+
     public function edit(Request $request)
     {
         return view('profile.edit', [
@@ -16,7 +16,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Update Data Diri (Nama & Email, serta Foto Profil)
     public function update(Request $request)
     {
         $request->validate([
@@ -42,7 +41,7 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            // Delete old avatar if exists locally
+
             if ($user->avatar && !filter_var($user->avatar, FILTER_VALIDATE_URL)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
             }
@@ -60,7 +59,6 @@ class ProfileController extends Controller
         return back()->with('status', 'profile-updated');
     }
 
-    // Tampilkan Profil
     public function show(Request $request)
     {
         return view('profile.show', [
@@ -68,7 +66,6 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Update Password
     public function updatePassword(Request $request)
     {
         $validated = $request->validate([

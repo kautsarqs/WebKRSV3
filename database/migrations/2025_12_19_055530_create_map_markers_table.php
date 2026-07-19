@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('map_markers', function (Blueprint $table) {
@@ -18,14 +16,11 @@ return new class extends Migration
             $table->decimal('longitude', 11, 8);
             $table->enum('type', ['area_koleksi', 'fasilitas_umum', 'kantor_pengelola', 'pos_keamanan']);
             $table->text('description')->nullable();
-            $table->string('color', 7)->default('#3b82f6'); // Hex color code
+            $table->string('color', 7)->default('#3b82f6');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('map_markers');

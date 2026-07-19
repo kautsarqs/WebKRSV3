@@ -6,13 +6,12 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
     #map { height: 600px; width: 100%; z-index: 10; border-radius: 1.75rem; }
-    
-    /* Fix Leaflet SVG rendering glitch with Tailwind CSS base styles */
+
     .leaflet-container svg {
         max-width: none !important;
         max-height: none !important;
     }
-    
+
     .map-controls {
         position: absolute;
         top: 1rem;
@@ -63,7 +62,7 @@
         box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
     }
     .map-wrapper { position: relative; }
-    
+
     @media (max-width: 640px) {
         .map-left-controls {
             top: 0.5rem !important;
@@ -82,7 +81,7 @@
         }
     }
     @media (max-width: 480px) {
-        .map-control-btn span span, 
+        .map-control-btn span span,
         .map-control-btn svg:last-child,
         .map-left-controls button span {
             display: none !important;
@@ -94,48 +93,46 @@
             max-width: 45px !important;
         }
     }
-    
-    /* Premium Leaflet Popup styles */
-    .leaflet-popup-content-wrapper { 
-        padding: 0; 
-        overflow: hidden; 
-        border-radius: 1.75rem; 
-        border: 1px solid rgba(228, 228, 231, 0.5); 
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
-        background: white; 
+
+    .leaflet-popup-content-wrapper {
+        padding: 0;
+        overflow: hidden;
+        border-radius: 1.75rem;
+        border: 1px solid rgba(228, 228, 231, 0.5);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        background: white;
     }
     .leaflet-popup-content { margin: 0 !important; width: 320px !important; line-height: 1.5; }
     @media (max-width: 640px) {
         .leaflet-popup-content { width: 250px !important; }
     }
     .leaflet-popup-tip { background: white; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-    .leaflet-container a.leaflet-popup-close-button { 
-        top: 14px; 
-        right: 14px; 
-        width: 32px; 
-        height: 32px; 
-        border-radius: 50%; 
-        background: rgba(255, 255, 255, 0.95); 
-        color: #27272a; 
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08); 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        font-size: 16px; 
-        text-decoration: none; 
-        transition: all 0.25s ease; 
-        font-weight: bold; 
+    .leaflet-container a.leaflet-popup-close-button {
+        top: 14px;
+        right: 14px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        color: #27272a;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        font-weight: bold;
         padding-bottom: 2px;
         border: 1px solid rgba(228, 228, 231, 0.4);
     }
-    .leaflet-container a.leaflet-popup-close-button:hover { 
-        background: #ffffff; 
-        color: #ef4444; 
-        transform: scale(1.1) rotate(90deg); 
+    .leaflet-container a.leaflet-popup-close-button:hover {
+        background: #ffffff;
+        color: #ef4444;
+        transform: scale(1.1) rotate(90deg);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
-    /* Custom GPS User location marker styles */
     .user-location-marker {
         position: relative;
         display: flex;
@@ -182,10 +179,10 @@
     </div>
 
     <div class="p-2.5 bg-white border border-zinc-200 rounded-[2.5rem] shadow-2xl shadow-zinc-250/30">
-        <div x-data="{ 
-                 isNavigating: false, 
-                 destinationName: '', 
-                 remainingDistance: '---', 
+        <div x-data="{
+                 isNavigating: false,
+                 destinationName: '',
+                 remainingDistance: '---',
                  remainingTime: '---',
                  startNav(detail) {
                      this.isNavigating = true;
@@ -206,9 +203,8 @@
              @update-nav.window="updateNav($event.detail)"
              class="map-wrapper">
             <div id="map" class="bg-zinc-50"></div>
-            
-            <!-- Floating Navigation Panel -->
-            <div x-show="isNavigating" 
+
+            <div x-show="isNavigating"
                  x-transition:enter="transition ease-out duration-350"
                  x-transition:enter-start="opacity-0 translate-y-12 scale-95"
                  x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -216,7 +212,7 @@
                  x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                  x-transition:leave-end="opacity-0 translate-y-12 scale-95"
                  class="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[1001] w-[88%] sm:w-[92%] max-w-[320px] sm:max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/60 rounded-2xl sm:rounded-[2rem] p-4 sm:p-5 shadow-2xl flex flex-col gap-3 sm:gap-4">
-                
+
                 <div class="flex items-start justify-between">
                     <div class="flex items-start gap-3">
                         <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs border border-emerald-100/50 shrink-0">
@@ -233,9 +229,9 @@
                         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                
+
                 <div class="h-px bg-zinc-200/60 w-full"></div>
-                
+
                 <div class="grid grid-cols-2 gap-3 sm:gap-4 text-zinc-700">
                     <div class="flex items-center gap-2.5 sm:gap-3 bg-zinc-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-zinc-100/75">
                         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-xs shrink-0">
@@ -246,7 +242,7 @@
                             <span class="font-extrabold text-zinc-900 text-xs sm:text-sm" x-text="remainingDistance">---</span>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-center gap-2.5 sm:gap-3 bg-zinc-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-zinc-100/75">
                         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -258,11 +254,10 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Left Controls: Settings Modal Trigger -->
-            <div class="map-left-controls" 
-                 x-data="{ 
-                     showSettingsModal: false, 
+
+            <div class="map-left-controls"
+                 x-data="{
+                     showSettingsModal: false,
                      showNotification: false,
                      notificationTitle: '',
                      notificationMessage: '',
@@ -276,8 +271,8 @@
                      confirmCallback = $event.detail.confirmCallback;
                      showNotification = true;
                  ">
-                <!-- Trigger Button -->
-                <button @click="showSettingsModal = true; $dispatch('close-layer-dropdown')" 
+
+                <button @click="showSettingsModal = true; $dispatch('close-layer-dropdown')"
                         class="px-3 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-md flex items-center gap-1.5 text-[10px] font-bold text-zinc-700 hover:bg-white transition-all cursor-pointer select-none">
                     <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -286,9 +281,8 @@
                     <span>Pengaturan Peta</span>
                 </button>
 
-                <!-- Settings Modal (Responsive) -->
                 <template x-teleport="body">
-                <div x-show="showSettingsModal" 
+                <div x-show="showSettingsModal"
                      class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0"
@@ -297,11 +291,9 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
                      x-cloak>
-                    
-                    <!-- Overlay -->
+
                     <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="showSettingsModal = false"></div>
 
-                    <!-- Modal Card -->
                     <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-200/50 p-6 flex flex-col gap-4 text-zinc-800 transform transition-all duration-300"
                          x-show="showSettingsModal"
                          x-transition:enter="transition ease-out duration-300"
@@ -310,8 +302,7 @@
                          x-transition:leave="transition ease-in duration-200"
                          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                        
-                        <!-- Header -->
+
                         <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
                             <div class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -327,9 +318,8 @@
                             </button>
                         </div>
 
-                        <!-- Body -->
                         <div class="flex flex-col gap-4 py-2">
-                            <!-- GPS Status Section -->
+
                             <div class="flex flex-col gap-1.5">
                                 <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Status GPS</span>
                                 <div id="gps-status" class="bg-zinc-50 border border-zinc-100 rounded-2xl p-3.5 flex items-center justify-between">
@@ -339,7 +329,6 @@
                                 </div>
                             </div>
 
-                            <!-- Offline Caching Section -->
                             <div class="flex flex-col gap-1.5">
                                 <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Peta Offline</span>
                                 <div class="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 flex flex-col gap-3">
@@ -349,7 +338,7 @@
                                     <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer">
                                         Hapus Cache
                                     </button>
-                                    
+
                                     <div id="download-progress" class="hidden mt-1">
                                         <div class="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden">
                                             <div id="progress-bar" class="bg-emerald-500 h-1.5 w-0 transition-all duration-150"></div>
@@ -363,9 +352,8 @@
                 </div>
                 </template>
 
-                <!-- Custom Alert/Confirm Modal -->
                 <template x-teleport="body">
-                <div x-show="showNotification" 
+                <div x-show="showNotification"
                      class="fixed inset-0 z-[10005] flex items-center justify-center p-4"
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0"
@@ -374,11 +362,9 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
                      x-cloak>
-                    
-                    <!-- Overlay -->
+
                     <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="if (notificationType !== 'confirm') showNotification = false"></div>
 
-                    <!-- Card -->
                     <div class="relative w-full max-w-xs bg-white rounded-3xl shadow-2xl p-6 flex flex-col gap-4 text-center text-zinc-800"
                          x-show="showNotification"
                          x-transition:enter="transition ease-out duration-200"
@@ -387,8 +373,7 @@
                          x-transition:leave="transition ease-in duration-150"
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95">
-                        
-                        <!-- Icon based on type -->
+
                         <div class="mx-auto w-12 h-12 rounded-full flex items-center justify-center shadow-inner"
                              :class="{
                                  'bg-emerald-50 text-emerald-600': notificationType === 'success',
@@ -411,22 +396,21 @@
                             <p class="text-xs text-zinc-500 font-inter mt-1.5 leading-relaxed" x-text="notificationMessage"></p>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="flex items-center gap-2 mt-2">
                             <template x-if="notificationType === 'confirm'">
                                 <div class="flex w-full gap-2">
-                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(false);" 
+                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(false);"
                                             class="flex-1 py-2.5 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
                                         Batal
                                     </button>
-                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(true);" 
+                                    <button @click="showNotification = false; if (confirmCallback) confirmCallback(true);"
                                             class="flex-1 py-2.5 px-3 bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
                                         Ya, Lanjut
                                     </button>
                                 </div>
                             </template>
                             <template x-if="notificationType !== 'confirm'">
-                                <button @click="showNotification = false" 
+                                <button @click="showNotification = false"
                                         class="w-full py-2.5 px-3 bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer select-none">
                                     Oke
                                 </button>
@@ -436,7 +420,7 @@
                 </div>
                 </template>
             </div>
-            
+
             <div class="map-controls" x-data="{ open: false, selected: 'road' }" @click.away="open = false" @close-layer-dropdown.window="open = false">
                 <div class="relative">
                     <button @click="open = !open" class="map-control-btn">
@@ -446,13 +430,13 @@
                         </span>
                         <svg class="w-4 h-4 text-zinc-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
-                    <div x-show="open" 
-                         x-transition:enter="transition ease-out duration-200" 
-                         x-transition:enter-start="opacity-0 scale-95" 
-                         x-transition:enter-end="opacity-100 scale-100" 
-                         x-transition:leave="transition ease-in duration-100" 
-                         x-transition:leave-start="opacity-100 scale-100" 
-                         x-transition:leave-end="opacity-0 scale-95" 
+                    <div x-show="open"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
                          class="absolute top-full right-0 mt-2 w-48 bg-white/95 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-2xl py-1.5 z-[2000]">
                         <button type="button" @click="selected = 'road'; switchLayer('road'); open = false" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition rounded-xl cursor-pointer">Lapisan Default</button>
                         <button type="button" @click="selected = 'satellite'; switchLayer('satellite'); open = false" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-emerald-50 hover:text-emerald-700 transition rounded-xl cursor-pointer">Lapisan Satelit</button>
@@ -463,7 +447,6 @@
         </div>
     </div>
 
-    <!-- Legenda Peta (Beautified) -->
     <div class="mt-12 bg-zinc-50 border border-zinc-200 rounded-3xl p-6 shadow-sm">
         <h4 class="font-heading text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
             <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
@@ -473,7 +456,7 @@
             @php
                 $markerTypes = $markers->groupBy('type');
             @endphp
-            
+
             @foreach($markerTypes as $type => $markersOfType)
                 @php
                     $color = $markersOfType->first()->color ?? '#3b82f6';
@@ -486,17 +469,17 @@
                 @endphp
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-zinc-200 shadow-xs">
                     @if($firstGeomType === 'point')
-                        {{-- Point: filled circle with glow ring --}}
+
                         <span class="w-3 h-3 rounded-full shrink-0" style="background-color: {{ $color }}; box-shadow: 0 0 0 3px {{ $color }}22;"></span>
                     @elseif($firstGeomType === 'polygon')
-                        {{-- Polygon: dashed curved closed shape with transparent fill --}}
+
                         <svg class="w-7 h-5 shrink-0" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6 18 C5 12, 8 5, 18 4 C28 3, 32 10, 31 17 C30 22, 22 22, 18 22 C12 22, 7 24, 6 18 Z"
                                   stroke="{{ $color }}" stroke-width="2" stroke-dasharray="4 2.5" stroke-linecap="round" stroke-linejoin="round"
                                   fill="{{ $color }}" fill-opacity="0.15"/>
                         </svg>
                     @else
-                        {{-- LineString: solid curved wavy line --}}
+
                         <svg class="w-7 h-5 shrink-0" viewBox="0 0 36 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 18 C8 12, 12 5, 18 10 C24 15, 28 6, 33 8"
                                   stroke="{{ $lineColor }}" stroke-width="{{ $lineWidth }}" stroke-linecap="round" stroke-linejoin="round"/>
@@ -510,22 +493,21 @@
         </div>
     </div>
 
-    <!-- Keterangan Lanjutan / Detail Marker -->
     <div class="mt-10 mb-16">
         <h4 class="font-heading text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
             <svg class="w-5.5 h-5.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
             Daftar Detail Lokasi & Area
         </h4>
-        
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             @foreach($markers->filter(fn($m) => $m->geometry_type === 'point') as $marker)
                 @php
                     $color = $marker->color ?? '#3b82f6';
                     $typeLabel = Str::of($marker->type)->replace('_', ' ')->title();
                 @endphp
-                <div id="marker-detail-{{ $marker->id }}" 
+                <div id="marker-detail-{{ $marker->id }}"
                      class="bg-white border border-zinc-200/80 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all duration-300 flex gap-4 items-center scroll-mt-24">
-                    
+
                     @if($marker->photo)
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-zinc-100">
                             <img src="{{ Storage::url($marker->photo) }}" alt="{{ $marker->name }}" class="w-full h-full object-cover">
@@ -535,10 +517,10 @@
                             <svg class="w-8 h-8 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                     @endif
-                    
+
                     <div class="flex-1 min-w-0 flex flex-col justify-between h-full">
                         <div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider mb-1" 
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider mb-1"
                                   style="color: {{ $color }}; border: 1px solid {{ $color }}40; background-color: {{ $color }}15;">
                                 {{ $typeLabel }}
                             </span>
@@ -548,11 +530,11 @@
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('peta.show', $marker->id) }}" 
+                            <a href="{{ route('peta.show', $marker->id) }}"
                                class="px-2.5 py-1 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] font-bold rounded-lg transition-colors">
                                 DETAIL
                             </a>
-                            <button onclick="focusOnMarker({{ $marker->id }})" 
+                            <button onclick="focusOnMarker({{ $marker->id }})"
                                     class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg transition-colors cursor-pointer">
                                 PETA
                             </button>
@@ -567,11 +549,11 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<!-- LocalForage library for IndexedDB caching -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Custom URL generator to bypass Leaflet's getTileUrl map-zoom caching bug
+
     function getTileUrlForCoords(layer, coords) {
         var url = layer._url;
         url = url.replace('{z}', coords.z)
@@ -586,10 +568,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return url;
     }
 
-    // Custom Tile Layer to cache map tiles in IndexedDB via localForage
     L.TileLayer.Offline = L.TileLayer.extend({
         getTileKey: function(coords) {
-            // Bersihkan URL dari karakter non-alfanumerik untuk menjadikannya prefix unik per layer
+
             var cleanUrl = (this._url || "").replace(/[^a-zA-Z0-9]/g, "").substring(0, 20);
             return `${cleanUrl}_tile_${coords.z}_${coords.x}_${coords.y}`;
         },
@@ -610,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     };
                     tile.src = objectUrl;
                 } else {
-                    // Coba unduh jika tidak ada di cache
+
                     fetch(url)
                         .then(function(res) {
                             if (!res.ok) throw new Error("Gagal mengambil tile");
@@ -658,21 +639,20 @@ document.addEventListener("DOMContentLoaded", function () {
         return new L.TileLayer.Offline(urlTemplate, options);
     };
 
-    var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]); // Batas Kalimantan Barat
-    var map = L.map('map', { 
+    var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]);
+    var map = L.map('map', {
         zoomControl: false,
         maxBounds: bounds,
         maxBoundsViscosity: 0.8,
         minZoom: 8
-    }).setView([1.2706202914994014, 109.48517276551188], 14); 
+    }).setView([1.2706202914994014, 109.48517276551188], 14);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Gunakan Offline Layer untuk melayani tile dengan offline support
     var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
     var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
-    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
-        maxNativeZoom: 17, 
-        maxZoom: 17, 
+    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxNativeZoom: 17,
+        maxZoom: 17,
         attribution: 'Map data: &copy; OpenStreetMap contributors',
         subdomains: 'abc',
         crossOrigin: true
@@ -680,7 +660,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var currentLayer = roadLayer.addTo(map);
 
-    // Auto-clear old corrupted cache from previous buggy version once
     if (!localStorage.getItem('tile_cache_cleaned_v3')) {
         localforage.clear().then(function() {
             localStorage.setItem('tile_cache_cleaned_v3', 'true');
@@ -700,18 +679,15 @@ document.addEventListener("DOMContentLoaded", function () {
         currentLayer.addTo(map);
     };
 
-
-
     // --- Jalur Rekaman Perjalanan User (Linestring Navigasi Real-Time) ---
     var userPathCoords = [];
     var userPolyline = L.polyline(userPathCoords, {
-        color: '#3b82f6', // Biru untuk navigasi aktif
+        color: '#3b82f6',
         weight: 4.5,
         opacity: 0.9,
         dashArray: '5, 8'
     }).addTo(map);
 
-    // --- Real-time User tracking logic ---
     var userMarker = null;
     var userAccuracyCircle = null;
     var firstLocationCheck = true;
@@ -745,11 +721,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     }).addTo(map);
                 }
 
-                // Tambahkan koordinat ke riwayat rute user dan perbarui linestring
                 userPathCoords.push(latlng);
                 userPolyline.setLatLngs(userPathCoords);
 
-                // Update rute navigasi jika sedang aktif
                 if (window.currentNavTarget) {
                     window.updateNavigationRouting();
                 }
@@ -792,7 +766,6 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     }
 
-    // --- Offline map seeding logic ---
     function getTileCoordsForBounds(bounds, zoom) {
         var tileSize = 256;
         var nw = bounds.getNorthWest();
@@ -821,7 +794,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.downloadVisibleArea = function() {
-        // Custom URL generator to bypass Leaflet's getTileUrl map-zoom caching bug
+
         function getTileUrlForQueue(layer, tile) {
             var url = layer._url;
             url = url.replace('{z}', tile.z)
@@ -882,7 +855,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Implement a queue with concurrency of 3 to avoid rate limits
             var index = 0;
             var maxConcurrency = 3;
             var activeRequests = 0;
@@ -903,12 +875,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         updateProgress();
                         downloadNext();
                     } else {
-                        // 50ms delay between fetches to respect tile servers and prevent rate limit blocks
+
                         setTimeout(function() {
                             fetch(url)
-                                .then(function(r) { 
+                                .then(function(r) {
                                     if (!r.ok) throw new Error("Gagal load tile");
-                                    return r.blob(); 
+                                    return r.blob();
                                 })
                                 .then(function(blob) {
                                     return localforage.setItem(key, blob);
@@ -942,9 +914,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (tiles.length > 250) {
             window.showMapAlert(
-                "Konfirmasi Unduhan", 
-                `Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`, 
-                "confirm", 
+                "Konfirmasi Unduhan",
+                `Anda akan mengunduh ${tiles.length} petak peta. Unduh sekarang?`,
+                "confirm",
                 function(approved) {
                     if (approved) startDownload();
                 }
@@ -981,8 +953,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- Auto-download Kebun Raya Sambas tiles on page load (background) ---
     function autoDownloadKRS() {
-        if (!navigator.onLine) return; // Jangan download jika offline
-        
+        if (!navigator.onLine) return;
+
         var bounds = L.latLngBounds([1.2599, 109.4751], [1.2799, 109.4951]);
         var zooms = [13, 14, 15, 16, 17];
         var tiles = [];
@@ -1003,30 +975,28 @@ document.addEventListener("DOMContentLoaded", function () {
                             localforage.setItem(key, blob);
                         })
                         .catch(function(e) {
-                            // Abaikan error
+
                         });
                 }
             });
         });
     }
 
-    // Jalankan otomatis 3 detik setelah halaman termuat
     setTimeout(autoDownloadKRS, 3000);
 
     var markers = @json($markers);
     var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
 
-    // --- Ekstrak Jalan Kustom untuk Sistem Navigasi ---
     var roadPolylines = [];
     markers.forEach(function(marker) {
         if ((marker.geometry_type === 'polyline' || marker.geometry_type === 'linestring') && marker.geojson) {
             var nameLower = (marker.name || '').toLowerCase();
             var typeLower = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
-            // Kecualikan batas wilayah
+
             if (nameLower.includes('batas') || typeLower.includes('batas')) {
                 return;
             }
-            // Hanya ambil jalan_utama dan jalan_lain
+
             if (typeLower !== 'jalan_utama' && typeLower !== 'jalan_lain') {
                 return;
             }
@@ -1051,7 +1021,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
     function getHaversineDistance(p1, p2) {
-        var R = 6371000; // Radius bumi dalam meter
+        var R = 6371000;
         var phi1 = p1.lat * Math.PI / 180;
         var phi2 = p2.lat * Math.PI / 180;
         var deltaPhi = (p2.lat - p1.lat) * Math.PI / 180;
@@ -1066,19 +1036,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function projectPointOnSegment(p, a, b) {
         var dx = b.lng - a.lng;
         var dy = b.lat - a.lat;
-        
+
         if (dx === 0 && dy === 0) {
             return { point: a, distance: getHaversineDistance(p, a), t: 0 };
         }
-        
+
         var t = ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy);
         t = Math.max(0, Math.min(1, t));
-        
+
         var projected = {
             lat: a.lat + t * dy,
             lng: a.lng + t * dx
         };
-        
+
         return {
             point: projected,
             distance: getHaversineDistance(p, projected),
@@ -1090,14 +1060,14 @@ document.addEventListener("DOMContentLoaded", function () {
         var minDistance = Infinity;
         var closestProjected = null;
         var closestSegment = null;
-        
+
         for (var i = 0; i < roadPolylines.length; i++) {
             var polyline = roadPolylines[i];
             for (var j = 0; j < polyline.path.length - 1; j++) {
                 var a = polyline.path[j];
                 var b = polyline.path[j+1];
                 var projection = projectPointOnSegment(p, a, b);
-                
+
                 if (projection.distance < minDistance) {
                     minDistance = projection.distance;
                     closestProjected = projection.point;
@@ -1111,7 +1081,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         }
-        
+
         return {
             point: closestProjected,
             distance: minDistance,
@@ -1123,16 +1093,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return p.lat.toFixed(6) + ',' + p.lng.toFixed(6);
     }
 
-    // --- Algoritma Pembuat Graf & Dijkstra ---
     function buildGraphAndRunDijkstra(startLatLng, endLatLng) {
         console.log("Dijkstra started. start:", startLatLng, "end:", endLatLng);
         console.log("Available roadPolylines:", roadPolylines);
-        
+
         var snapS = findClosestSnapPoint(startLatLng);
         var snapE = findClosestSnapPoint(endLatLng);
         console.log("snapS:", snapS, "snapE:", snapE);
-        
-        // Batas maksimal snapping jika user terlalu jauh dari jalan kustom
+
         if (!snapS.point || !snapE.point || roadPolylines.length === 0) {
             console.log("No snap points or roadPolylines empty. Snapping failed.");
             return {
@@ -1141,35 +1109,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 isStraightLine: true
             };
         }
-        
+
         var adj = {};
         function addEdge(p1, p2) {
             var key1 = getNodeKey(p1);
             var key2 = getNodeKey(p2);
             var dist = getHaversineDistance(p1, p2);
-            
+
             if (!adj[key1]) adj[key1] = {};
             if (!adj[key2]) adj[key2] = {};
-            
+
             adj[key1][key2] = dist;
             adj[key2][key1] = dist;
         }
-        
+
         var keyToCoord = {};
         function registerCoord(p) {
             var key = getNodeKey(p);
             keyToCoord[key] = p;
         }
-        
-        // Daftarkan semua koordinat jalan
+
         roadPolylines.forEach(function(polyline) {
             polyline.path.forEach(function(p) { registerCoord(p); });
             for (var i = 0; i < polyline.path.length - 1; i++) {
                 addEdge(polyline.path[i], polyline.path[i+1]);
             }
         });
-        
-        // Koneksi antar jalan: proyeksikan tiap vertex ke segmen jalan lain.
+
         // Semua vertex (termasuk endpoint) hanya dihubungkan jika jarak < 30m.
         roadPolylines.forEach(function(polyline, i) {
             var pathLen = polyline.path.length;
@@ -1194,7 +1160,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Hubungkan vertex (termasuk endpoint) hanya jika jarak ke jalan lain < 30m
                 // CATATAN: Endpoint tidak boleh "selalu" terhubung tanpa batas jarak,
-                // karena ini menyebabkan rute lurus langsung ke destinasi via endpoint terjauh.
+
                 var shouldConnect = closestPoint && closestDist < 30.0;
                 if (shouldConnect) {
                     registerCoord(closestPoint);
@@ -1204,54 +1170,51 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         });
-        
-        // Sisipkan titik SnapStart ke Graf
+
         registerCoord(snapS.point);
         var sSeg = snapS.segment;
         if (sSeg) {
             addEdge(sSeg.a, snapS.point);
             addEdge(snapS.point, sSeg.b);
         }
-        
-        // Sisipkan titik SnapEnd ke Graf
+
         registerCoord(snapE.point);
         var eSeg = snapE.segment;
         if (eSeg) {
             addEdge(eSeg.a, snapE.point);
             addEdge(snapE.point, eSeg.b);
         }
-        
+
         var startKey = getNodeKey(snapS.point);
         var endKey = getNodeKey(snapE.point);
-        
-        // Jalankan Dijkstra
+
         var distances = {};
         var previous = {};
         var unvisited = new Set();
-        
+
         Object.keys(adj).forEach(function(key) {
             distances[key] = Infinity;
             unvisited.add(key);
         });
         distances[startKey] = 0;
-        
+
         while (unvisited.size > 0) {
             var minNode = null;
             var minDist = Infinity;
-            
+
             unvisited.forEach(function(key) {
                 if (distances[key] < minDist) {
                     minDist = distances[key];
                     minNode = key;
                 }
             });
-            
+
             if (minNode === null || minNode === endKey) {
                 break;
             }
-            
+
             unvisited.delete(minNode);
-            
+
             var neighbors = adj[minNode] || {};
             Object.keys(neighbors).forEach(function(neighbor) {
                 if (unvisited.has(neighbor)) {
@@ -1263,17 +1226,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         }
-        
+
         var pathCoords = [];
         var currentKey = endKey;
-        
+
         if (distances[endKey] !== Infinity || startKey === endKey) {
             while (currentKey) {
                 pathCoords.push(keyToCoord[currentKey]);
                 currentKey = previous[currentKey];
             }
             pathCoords.reverse();
-            
+
             console.log("Dijkstra path successfully found! nodes count:", pathCoords.length);
             return {
                 path: pathCoords,
@@ -1292,7 +1255,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // --- Menggambar Garis Navigasi ---
     var navRoadLine = null;
     var navSnapStartLine = null;
     var navSnapEndLine = null;
@@ -1301,7 +1263,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (navRoadLine) map.removeLayer(navRoadLine);
         if (navSnapStartLine) map.removeLayer(navSnapStartLine);
         if (navSnapEndLine) map.removeLayer(navSnapEndLine);
-        
+
         navRoadLine = null;
         navSnapStartLine = null;
         navSnapEndLine = null;
@@ -1309,7 +1271,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function drawNavigationRoute(userCoord, targetCoord, routingResult) {
         clearNavigationLayers();
-        
+
         if (routingResult.isStraightLine) {
             navRoadLine = L.polyline([userCoord, targetCoord], {
                 color: '#3b82f6',
@@ -1318,15 +1280,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 dashArray: '8, 8'
             }).addTo(map);
         } else {
-            // Garis putus-putus dari GPS User ke Snap Start
+
             navSnapStartLine = L.polyline([userCoord, routingResult.snapStart], {
                 color: '#3b82f6',
                 weight: 4,
                 opacity: 0.8,
                 dashArray: '5, 8'
             }).addTo(map);
-            
-            // Garis tebal solid menyusuri jalan kustom
+
             var pathLatLngs = routingResult.path.map(function(p) {
                 return L.latLng(p.lat, p.lng);
             });
@@ -1335,8 +1296,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 weight: 6,
                 opacity: 0.95
             }).addTo(map);
-            
-            // Garis putus-putus dari Snap End ke Bangunan Tujuan
+
             navSnapEndLine = L.polyline([routingResult.snapEnd, targetCoord], {
                 color: '#3b82f6',
                 weight: 4,
@@ -1346,7 +1306,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // --- State Navigasi Global ---
     window.currentNavTarget = null;
     window.arrivalTimeout = null;
 
@@ -1357,17 +1316,17 @@ document.addEventListener("DOMContentLoaded", function () {
             var ctx = new AudioContext();
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
-            
+
             osc.connect(gain);
             gain.connect(ctx.destination);
-            
+
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime); // A5 note
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-            
+
             gain.gain.setValueAtTime(0.5, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-            
+
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.8);
         } catch (e) {
@@ -1402,15 +1361,15 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             distStr = (totalDistMeters / 1000).toFixed(2) + ' km';
         }
-        
-        var timeMinutes = Math.round(totalDistMeters / (1.25 * 60)); // 1.25 m/s jalan kaki
+
+        var timeMinutes = Math.round(totalDistMeters / (1.25 * 60));
         var timeStr = '';
         if (timeMinutes < 1) {
             timeStr = '< 1 mnt jalan kaki';
         } else {
             timeStr = timeMinutes + ' mnt jalan kaki';
         }
-        
+
         window.dispatchEvent(new CustomEvent('start-nav', {
             detail: {
                 name: name,
@@ -1422,7 +1381,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.updateNavigationRouting = function() {
         if (!window.currentNavTarget) return;
-        
+
         if (!userMarker) {
             window.dispatchEvent(new CustomEvent('start-nav', {
                 detail: {
@@ -1434,13 +1393,13 @@ document.addEventListener("DOMContentLoaded", function () {
             window.showMapAlert("Informasi Navigasi", "Sistem sedang mencari lokasi GPS Anda. Jika Anda sedang offline atau GPS tidak tersedia, silakan TAP/KLIK di mana saja pada peta untuk menentukan posisi Anda saat ini secara manual.", "info");
             return;
         }
-        
+
         var userLatLng = userMarker.getLatLng();
         var targetLatLng = L.latLng(window.currentNavTarget.lat, window.currentNavTarget.lng);
-        
+
         var result = buildGraphAndRunDijkstra(userLatLng, targetLatLng);
         drawNavigationRoute(userLatLng, targetLatLng, result);
-        
+
         var totalDistMeters = 0;
         if (result.isStraightLine) {
             totalDistMeters = result.distance;
@@ -1449,13 +1408,12 @@ document.addEventListener("DOMContentLoaded", function () {
             var distSnapEToTarget = getHaversineDistance(result.snapEnd, targetLatLng);
             totalDistMeters = distUserToSnapS + result.distance + distSnapEToTarget;
         }
-        
+
         updateFloatingPanel(window.currentNavTarget.name, totalDistMeters);
 
-        // Deteksi Kedatangan jika jarak <= 10 meter
         if (totalDistMeters <= 10.0 && !window.arrivalTimeout) {
             playChime();
-            
+
             if ('speechSynthesis' in window) {
                 var speechMsg = new SpeechSynthesisUtterance("Sudah sampai di lokasi");
                 speechMsg.lang = 'id-ID';
@@ -1476,13 +1434,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Simpan referensi layer peta berdasarkan marker id untuk fitur LIHAT PETA di legenda
     window.mapLayers = window.mapLayers || {};
 
     markers.forEach(function(marker) {
         var typeLabel = marker.type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        
-        var imageHtml = marker.photo 
+
+        var imageHtml = marker.photo
             ? `<div class="relative w-full h-40 bg-zinc-100 group overflow-hidden"><img src="${storageBase + '/' + marker.photo}" alt="${marker.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"></div>`
             : `<div class="w-full h-24 bg-zinc-100 flex items-center justify-center border-b border-zinc-50"><svg class="w-8 h-8 text-zinc-350" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
 
@@ -1548,21 +1505,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         var markerTypeNorm = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
                         var lineColor = marker.color;
                         var lineWidth = 4.5;
-                        
+
                         if (markerTypeNorm === 'jalan_utama') {
-                            lineColor = '#b8b8b8'; // Abu-abu terang tebal
+                            lineColor = '#b8b8b8';
                             lineWidth = 4;
                         } else if (markerTypeNorm === 'jalan_lain') {
-                            lineColor = '#c8c8c8'; // Abu-abu terang tipis
+                            lineColor = '#c8c8c8';
                             lineWidth = 2;
                         }
-                        
+
                         leafletLayer = L.polyline(coordinates, { color: lineColor, weight: lineWidth }).addTo(map);
                     } else if (geomType === 'polygon') {
-                        leafletLayer = L.polygon(coordinates, { 
-                            color: marker.color, 
-                            fillColor: marker.color, 
-                            fillOpacity: 0.12, 
+                        leafletLayer = L.polygon(coordinates, {
+                            color: marker.color,
+                            fillColor: marker.color,
+                            fillOpacity: 0.12,
                             weight: 3,
                             dashArray: '6, 6'
                         }).addTo(map);
@@ -1591,14 +1548,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 layer.openPopup();
             }
         }
-        
+
         var mapContainer = document.getElementById('map') || document.getElementById('home-map');
         if (mapContainer) {
             mapContainer.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
-    // Cek parameter focus di URL
     var urlParams = new URLSearchParams(window.location.search);
     var focusId = urlParams.get('focus');
     if (focusId) {
@@ -1607,13 +1563,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1200);
     }
 
-    // Paksa render ulang ukuran Leaflet secara berkala selama transisi loading halaman selesai
     var invalidateInterval = setInterval(function() {
         if (map) {
             map.invalidateSize();
         }
     }, 1000);
-    
+
     setTimeout(function() {
         clearInterval(invalidateInterval);
     }, 6000);

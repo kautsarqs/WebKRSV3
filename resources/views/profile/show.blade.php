@@ -2,16 +2,16 @@
     <x-admin-sidebar />
 
     <div class="max-w-3xl mx-auto py-8">
-        
+
         <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl shadow-xl shadow-zinc-200/40 p-10 text-center overflow-hidden">
-            
+
             <div class="absolute top-[-50px] right-[-50px] w-40 h-40 bg-zinc-200/50 rounded-full blur-[50px] pointer-events-none"></div>
 
             <div class="relative inline-block mb-6">
                 <div class="relative w-32 h-32 mx-auto">
-                    <img 
-                        src="{{ $user->avatar_url }}" 
-                        alt="{{ $user->name }}" 
+                    <img
+                        src="{{ $user->avatar_url }}"
+                        alt="{{ $user->name }}"
                         class="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
                     >
                     <span class="absolute bottom-1 right-1 bg-zinc-900 text-white text-[10px] uppercase tracking-wider px-2 py-1 rounded-full border-2 border-white font-bold font-space shadow-sm">
@@ -28,7 +28,7 @@
                     <p class="text-xs text-zinc-400 uppercase tracking-widest font-bold font-space">Bergabung Sejak</p>
                     <p class="text-zinc-800 font-bold text-lg font-space">{{ $user->created_at->format('d F Y') }}</p>
                 </div>
-                
+
                 <div class="text-center space-y-1 border-l border-zinc-200/60">
                     <p class="text-xs text-zinc-400 uppercase tracking-widest font-bold font-space">Status Akun</p>
                     <div class="flex items-center justify-center gap-2 pt-1">

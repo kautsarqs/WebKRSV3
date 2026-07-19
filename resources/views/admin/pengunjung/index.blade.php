@@ -2,15 +2,15 @@
     <x-admin-sidebar />
 
     <div class="space-y-6 py-4">
-        {{-- Header Section --}}
+
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Kelola Pengunjung</h2>
                 <p class="text-zinc-500 text-sm mt-1">Daftar permohonan kunjungan rombongan ke Kebun Raya Sambas.</p>
             </div>
-            
+
             <div class="flex items-center gap-3 flex-wrap">
-                {{-- Bulk Delete Button --}}
+
                 <form id="bulk-delete-form" method="POST" action="{{ route('admin.pengunjung.bulk-delete') }}" style="display:none;">
                     @csrf
                     <input type="hidden" id="bulk-ids-json" name="ids_json" value="">
@@ -43,21 +43,19 @@
             </div>
         @endif
 
-        {{-- Status Filters --}}
         <div class="flex items-center gap-2 overflow-x-auto pb-2">
-            <a href="{{ route('admin.pengunjung.index') }}" 
+            <a href="{{ route('admin.pengunjung.index') }}"
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ !request('status') ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                 Semua
             </a>
             @foreach(['pending' => 'Pending', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $val => $label)
-                <a href="{{ route('admin.pengunjung.index', ['status' => $val]) }}" 
+                <a href="{{ route('admin.pengunjung.index', ['status' => $val]) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request('status') === $val ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                     {{ $label }}
                 </a>
             @endforeach
         </div>
 
-        {{-- Table Card --}}
         <div class="bg-white border border-zinc-200/80 rounded-3xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -92,7 +90,7 @@
                             @endphp
                             <tr class="hover:bg-zinc-50/40 transition-colors">
                                 <td class="px-6 py-4 text-center">
-                                    <input type="checkbox" class="row-checkbox rounded border-zinc-300" 
+                                    <input type="checkbox" class="row-checkbox rounded border-zinc-300"
                                            value="{{ $row->id }}" onchange="updateBulkBtn()">
                                 </td>
                                 <td class="px-6 py-4">
@@ -120,14 +118,13 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="grid grid-cols-2 gap-1.5 w-full max-w-[180px] mx-auto">
-                                        {{-- Lihat Semua --}}
+
                                         <button type="button"
                                                 onclick="openRombonganModal({{ json_encode($row->nama_lengkap) }}, {{ json_encode($allMembers) }})"
                                                 class="col-span-1 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Lihat Semua
                                         </button>
 
-                                        {{-- Hapus button opens confirm modal --}}
                                         <button type="button"
                                                 onclick="confirmDelete({{ $row->id }}, {{ json_encode($row->nama_lengkap) }})"
                                                 class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
@@ -180,7 +177,6 @@
         </div>
     </div>
 
-    {{-- ===== CONFIRM DELETE MODAL ===== --}}
     <div id="modal-confirm-delete" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -200,7 +196,6 @@
         </div>
     </div>
 
-    {{-- ===== CONFIRM BULK DELETE MODAL ===== --}}
     <div id="modal-confirm-bulk" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -220,7 +215,6 @@
         </div>
     </div>
 
-    {{-- ===== ROMBONGAN MODAL ===== --}}
     <div id="rombongan-modal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:24px; padding:0; max-width:560px; width:90%; max-height:80vh; box-shadow:0 25px 50px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden;">
             <div style="padding:24px 24px 16px; border-bottom:1px solid #f4f4f5; display:flex; align-items:center; justify-content:space-between;">
@@ -234,7 +228,6 @@
         </div>
     </div>
 
-    {{-- ===== TOLAK MODAL (Pengunjung) ===== --}}
     <div id="modal-tolak-pengunjung" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:460px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <p id="modal-tolak-title-pengunjung" style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;font-family:'Space Grotesk',sans-serif;">Tolak Pendaftaran Pengunjung</p>
@@ -260,7 +253,6 @@
     <script>
     var _deleteTargetId = null;
 
-    // ---- Checkbox logic ----
     function toggleAll(chk) {
         document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = chk.checked; });
         updateBulkBtn();
@@ -278,7 +270,6 @@
         return ids;
     }
 
-    // ---- Single Delete ----
     function confirmDelete(id, nama) {
         _deleteTargetId = id;
         var el = document.getElementById('confirm-delete-name');
@@ -296,7 +287,6 @@
         if (form) form.submit();
     }
 
-    // ---- Bulk Delete ----
     function confirmBulkDelete() {
         var ids = getCheckedIds();
         if (ids.length === 0) return;
@@ -312,7 +302,6 @@
         document.getElementById('bulk-delete-form').submit();
     }
 
-    // ---- Rombongan Modal ----
     function openRombonganModal(nama, members) {
         document.getElementById('modal-title-text').textContent = 'Rombongan: ' + nama;
         var list = document.getElementById('modal-members-list');
@@ -342,7 +331,6 @@
         document.getElementById('rombongan-modal').style.display = 'none';
     }
 
-    // Tolak Pengunjung Modal
     function openTolakPengunjungModal(url, nama) {
         document.getElementById('tolak-form-pengunjung').action = url;
         document.getElementById('tolak-subtitle-pengunjung').textContent = 'Berikan alasan penolakan untuk pengunjung: ' + nama;
@@ -363,7 +351,6 @@
         document.getElementById('modal-tolak-pengunjung').style.display = 'none';
     }
 
-    // Close modals on backdrop click
     document.getElementById('modal-confirm-delete').addEventListener('click', function(e) {
         if (e.target === this) closeConfirmDelete();
     });

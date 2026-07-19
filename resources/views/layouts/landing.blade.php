@@ -10,7 +10,6 @@
     <link rel="canonical" href="{{ request()->url() }}" />
     <meta name="robots" content="index, follow" />
 
-    <!-- PWA Settings -->
     <meta name="theme-color" content="#064e3b" />
     <link rel="manifest" href="{{ asset('manifest.json') }}" />
     <link rel="apple-touch-icon" href="{{ asset('images/logoKRS_square.png') }}" />
@@ -21,13 +20,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        body { 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
-            scroll-behavior: smooth; 
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            scroll-behavior: smooth;
         }
-        h1, h2, h3, .font-heading { 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
-            font-weight: 800; 
+        h1, h2, h3, .font-heading {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 800;
         }
         .img-zoom { transition: transform 0.7s ease; }
         .group:hover .img-zoom { transform: scale(1.05); }
@@ -39,12 +38,11 @@
     $isHome = request()->routeIs('home') || request()->is('/');
 @endphp
 
-<body x-data="{ isLoading: true }" 
+<body x-data="{ isLoading: true }"
       x-init="if (document.readyState === 'complete') { setTimeout(() => { isLoading = false }, 500); } else { window.addEventListener('load', () => { setTimeout(() => { isLoading = false }, 500); }); }"
       class="bg-white text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white overflow-x-hidden"
       :class="{ 'overflow-hidden': isLoading }">
 
-    {{-- Skeleton Loading Overlay --}}
     <x-landing.skeleton-shell />
 
     <div class="fixed inset-0 z-0 pointer-events-none">
@@ -69,20 +67,17 @@
                 navigator.serviceWorker.register('/sw.js')
                     .then(reg => {
                         console.log('Service Worker registered successfully!', reg);
-                        
-                        // Sync authentication state with service worker cache
+
                         const currentUserId = @json(Auth::id() ?? 'guest');
                         const cachedUserId = localStorage.getItem('auth_user_id');
-                        
+
                         if (cachedUserId && cachedUserId !== String(currentUserId)) {
                             localStorage.setItem('auth_user_id', currentUserId);
-                            
-                            // Send message to Service Worker to clear the cached pages
+
                             if (navigator.serviceWorker.controller) {
                                 navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_PAGE_CACHE' });
                                 console.log('[Auth Sync] Sent CLEAR_PAGE_CACHE to Service Worker');
-                                
-                                // Reload page to fetch correct state and cache it
+
                                 setTimeout(() => {
                                     window.location.reload();
                                 }, 50);

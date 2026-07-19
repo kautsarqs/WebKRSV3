@@ -9,17 +9,12 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+
     public function register(): void
     {
-        //
+
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Paginator::useTailwind();
@@ -28,22 +23,20 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        // Custom email verification representation
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
             return (new MailMessage)
                 ->subject('Verifikasi Alamat Email - KEBUN RAYA SAMBAS')
                 ->view('emails.verify', ['url' => $url, 'user' => $notifiable]);
         });
 
-        // Auto-update sw.js precache list with Vite compiled assets
         try {
             $manifestPath = public_path('build/manifest.json');
             $swPath = public_path('sw.js');
-            
+
             if (file_exists($manifestPath) && file_exists($swPath)) {
                 $manifest = json_decode(file_get_contents($manifestPath), true);
                 $buildAssets = [];
-                
+
                 if (is_array($manifest)) {
                     foreach ($manifest as $file) {
                         if (isset($file['file'])) {
@@ -56,8 +49,7 @@ class AppServiceProvider extends ServiceProvider
                         }
                     }
                 }
-                
-                // Keep the static assets precached as well
+
                 $baseAssets = [
                     '/',
                     '/peta',
@@ -69,41 +61,37 @@ class AppServiceProvider extends ServiceProvider
                     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
                     'https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js'
                 ];
-                
+
                 $allAssets = array_unique(array_merge($baseAssets, $buildAssets));
-                sort($allAssets); // Stable ordering
-                
+                sort($allAssets);
+
                 $swContent = file_get_contents($swPath);
-                
-                // Generate the replacement array string
+
                 $assetsJsString = "const ASSETS_TO_CACHE = [\n  " . implode(",\n  ", array_map(function($path) {
                     return "'" . str_replace("'", "\\'", $path) . "'";
                 }, $allAssets)) . "\n];";
-                
-                // Check if the file needs an update
+
                 if (strpos($swContent, $assetsJsString) === false) {
-                    // Update Cache Name version automatically on assets change to activate the SW update
+
                     $newCacheVersion = 'krs-cache-' . time();
-                    
-                    // Replace the ASSETS_TO_CACHE array
+
                     $updatedContent = preg_replace(
                         '/const ASSETS_TO_CACHE = \[.*?\];/s',
                         $assetsJsString,
                         $swContent
                     );
-                    
-                    // Replace CACHE_NAME to force cache updates
+
                     $updatedContent = preg_replace(
                         "/const CACHE_NAME = '.*?';/",
                         "const CACHE_NAME = '{$newCacheVersion}';",
                         $updatedContent
                     );
-                    
+
                     file_put_contents($swPath, $updatedContent);
                 }
             }
         } catch (\Exception $e) {
-            // Silently log or ignore to prevent breaking the app if write permissions fail
+
             logger()->warning('Failed to auto-update PWA service worker assets: ' . $e->getMessage());
         }
     }

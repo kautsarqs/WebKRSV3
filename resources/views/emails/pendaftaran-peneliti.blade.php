@@ -136,9 +136,9 @@
             <div class="content">
                 <h2>Permohonan Izin Penelitian Baru</h2>
                 <div class="subtitle">Sistem Notifikasi Administrator Kebun Raya Sambas</div>
-                
+
                 <p>Halo Admin, satu permohonan izin penelitian baru telah masuk ke sistem. Berikut ringkasan informasi pendaftar:</p>
-                
+
                 <table class="details-table">
                     <tr>
                         <th>Nama Lengkap</th>
@@ -165,9 +165,9 @@
                         <td>{{ $pendaftaran->tanggal_mulai->format('d F Y') }} s/d {{ $pendaftaran->tanggal_selesai->format('d F Y') }}</td>
                     </tr>
                 </table>
-                
+
                 <p>Silakan masuk ke panel admin untuk meninjau permohonan izin penelitian ini (menyetujui atau menolak permohonan).</p>
-                
+
                 <div class="button-wrapper">
                     <a href="{{ route('admin.peneliti.index') }}" class="button">Tinjau Permohonan</a>
                 </div>

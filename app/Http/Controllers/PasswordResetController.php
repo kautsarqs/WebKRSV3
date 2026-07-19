@@ -11,17 +11,12 @@ use App\Models\User;
 
 class PasswordResetController extends Controller
 {
-    /**
-     * Display the password reset link request view.
-     */
+
     public function create()
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Handle an incoming password reset link request.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -37,17 +32,11 @@ class PasswordResetController extends Controller
                     : back()->withErrors(['email' => __($status)]);
     }
 
-    /**
-     * Display the password reset view.
-     */
     public function edit(Request $request, $token)
     {
         return view('auth.reset-password', ['request' => $request]);
     }
 
-    /**
-     * Handle an incoming new password request.
-     */
     public function update(Request $request)
     {
         $request->validate([

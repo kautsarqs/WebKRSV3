@@ -10,9 +10,7 @@ use App\Helpers\ImageOptimizer;
 
 class MapController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $query = MapMarker::query();
@@ -34,9 +32,6 @@ class MapController extends Controller
         return view('admin.maps.index', compact('markers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
@@ -44,9 +39,6 @@ class MapController extends Controller
         return view('admin.maps.create', compact('existingTypes', 'existingMarkers'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -72,17 +64,11 @@ class MapController extends Controller
         return redirect()->route('admin.maps.index')->with('success', 'Marker peta berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(MapMarker $map)
     {
         return view('admin.maps.show', compact('map'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(MapMarker $map)
     {
         $existingTypes = MapMarker::select('type')->distinct()->pluck('type');
@@ -90,9 +76,6 @@ class MapController extends Controller
         return view('admin.maps.edit', compact('map', 'existingTypes', 'existingMarkers'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, MapMarker $map)
     {
         $request->validate([
@@ -110,14 +93,13 @@ class MapController extends Controller
         $data = $request->except(['photo']);
 
         if ($request->hasFile('photo')) {
-            // Hapus foto lama jika ada
+
             if ($map->photo && Storage::disk('public')->exists($map->photo)) {
                 Storage::disk('public')->delete($map->photo);
             }
             $data['photo'] = ImageOptimizer::convertToAvif($request->file('photo'), 'map_markers');
         }
 
-        // Jika geometry tipe berubah ke polyline/polygon, kosongkan lat/long
         if ($request->geometry_type !== 'point') {
             $data['latitude'] = null;
             $data['longitude'] = null;
@@ -130,12 +112,9 @@ class MapController extends Controller
         return redirect()->route('admin.maps.index')->with('success', 'Marker peta berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(MapMarker $map)
     {
-        // Hapus foto jika ada
+
         if ($map->photo && Storage::disk('public')->exists($map->photo)) {
             Storage::disk('public')->delete($map->photo);
         }

@@ -1,5 +1,5 @@
 <x-app-layout>
-    {{-- Background Video layer (same as Hero) --}}
+
     <div class="fixed inset-0 z-0 overflow-hidden">
         <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover">
             <source src="{{ asset('videos/hero.mp4') }}" type="video/mp4" />
@@ -8,11 +8,11 @@
     </div>
 
     <div class="relative z-10 min-h-[85vh] flex items-center justify-center font-inter selection:bg-emerald-800 selection:text-white py-10">
-        
+
         <div class="relative w-full max-w-md p-8 bg-zinc-950/45 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl text-white">
-            
+
             <div class="text-center mb-8">
-                <!-- Botanical leaf accent -->
+
                 <div class="flex items-center justify-center gap-2 mb-3">
                     <span class="block h-px w-6 bg-white/20 rounded-full"></span>
                     <svg class="w-4 h-4 text-emerald-400 opacity-80" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -71,11 +71,11 @@
                     @enderror
                 </div>
 
-                <button type="submit" 
+                <button type="submit"
                     class="w-full py-3.5 px-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all transform hover:scale-[1.01] active:scale-[0.99] font-space shadow-xl shadow-emerald-950/40 focus:outline-none flex items-center justify-center gap-2">
                     <span>Kirim Tautan Reset</span>
                 </button>
-                
+
                 <div class="text-center pt-2">
                     <p class="text-sm text-zinc-400">
                         <a href="{{ route('login') }}" class="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors inline-flex items-center gap-1">

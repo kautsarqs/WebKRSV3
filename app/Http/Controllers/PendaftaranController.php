@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PendaftaranController extends Controller
 {
-    // ─── Pengunjung ──────────────────────────────────────────────────────────
 
-    /** Menampilkan Form Pengunjung */
     public function createPengunjung()
     {
         if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
@@ -24,7 +22,6 @@ class PendaftaranController extends Controller
         return view('landing.pengunjung');
     }
 
-    /** Menyimpan Data Pengunjung */
     public function storePengunjung(Request $request)
     {
         if (Auth::guest()) {
@@ -34,7 +31,6 @@ class PendaftaranController extends Controller
             return redirect()->route('verification.notice');
         }
 
-        // Clean phone numbers
         $cleanRombongan = [];
         if ($request->has('rombongan')) {
             foreach ($request->rombongan as $idx => $member) {
@@ -56,7 +52,7 @@ class PendaftaranController extends Controller
             'tanggal_kunjungan' => 'required|date|after_or_equal:today',
             'instansi'          => 'required|string',
             'keperluan'         => 'required|string|max:500',
-            
+
             'rombongan.*.nama'     => 'nullable|string|max:255',
             'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/',
             'rombongan.*.instansi' => 'nullable|string|max:255',
@@ -84,7 +80,7 @@ class PendaftaranController extends Controller
         PendaftaranPengunjung::create([
             'user_id'           => Auth::id(),
             'nama_lengkap'      => $request->nama_lengkap,
-            'no_identitas'      => '0000000000000000', 
+            'no_identitas'      => '0000000000000000',
             'nomor_hp'          => $request->nomor_hp,
             'tanggal_kunjungan' => $request->tanggal_kunjungan,
             'jumlah_rombongan'  => $jumlahRombongan,
@@ -97,7 +93,6 @@ class PendaftaranController extends Controller
         return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil dikirim! Menunggu konfirmasi admin.');
     }
 
-    /** Edit Form Pengunjung (User) */
     public function editPengunjung($id)
     {
         $pengunjung = PendaftaranPengunjung::where('id', $id)
@@ -111,7 +106,6 @@ class PendaftaranController extends Controller
         return view('dashboard.pengunjung.edit', compact('pengunjung'));
     }
 
-    /** Update Data Pengunjung (User) */
     public function updatePengunjung(Request $request, $id)
     {
         $pengunjung = PendaftaranPengunjung::where('id', $id)
@@ -122,7 +116,6 @@ class PendaftaranController extends Controller
             return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
         }
 
-        // Clean phone numbers
         $cleanRombongan = [];
         if ($request->has('rombongan')) {
             foreach ($request->rombongan as $idx => $member) {
@@ -144,7 +137,7 @@ class PendaftaranController extends Controller
             'tanggal_kunjungan' => 'required|date|after_or_equal:today',
             'instansi'          => 'required|string',
             'keperluan'         => 'required|string|max:500',
-            
+
             'rombongan.*.nama'     => 'nullable|string|max:255',
             'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/',
             'rombongan.*.instansi' => 'nullable|string|max:255',
@@ -201,7 +194,6 @@ class PendaftaranController extends Controller
         }
     }
 
-    /** Batal/Hapus Pendaftaran Pengunjung (User) */
     public function destroyPengunjungUser($id)
     {
         $pengunjung = PendaftaranPengunjung::where('id', $id)
@@ -216,9 +208,6 @@ class PendaftaranController extends Controller
         return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil dibatalkan.');
     }
 
-    // ─── Peneliti ─────────────────────────────────────────────────────────────
-
-    /** Menampilkan Form Peneliti */
     public function createPeneliti()
     {
         if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
@@ -227,7 +216,6 @@ class PendaftaranController extends Controller
         return view('landing.peneliti');
     }
 
-    /** Menyimpan Data Peneliti & kirim notifikasi ke admin */
     public function storePeneliti(Request $request)
     {
         if (Auth::guest()) {
@@ -289,7 +277,6 @@ class PendaftaranController extends Controller
             'status'            => 'pending',
         ]);
 
-        // Kirim email notifikasi ke admin
         $adminEmail = env('ADMIN_EMAIL', config('mail.from.address'));
         try {
             Mail::to($adminEmail)->send(new PendaftaranPenelitiMail($pendaftaran));
@@ -301,7 +288,6 @@ class PendaftaranController extends Controller
             ->with('success', 'Permohonan penelitian berhasil dikirim! Notifikasi telah dikirimkan ke admin. Menunggu konfirmasi.');
     }
 
-    /** Edit Form Peneliti (User) */
     public function editPeneliti($id)
     {
         $peneliti = PendaftaranPeneliti::where('id', $id)
@@ -315,7 +301,6 @@ class PendaftaranController extends Controller
         return view('dashboard.peneliti.edit', compact('peneliti'));
     }
 
-    /** Update Data Peneliti (User) */
     public function updatePeneliti(Request $request, $id)
     {
         $peneliti = PendaftaranPeneliti::where('id', $id)
@@ -393,7 +378,6 @@ class PendaftaranController extends Controller
                 'parent_id'         => $peneliti->id,
             ]);
 
-            // Kirim email notifikasi ke admin
             $adminEmail = env('ADMIN_EMAIL', config('mail.from.address'));
             try {
                 Mail::to($adminEmail)->send(new \App\Mail\PendaftaranPenelitiMail($newPeneliti));
@@ -415,14 +399,13 @@ class PendaftaranController extends Controller
                 'tanggal_selesai'   => $request->tanggal_selesai,
                 'tujuan_penelitian' => $request->tujuan_penelitian,
                 'surat_pengantar'   => $suratPengantarPaths,
-                'status'            => 'pending', // Reset to pending if edited
+                'status'            => 'pending',
             ]);
 
             return redirect()->route('dashboard')->with('success', 'Pendaftaran peneliti berhasil diperbarui.');
         }
     }
 
-    /** Batal/Hapus Pendaftaran Peneliti (User) */
     public function destroyPenelitiUser($id)
     {
         $peneliti = PendaftaranPeneliti::where('id', $id)

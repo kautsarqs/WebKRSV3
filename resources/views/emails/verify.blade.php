@@ -121,13 +121,13 @@
             <div class="content">
                 <h2>Halo, {{ $user->name }}!</h2>
                 <p>Terima kasih telah melakukan registrasi di platform digital <strong>Kebun Raya Sambas</strong>. Silakan verifikasi alamat email Anda agar dapat menikmati seluruh akses navigasi, pendaftaran kunjungan, serta perizinan penelitian.</p>
-                
+
                 <div class="button-wrapper">
                     <a href="{{ $url }}" class="button">Verifikasi Alamat Email</a>
                 </div>
-                
+
                 <p>Tautan verifikasi ini akan kedaluwarsa dalam 60 menit demi alasan keamanan akun Anda.</p>
-                
+
                 <div class="security-notice">
                     <strong>Pemberitahuan Keamanan:</strong> Jika Anda tidak merasa membuat akun baru atau merasa salah menerima email ini, abaikan pesan ini dengan aman.
                 </div>

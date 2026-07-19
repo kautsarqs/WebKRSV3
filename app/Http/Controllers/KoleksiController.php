@@ -10,9 +10,7 @@ use App\Helpers\ImageOptimizer;
 
 class KoleksiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $query = Koleksi::query();
@@ -25,18 +23,12 @@ class KoleksiController extends Controller
         return view('admin.koleksi.index', compact('koleksis'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $categories = \App\Models\Category::all();
         return view('admin.koleksi.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -75,7 +67,7 @@ class KoleksiController extends Controller
                 'otoritas_1' => $validated['otoritas_1'] ?? null,
                 'otoritas_2' => $validated['otoritas_2'] ?? null,
             ]);
-            
+
             DB::commit();
 
             return redirect()->route('admin.koleksi.index')
@@ -86,25 +78,16 @@ class KoleksiController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Koleksi $koleksi)
     {
         return view('koleksi.show', compact('koleksi'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Koleksi $koleksi)
     {
         return view('admin.koleksi.edit', compact('koleksi'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Koleksi $koleksi)
     {
         $validated = $request->validate([
@@ -121,7 +104,7 @@ class KoleksiController extends Controller
             'otoritas_1' => 'nullable|string|max:255',
             'otoritas_2' => 'nullable|string|max:255',
         ]);
-        
+
         DB::beginTransaction();
         try {
             $path = $koleksi->photo;
@@ -157,9 +140,6 @@ class KoleksiController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Koleksi $koleksi)
     {
         if ($koleksi->photo) {
@@ -171,9 +151,6 @@ class KoleksiController extends Controller
             ->with('success', 'Koleksi berhasil dihapus.');
     }
 
-    /**
-     * Display a listing of the resource for public.
-     */
     public function publicIndex(Request $request)
     {
         $query = Koleksi::query();

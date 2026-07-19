@@ -121,13 +121,13 @@
             <div class="content">
                 <h2>Halo!</h2>
                 <p>Anda menerima email ini karena kami menerima permintaan penyetelan ulang kata sandi (reset password) untuk akun Anda di platform digital <strong>Kebun Raya Sambas</strong>.</p>
-                
+
                 <div class="button-wrapper">
                     <a href="{{ $url }}" class="button">Atur Ulang Kata Sandi</a>
                 </div>
-                
+
                 <p>Tautan atur ulang kata sandi ini akan kedaluwarsa dalam 60 menit.</p>
-                
+
                 <div class="security-notice">
                     <strong>Pemberitahuan Keamanan:</strong> Jika Anda tidak merasa melakukan permintaan penyetelan ulang kata sandi, maka tidak ada tindakan lebih lanjut yang perlu Anda lakukan. Pastikan akun Anda tetap aman.
                 </div>

@@ -1,31 +1,28 @@
 <x-dashboard-layout title="Kelola User">
     <x-admin-sidebar />
 
-    <!-- 2. KONTEN UTAMA -->
     <div class="space-y-6">
-        
-        <!-- Header & Action -->
+
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Daftar Pengguna</h2>
                 <p class="text-zinc-500 text-sm mt-1 font-inter">Kelola semua akun yang terdaftar di sistem.</p>
             </div>
-            
+
             <div class="flex items-center gap-3">
-                <!-- Search Form -->
+
                 <form action="{{ route('admin.users.index') }}" method="GET" class="relative group">
                     <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-3 h-5 w-5 text-zinc-400 group-hover:text-zinc-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    
-                    <input 
-                        type="search" 
-                        name="search" 
-                        placeholder="Cari nama atau email..." 
+
+                    <input
+                        type="search"
+                        name="search"
+                        placeholder="Cari nama atau email..."
                         value="{{ request('search') }}"
                         class="pl-10 pr-4 py-2.5 w-full md:w-[280px] bg-white/60 backdrop-blur-sm border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 outline-none text-zinc-800 text-sm shadow-sm transition-all"
                     />
                 </form>
 
-                <!-- Tombol Tambah -->
                 <a href="{{ route('admin.users.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-zinc-900 text-white text-sm font-bold font-space rounded-xl hover:bg-zinc-800 transition-all shadow-lg shadow-zinc-900/20 transform hover:-translate-y-0.5">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                     Tambah User
@@ -33,7 +30,6 @@
             </div>
         </div>
 
-        <!-- Alert Success/Error -->
         @if (session('success'))
             <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="bg-green-100/80 backdrop-blur-sm border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm font-bold flex items-center shadow-sm">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -48,7 +44,6 @@
             </div>
         @endif
 
-        <!-- GLASS TABLE CONTAINER -->
         <div class="bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl shadow-xl shadow-zinc-200/40 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -67,7 +62,7 @@
                             <tr class="hover:bg-white/40 transition-colors group">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
-                                         <img src="{{ $user->avatar_url }}" 
+                                         <img src="{{ $user->avatar_url }}"
                                               class="h-9 w-9 rounded-full border border-zinc-200 shadow-sm object-cover" alt="">
                                         <span class="font-bold text-zinc-700 font-space group-hover:text-zinc-900 transition-colors">{{ $user->name }}</span>
                                     </div>
@@ -100,16 +95,15 @@
                                 <td class="px-6 py-4 text-zinc-500 font-medium">{{ $user->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <!-- Edit Button -->
-                                        <a href="{{ route('admin.users.edit', $user) }}" 
+
+                                        <a href="{{ route('admin.users.edit', $user) }}"
                                            class="p-2 text-zinc-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                             </svg>
                                         </a>
 
-                                         <!-- Delete Button -->
-                                         <button type="button" 
+                                         <button type="button"
                                                  onclick="confirmDelete({{ $user->id }}, {{ json_encode($user->name) }})"
                                                  class="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus">
                                              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -128,7 +122,6 @@
                 </table>
             </div>
 
-            <!-- Pagination (Jika ada) -->
             @if($users->hasPages())
                 <div class="px-6 py-4 border-t border-zinc-200/60 bg-zinc-50/30">
                     {{ $users->links() }}
@@ -137,7 +130,6 @@
         </div>
     </div>
 
-    {{-- ===== CONFIRM DELETE MODAL ===== --}}
     <div id="modal-confirm-delete" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -179,7 +171,6 @@
         if (form) form.submit();
     }
 
-    // Close modal on backdrop click
     document.getElementById('modal-confirm-delete').addEventListener('click', function(e) {
         if (e.target === this) closeConfirmDelete();
     });

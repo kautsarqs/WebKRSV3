@@ -2,20 +2,20 @@
     <x-admin-sidebar />
 
     <div class="space-y-6">
-        
+
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Daftar Marker Peta</h2>
                 <p class="text-zinc-500 text-sm mt-1 font-inter">Kelola semua marker yang ditampilkan di peta digital.</p>
             </div>
-            
+
             <div class="flex items-center gap-3">
                 <form action="{{ route('admin.maps.index') }}" method="GET" class="relative group">
                     <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-3 h-5 w-5 text-zinc-400 group-hover:text-zinc-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    <input 
-                        type="search" 
-                        name="search" 
-                        placeholder="Cari marker..." 
+                    <input
+                        type="search"
+                        name="search"
+                        placeholder="Cari marker..."
                         value="{{ request('search') }}"
                         class="pl-10 pr-4 py-2.5 w-full md:w-[280px] bg-white/60 backdrop-blur-sm border border-zinc-200 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 outline-none text-zinc-800 text-sm shadow-sm transition-all"
                     />
@@ -83,7 +83,7 @@
                                         <div class="w-16 h-16 bg-zinc-50 rounded-lg border border-zinc-200 flex items-center justify-center overflow-hidden shadow-xs" title="LineString">
                                             <svg class="w-11 h-11" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M8 50 C16 36, 20 18, 32 28 C42 37, 46 14, 56 12"
-                                                      stroke="{{ $lineColor }}" 
+                                                      stroke="{{ $lineColor }}"
                                                       stroke-width="{{ $lineWidth }}"
                                                       stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -124,7 +124,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.maps.edit', $marker) }}" 
+                                        <a href="{{ route('admin.maps.edit', $marker) }}"
                                            class="p-2 text-zinc-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -160,7 +160,6 @@
         </div>
     </div>
 
-    {{-- Modal konfirmasi hapus --}}
     <div id="delete-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -180,7 +179,6 @@
         </div>
     </div>
 
-    {{-- Hidden form untuk submit DELETE --}}
     <form id="delete-form" method="POST" style="display:none;">
         @csrf
         @method('DELETE')

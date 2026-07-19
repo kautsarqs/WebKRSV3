@@ -15,17 +15,11 @@ class PendaftaranPenelitiMail extends Mailable
 
     public $pendaftaran;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct($pendaftaran)
     {
         $this->pendaftaran = $pendaftaran;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -33,9 +27,6 @@ class PendaftaranPenelitiMail extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -43,11 +34,6 @@ class PendaftaranPenelitiMail extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

@@ -23,7 +23,7 @@
         </div>
         <h1 class="text-4xl font-bold text-zinc-900 mb-4">Pendaftaran Peneliti</h1>
         <p class="text-zinc-500 max-w-xl mx-auto">
-            Lengkapi formulir di bawah ini untuk mengajukan izin penelitian di Kebun Raya Sambas. 
+            Lengkapi formulir di bawah ini untuk mengajukan izin penelitian di Kebun Raya Sambas.
             Notifikasi persetujuan akan dikirimkan oleh tim admin.
         </p>
     </div>
@@ -61,7 +61,6 @@
     <form id="form-peneliti" action="{{ route('pendaftaran.peneliti.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
 
-        {{-- ── INFORMASI PRIBADI ──────────────────────────────────────── --}}
         <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden">
             <div class="px-8 py-5 border-b border-zinc-100 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center">
@@ -98,7 +97,6 @@
             </div>
         </div>
 
-        {{-- ── ASAL INSTITUSI ─────────────────────────────────────────── --}}
         <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden">
             <div class="px-8 py-5 border-b border-zinc-100 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
@@ -125,7 +123,6 @@
             </div>
         </div>
 
-        {{-- ── DETAIL PENELITIAN ──────────────────────────────────────── --}}
         <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden">
             <div class="px-8 py-5 border-b border-zinc-100 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-xl bg-violet-100 flex items-center justify-center">
@@ -172,7 +169,6 @@
             </div>
         </div>
 
-        {{-- ── DOKUMEN LAMPIRAN ────────────────────────────────────────── --}}
         <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden">
             <div class="px-8 py-5 border-b border-zinc-100 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center">
@@ -198,9 +194,8 @@
             </div>
         </div>
 
-        {{-- ── SUBMIT ──────────────────────────────────────────────────── --}}
         <div class="flex flex-col sm:flex-row items-center gap-4">
-            <button type="submit" 
+            <button type="submit"
                 class="flex-1 bg-zinc-900 hover:bg-emerald-700 text-white font-semibold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-zinc-900/15 flex justify-center items-center gap-2 hover:-translate-y-0.5 hover:shadow-xl cursor-pointer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Kirim Permohonan Penelitian
@@ -228,7 +223,6 @@
         const startInput = document.getElementById('tanggal_mulai');
         const endInput = document.getElementById('tanggal_selesai');
 
-        // Phone intl-tel-input
         const iti = window.intlTelInput(phoneDisplay, {
             initialCountry: "id",
             preferredCountries: ["id", "my", "sg"],
@@ -244,7 +238,7 @@
             if (nationalNumber.startsWith('0')) {
                 nationalNumber = nationalNumber.substring(1);
             }
-            
+
             if (nationalNumber) {
                 phoneHidden.value = '+' + dialCode + nationalNumber;
             } else {
@@ -304,11 +298,10 @@
             else toggleError(this, false, '');
         });
 
-        // Dynamic dates check
         startInput.addEventListener('change', function() {
             if (this.value) {
                 endInput.min = this.value;
-                // Check if end date is before new start date
+
                 if (endInput.value && new Date(endInput.value) < new Date(this.value)) {
                     toggleError(endInput, true, 'Tanggal selesai tidak boleh kurang dari tanggal mulai.');
                 } else {
@@ -329,11 +322,10 @@
 
         form.addEventListener('submit', function(e) {
             nameInput.dispatchEvent(new Event('input'));
-            
-            // Check main dates validity
+
             const today = new Date();
             today.setHours(0,0,0,0);
-            
+
             if (startInput.value && new Date(startInput.value) < today) {
                 e.preventDefault();
                 toggleError(startInput, true, 'Tanggal mulai tidak boleh tanggal yang sudah lewat.');
@@ -345,7 +337,6 @@
                 return;
             }
 
-            // Force update phone hidden input before validation
             phoneDisplay.dispatchEvent(new Event('input'));
 
             if (!phoneHidden.value || phoneHidden.value.trim() === '') {

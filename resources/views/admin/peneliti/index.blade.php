@@ -2,15 +2,15 @@
     <x-admin-sidebar />
 
     <div class="space-y-6 py-4">
-        {{-- Header Section --}}
+
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Kelola Peneliti</h2>
                 <p class="text-zinc-500 text-sm mt-1">Daftar permohonan izin penelitian di Kebun Raya Sambas.</p>
             </div>
-            
+
             <div class="flex items-center gap-3 flex-wrap">
-                {{-- Bulk Delete Button --}}
+
                 <form id="bulk-delete-form-peneliti" method="POST" action="{{ route('admin.peneliti.bulk-delete') }}" style="display:none;">
                     @csrf
                     <input type="hidden" id="bulk-ids-json-peneliti" name="ids_json" value="">
@@ -43,21 +43,19 @@
             </div>
         @endif
 
-        {{-- Status Filters --}}
         <div class="flex items-center gap-2 overflow-x-auto pb-2">
-            <a href="{{ route('admin.peneliti.index') }}" 
+            <a href="{{ route('admin.peneliti.index') }}"
                class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ !request('status') ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                 Semua
             </a>
             @foreach(['pending' => 'Pending', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $val => $label)
-                <a href="{{ route('admin.peneliti.index', ['status' => $val]) }}" 
+                <a href="{{ route('admin.peneliti.index', ['status' => $val]) }}"
                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request('status') === $val ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
                     {{ $label }}
                 </a>
             @endforeach
         </div>
 
-        {{-- Table Card --}}
         <div class="bg-white border border-zinc-200/80 rounded-3xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -79,7 +77,7 @@
                         @forelse($penelitis as $row)
                             <tr class="hover:bg-zinc-50/40 transition-colors">
                                 <td class="px-6 py-4 text-center">
-                                    <input type="checkbox" class="row-checkbox-peneliti rounded border-zinc-300" 
+                                    <input type="checkbox" class="row-checkbox-peneliti rounded border-zinc-300"
                                            value="{{ $row->id }}" onchange="updateBulkBtnPeneliti()">
                                 </td>
                                 <td class="px-6 py-4">
@@ -106,20 +104,20 @@
                                     @if(is_array($docs))
                                         <div class="flex flex-col gap-1 items-start">
                                             @if(!empty($docs['surat_izin']))
-                                                <a href="{{ Storage::url($docs['surat_izin']) }}" target="_blank" 
+                                                <a href="{{ Storage::url($docs['surat_izin']) }}" target="_blank"
                                                    class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-bold underline">
                                                     Surat Izin
                                                 </a>
                                             @endif
                                             @if(!empty($docs['cv']))
-                                                <a href="{{ Storage::url($docs['cv']) }}" target="_blank" 
+                                                <a href="{{ Storage::url($docs['cv']) }}" target="_blank"
                                                    class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-bold underline">
                                                     CV
                                                 </a>
                                             @endif
                                         </div>
                                     @elseif($row->surat_pengantar)
-                                        <a href="{{ Storage::url($row->surat_pengantar) }}" target="_blank" 
+                                        <a href="{{ Storage::url($row->surat_pengantar) }}" target="_blank"
                                            class="inline-flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-bold underline">
                                             Unduh
                                         </a>
@@ -149,20 +147,19 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="grid grid-cols-2 gap-1.5 w-full max-w-[180px] mx-auto">
-                                        {{-- Detail --}}
+
                                         <button type="button"
                                                 onclick="openDetailPenelitiModal({{ json_encode($row) }})"
                                                 class="col-span-1 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Detail
                                         </button>
 
-                                        {{-- Hapus button opens confirm modal --}}
                                         <button type="button"
                                                 onclick="confirmDeletePeneliti({{ $row->id }}, {{ json_encode($row->nama_lengkap) }})"
                                                 class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Hapus
                                         </button>
-                                        {{-- Hidden form for actual delete --}}
+
                                         <form id="delete-form-peneliti-{{ $row->id }}" method="POST" action="{{ route('admin.peneliti.destroy', $row->id) }}" style="display:none;">
                                             @csrf
                                             @method('DELETE')
@@ -210,7 +207,6 @@
         </div>
     </div>
 
-    {{-- ===== CONFIRM DELETE MODAL ===== --}}
     <div id="modal-confirm-delete-peneliti" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -230,7 +226,6 @@
         </div>
     </div>
 
-    {{-- ===== CONFIRM BULK DELETE MODAL ===== --}}
     <div id="modal-confirm-bulk-peneliti" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -250,7 +245,6 @@
         </div>
     </div>
 
-    {{-- ===== TOLAK MODAL (Peneliti) ===== --}}
     <div id="modal-tolak-peneliti" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:460px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <p id="modal-tolak-title-peneliti" style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;font-family:'Space Grotesk',sans-serif;">Tolak Permohonan Penelitian</p>
@@ -273,7 +267,6 @@
         </div>
     </div>
 
-    {{-- ===== DETAIL PENELITI MODAL ===== --}}
     <div id="detail-peneliti-modal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:24px; padding:0; max-width:560px; width:90%; max-height:85vh; box-shadow:0 25px 50px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden;">
             <div style="padding:24px 24px 16px; border-bottom:1px solid #f4f4f5; display:flex; align-items:center; justify-content:space-between;">
@@ -281,7 +274,7 @@
                 <button onclick="closeDetailPenelitiModal()" style="background:none;border:none;cursor:pointer;color:#a1a1aa;font-size:22px;line-height:1;">&times;</button>
             </div>
             <div id="detail-peneliti-content" style="padding:24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px; font-size:14px; color:#3f3f46;">
-                {{-- Data populated dynamically --}}
+
             </div>
             <div style="padding:16px 24px; border-top:1px solid #f4f4f5; display:flex; justify-content:flex-end;">
                 <button onclick="closeDetailPenelitiModal()" style="padding:8px 20px;background:#18181b;border:none;border-radius:12px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tutup</button>
@@ -309,7 +302,6 @@
         return ids;
     }
 
-    // Single Delete
     function confirmDeletePeneliti(id, nama) {
         _deletePenelitiId = id;
         var el = document.getElementById('confirm-delete-peneliti-name');
@@ -325,7 +317,6 @@
         document.getElementById('delete-form-peneliti-' + _deletePenelitiId).submit();
     }
 
-    // Bulk Delete
     function confirmBulkDeletePeneliti() {
         var ids = getCheckedIdsPeneliti();
         if (ids.length === 0) return;
@@ -341,7 +332,6 @@
         document.getElementById('bulk-delete-form-peneliti').submit();
     }
 
-    // Tolak Modal
     function openTolakModal(url, nama) {
         document.getElementById('tolak-form-peneliti').action = url;
         document.getElementById('tolak-subtitle').textContent = 'Berikan alasan penolakan untuk peneliti: ' + nama;
@@ -362,13 +352,12 @@
         document.getElementById('modal-tolak-peneliti').style.display = 'none';
     }
 
-    // Detail Modal
     function openDetailPenelitiModal(data) {
         var content = document.getElementById('detail-peneliti-content');
-        
+
         var dateMulai = new Date(data.tanggal_mulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         var dateSelesai = new Date(data.tanggal_selesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-        
+
         var docs = '';
         try {
             var parsed = JSON.parse(data.surat_pengantar);
@@ -419,7 +408,6 @@
         document.getElementById('detail-peneliti-modal').style.display = 'none';
     }
 
-    // Close on backdrop click
     ['modal-confirm-delete-peneliti','modal-confirm-bulk-peneliti','modal-tolak-peneliti','detail-peneliti-modal'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });

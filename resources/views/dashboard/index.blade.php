@@ -4,7 +4,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Beranda
         </x-ui.nav-link>
-        
+
         <x-ui.nav-link :href="route('profile.show')" :active="request()->routeIs('profile.show') || request()->routeIs('profile.edit')">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Profil Saya
@@ -28,7 +28,6 @@
 
     <div class="space-y-6">
 
-        {{-- ── FLASH MESSAGES ──────────────────────────────────────────── --}}
         @if(session('success'))
             <div class="flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-4 rounded-2xl">
                 <svg class="w-5 h-5 mt-0.5 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -36,11 +35,8 @@
             </div>
         @endif
 
-
-
-        {{-- ── HERO GREETING ────────────────────────────────────────────── --}}
         <div class="relative overflow-hidden bg-gradient-to-br from-zinc-950 via-zinc-900 to-emerald-950 rounded-3xl p-8 text-white shadow-xl shadow-zinc-950/20">
-            {{-- Decorative blobs --}}
+
             <div class="absolute -top-12 -right-12 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
             <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
@@ -57,12 +53,11 @@
             </div>
         </div>
 
-        {{-- ── QUICK ACTIONS ─────────────────────────────────────────────── --}}
         <div>
             <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Aksi Cepat</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
-                <a href="{{ route('peta') }}" 
+                <a href="{{ route('peta') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-emerald-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
@@ -73,7 +68,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('pendaftaran.pengunjung') }}" 
+                <a href="{{ route('pendaftaran.pengunjung') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-blue-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -84,7 +79,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('pendaftaran.peneliti') }}" 
+                <a href="{{ route('pendaftaran.peneliti') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-violet-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -95,7 +90,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('koleksi') }}" 
+                <a href="{{ route('koleksi') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-amber-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
@@ -106,7 +101,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('profil') }}" 
+                <a href="{{ route('profil') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-teal-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -117,7 +112,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('profile.edit') }}" 
+                <a href="{{ route('profile.edit') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-zinc-400 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-700 group-hover:text-white transition-colors shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -131,7 +126,6 @@
             </div>
         </div>
 
-        {{-- ── RIWAYAT PENDAFTARAN SAYA ─────────────────────────────────── --}}
         <div class="bg-white border border-zinc-200/80 rounded-3xl p-6 shadow-sm">
             <h2 class="text-lg font-bold text-zinc-900 font-space tracking-tight mb-5 flex items-center gap-2">
                 <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -146,7 +140,7 @@
                 </div>
             @else
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {{-- Riwayat Kunjungan --}}
+
                     <div>
                         <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Kunjungan</h3>
                         @if($pengunjungRegistrations->isNotEmpty())
@@ -196,7 +190,7 @@
                                              </div>
                                         @elseif($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
-                                                <a href="{{ route('dashboard.pengunjung.edit', $reg->id) }}" 
+                                                <a href="{{ route('dashboard.pengunjung.edit', $reg->id) }}"
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
                                                     Edit
                                                 </a>
@@ -219,7 +213,6 @@
                         @endif
                     </div>
 
-                    {{-- Riwayat Penelitian --}}
                     <div class="lg:border-l lg:border-zinc-200/60 lg:pl-8 pt-6 lg:pt-0 border-t lg:border-t-0 border-zinc-200/60">
                         <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Penelitian</h3>
                         @if($penelitiRegistrations->isNotEmpty())
@@ -264,7 +257,7 @@
                                              </div>
                                         @elseif($reg->status !== 'disetujui')
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
-                                                <a href="{{ route('dashboard.peneliti.edit', $reg->id) }}" 
+                                                <a href="{{ route('dashboard.peneliti.edit', $reg->id) }}"
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
                                                     Edit
                                                 </a>
@@ -290,7 +283,6 @@
             @endif
         </div>
 
-        {{-- ── INFO CARD ─────────────────────────────────────────────────── --}}
         <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-3xl p-6">
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-600/25">
@@ -299,7 +291,7 @@
                 <div>
                     <h3 class="font-bold text-emerald-900 mb-1">Tentang Portal ini</h3>
                     <p class="text-sm text-emerald-800/70 leading-relaxed">
-                        Portal ini menyediakan akses digital ke kawasan <strong>Kebun Raya Sambas</strong> — mulai dari peta interaktif, katalog koleksi flora, hingga pendaftaran kunjungan dan penelitian. 
+                        Portal ini menyediakan akses digital ke kawasan <strong>Kebun Raya Sambas</strong> — mulai dari peta interaktif, katalog koleksi flora, hingga pendaftaran kunjungan dan penelitian.
                         Gunakan menu di atas untuk memulai.
                     </p>
                 </div>

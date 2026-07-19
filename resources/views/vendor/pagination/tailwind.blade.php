@@ -37,7 +37,7 @@
 
             <div>
                 <span class="relative z-0 inline-flex shadow-sm rounded-md ml-4">
-                    {{-- Previous Page Link --}}
+
                     @if ($paginator->onFirstPage())
                         <span aria-disabled="true" aria-label="{{ __('pagination.previous') }}">
                             <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-muted-foreground bg-card border border-border cursor-default rounded-l-md leading-5" aria-hidden="true">
@@ -54,21 +54,19 @@
                         </a>
                     @endif
 
-                    {{-- Pagination Elements --}}
                     @foreach ($elements as $element)
-                        {{-- "Three Dots" Separator --}}
+
                         @if (is_string($element))
                             <span aria-disabled="true">
                                 <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-muted-foreground bg-card border border-border cursor-default leading-5">{{ $element }}</span>
                             </span>
                         @endif
 
-                        {{-- Array Of Links --}}
                         @if (is_array($element))
                             @foreach ($element as $page => $url)
                                 @if ($page == $paginator->currentPage())
                                     <span aria-current="page">
-                                        {{-- Style untuk HALAMAN AKTIF (Hitam Solid) --}}
+
                                         <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-primary-foreground bg-primary border border-primary cursor-default leading-5">{{ $page }}</span>
                                     </span>
                                 @else
@@ -80,7 +78,6 @@
                         @endif
                     @endforeach
 
-                    {{-- Next Page Link --}}
                     @if ($paginator->hasMorePages())
                         <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-muted-foreground bg-card border border-border rounded-r-md leading-5 hover:text-foreground hover:bg-muted focus:z-10 focus:outline-none transition ease-in-out duration-150" aria-label="{{ __('pagination.next') }}">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
