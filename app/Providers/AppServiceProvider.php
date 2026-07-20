@@ -19,7 +19,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
 
-        if (config('app.env') === 'production' || request()->isSecure() || request()->header('X-Forwarded-Proto') === 'https') {
+        // Paksa HTTPS jika APP_URL menggunakan https (Berguna untuk mengatasi Invalid Signature di balik proxy/tunnel)
+        if (str_starts_with(config('app.url'), 'https://')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
