@@ -32,18 +32,18 @@ class KoleksiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:150',
             'description' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
-            'kerajaan' => 'nullable|string|max:255',
-            'divisi' => 'nullable|string|max:255',
-            'kelas' => 'nullable|string|max:255',
-            'order' => 'nullable|string|max:255',
-            'famili' => 'nullable|string|max:255',
-            'genus' => 'nullable|string|max:255',
-            'spesies' => 'nullable|string|max:255',
-            'otoritas_1' => 'nullable|string|max:255',
-            'otoritas_2' => 'nullable|string|max:255',
+            'kerajaan' => 'nullable|string|max:50',
+            'divisi' => 'nullable|string|max:50',
+            'kelas' => 'nullable|string|max:50',
+            'order' => 'nullable|string|max:50',
+            'famili' => 'nullable|string|max:100',
+            'genus' => 'nullable|string|max:100',
+            'spesies' => 'nullable|string|max:100',
+            'otoritas_1' => 'nullable|string|max:100',
+            'otoritas_2' => 'nullable|string|max:100',
         ]);
 
         DB::beginTransaction();
@@ -91,18 +91,18 @@ class KoleksiController extends Controller
     public function update(Request $request, Koleksi $koleksi)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:150',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:2048',
-            'kerajaan' => 'nullable|string|max:255',
-            'divisi' => 'nullable|string|max:255',
-            'kelas' => 'nullable|string|max:255',
-            'order' => 'nullable|string|max:255',
-            'famili' => 'nullable|string|max:255',
-            'genus' => 'nullable|string|max:255',
-            'spesies' => 'nullable|string|max:255',
-            'otoritas_1' => 'nullable|string|max:255',
-            'otoritas_2' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'kerajaan' => 'nullable|string|max:50',
+            'divisi' => 'nullable|string|max:50',
+            'kelas' => 'nullable|string|max:50',
+            'order' => 'nullable|string|max:50',
+            'famili' => 'nullable|string|max:100',
+            'genus' => 'nullable|string|max:100',
+            'spesies' => 'nullable|string|max:100',
+            'otoritas_1' => 'nullable|string|max:100',
+            'otoritas_2' => 'nullable|string|max:100',
         ]);
 
         DB::beginTransaction();

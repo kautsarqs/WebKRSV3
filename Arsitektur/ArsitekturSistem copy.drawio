@@ -1,0 +1,190 @@
+<mxfile host="65bd71144e">
+    <diagram id="arsitektur_webkrsv3" name="Arsitektur Sistem WebKRSV3">
+        <mxGraphModel dx="2911" dy="933" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1050" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="presentation_tier" value="Presentation Tier (Client-Side &amp; GUI)" style="swimlane;html=1;startSize=40;fillColor=#f8f9fa;strokeColor=#1a73e8;strokeWidth=2;fontStyle=1;fontSize=14;fontColor=#1a73e8;horizontal=1;pointerEvents=0;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="840" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin_dashboard_ui" value="&lt;b&gt;Admin Dashboard UI (Management GUI)&lt;/b&gt;&lt;br/&gt;• Admin Blade Templates (Dashboard, User, Koleksi, Map)&lt;br/&gt;• Admin Control Panel (Persetujuan Riset/Kunjungan)&lt;br/&gt;• GeoJSON Boundary Editor (Leaflet Map Draw)&lt;br/&gt;• Data Export (Unduhan Laporan CSV/Excel)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f0fe;strokeColor=#1a73e8;strokeWidth=2;fontSize=11;fontColor=#174ea6;align=left;spacingLeft=10;" parent="presentation_tier" vertex="1">
+                    <mxGeometry x="480" y="60" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_portal_ui" value="&lt;b&gt;User Portal UI (Client PWA)&lt;/b&gt;&lt;br/&gt;• Laravel Blade Templates (Home, Map, Flora, Pendaftaran)&lt;br/&gt;• Tailwind CSS v4 &amp; Alpine.js (Styling &amp; Interaktivitas)&lt;br/&gt;• Leaflet.js Map Viewer (Visualisasi Spasial)&lt;br/&gt;• sw.js &amp; manifest.json (Offline Cache &amp; A2HS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f0fe;strokeColor=#1a73e8;strokeWidth=2;fontSize=11;fontColor=#174ea6;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="100" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="application_tier" value="Application Tier (Server-Side Logic - Laravel 12)" style="swimlane;html=1;startSize=40;fillColor=#f8f9fa;strokeColor=#137333;strokeWidth=2;fontStyle=1;fontSize=14;fontColor=#137333;horizontal=1;pointerEvents=0;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="280" width="840" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="image_mail_services" value="&lt;b&gt;Application Services &amp; Helpers&lt;/b&gt;&lt;br/&gt;• ImageOptimizer (Kompresi &amp; Konversi AVIF Otomatis)&lt;br/&gt;• PendaftaranPenelitiMail (Kelas Mailer Notifikasi SMTP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f4ea;strokeColor=#137333;strokeWidth=2;fontSize=11;fontColor=#137333;align=left;spacingLeft=10;" parent="application_tier" vertex="1">
+                    <mxGeometry x="140" y="310" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="auth_controllers" value="&lt;b&gt;Auth &amp; Profile Controllers&lt;/b&gt;&lt;br/&gt;• AuthController.php (Login/Register)&lt;br/&gt;• SocialiteController.php (Google OAuth)&lt;br/&gt;• ProfileController.php (Manajemen Akun)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f4ea;strokeColor=#137333;strokeWidth=2;fontSize=11;fontColor=#137333;align=left;spacingLeft=10;" vertex="1" parent="application_tier">
+                    <mxGeometry x="20" y="180" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="web_router_middleware" value="&lt;b&gt;Web Router &amp; Middleware (routes/web.php)&lt;/b&gt;&lt;br/&gt;• Route Handler: Pemetaan HTTP Request ke Controller&lt;br/&gt;• Middleware: auth (Proteksi Sesi), verified (Verifikasi Email), admin (Hak Akses Pengelola)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f4ea;strokeColor=#137333;strokeWidth=2;fontSize=11;fontColor=#137333;align=left;spacingLeft=10;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="340" width="360" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="map_koleksi_controllers" value="&lt;b&gt;Koleksi &amp; Map Controllers&lt;/b&gt;&lt;br/&gt;• KoleksiController.php (Katalog Flora)&lt;br/&gt;• Admin/MapController.php (GeoJSON Marker)&lt;br/&gt;• Admin/UserController.php (Manajemen User)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f4ea;strokeColor=#137333;strokeWidth=2;fontSize=11;fontColor=#137333;align=left;spacingLeft=10;" vertex="1" parent="1">
+                    <mxGeometry x="340" y="460" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="pendaftaran_controllers" value="&lt;b&gt;Pendaftaran Controllers&lt;/b&gt;&lt;br/&gt;• PendaftaranController.php (Kunjungan)&lt;br/&gt;• Admin/PendaftaranManageController.php&lt;br/&gt;• Logika Persetujuan Izin Penelitian/Riset" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6f4ea;strokeColor=#137333;strokeWidth=2;fontSize=11;fontColor=#137333;align=left;spacingLeft=10;" vertex="1" parent="1">
+                    <mxGeometry x="600" y="460" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="data_tier" value="Data Tier (Database &amp; Data Access Layer)" style="swimlane;html=1;startSize=40;fillColor=#f8f9fa;strokeColor=#b06000;strokeWidth=2;fontStyle=1;fontSize=14;fontColor=#b06000;horizontal=1;pointerEvents=0;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="740" width="840" height="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;b style=&quot;border-color: rgb(218, 220, 224); color: rgb(176, 96, 0); font-size: 11px;&quot;&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;PostgreSQL Database&lt;/b&gt;&lt;br style=&quot;border-color: rgb(218, 220, 224); color: rgb(176, 96, 0); font-size: 11px;&quot;&gt;&lt;span style=&quot;color: rgb(176, 96, 0); font-size: 11px;&quot;&gt;• Penyimpanan Relasional &amp;amp; Spasial&lt;/span&gt;&lt;br style=&quot;border-color: rgb(218, 220, 224); color: rgb(176, 96, 0); font-size: 11px;&quot;&gt;&lt;span style=&quot;color: rgb(176, 96, 0); font-size: 11px;&quot;&gt;• Tabel: users, koleksis, map_markers (GeoJSON), pendaftarans&lt;/span&gt;" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.database;whiteSpace=wrap;labelBackgroundColor=none;strokeColor=#b06000;fillColor=#fef7e0;" vertex="1" parent="data_tier">
+                    <mxGeometry x="320" y="250" width="200" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="eloquent_models" value="&lt;b&gt;Eloquent ORM Models (Data Access Layer - API internal)&lt;/b&gt;&lt;br/&gt;• User.php • Koleksi.php • MapMarker.php • PendaftaranPengunjung.php • PendaftaranPeneliti.php" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef7e0;strokeColor=#b06000;strokeWidth=2;fontSize=11;fontColor=#b06000;align=center;" parent="data_tier" vertex="1">
+                    <mxGeometry x="200" y="100" width="440" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_models_to_db" value="5a. SQL Query / DDL Execution" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#b06000;strokeWidth=1.5;fontSize=10;" parent="data_tier" source="eloquent_models" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="387" y="210" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_db_to_models" value="5b. Return ResultSet / Records" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.865;entryY=1;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;dashed=1;fontSize=10;entryPerimeter=0;" parent="data_tier" source="4" target="eloquent_models" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="453" y="210" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="581" y="345"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="osm_api" value="&lt;b&gt;OpenStreetMap&lt;/b&gt;&lt;br/&gt;Basemap Tiles" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fce8e6;strokeColor=#c5221f;strokeWidth=2;fontSize=11;fontColor=#c5221f;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="-300" y="110" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="google_oauth" value="&lt;b&gt;Google OAuth API&lt;/b&gt;&lt;br/&gt;(Laravel Socialite)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fce8e6;strokeColor=#c5221f;strokeWidth=2;fontSize=11;fontColor=#c5221f;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="-290" y="460" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="smtp_gmail" value="&lt;b&gt;SMTP Gmail Server&lt;/b&gt;&lt;br/&gt;(Notifikasi Admin)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fce8e6;strokeColor=#c5221f;strokeWidth=2;fontSize=11;fontColor=#c5221f;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="-290" y="590" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_user_to_router" value="1a. HTTP Request (Kunjungan, Riset)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;strokeColor=#1a73e8;strokeWidth=1.5;fontSize=10;entryX=-0.001;entryY=0.362;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="user_portal_ui" target="web_router_middleware" edge="1">
+                    <mxGeometry x="-0.814" relative="1" as="geometry">
+                        <mxPoint x="230" y="360" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="240" y="365"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_router_to_user" value="6a. Return HTML / Cache" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.124;entryY=1.007;entryDx=0;entryDy=0;strokeColor=#1a73e8;strokeWidth=1.5;dashed=1;fontSize=10;entryPerimeter=0;" parent="1" source="web_router_middleware" target="user_portal_ui" edge="1">
+                    <mxGeometry x="0.2067" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="280" y="390"/>
+                            <mxPoint x="120" y="390"/>
+                            <mxPoint x="120" y="201"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_admin_to_router" value="1b. HTTP Request (CRUD, Persetujuan)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;strokeColor=#1a73e8;strokeWidth=1.5;fontSize=10;" parent="1" source="admin_dashboard_ui" edge="1">
+                    <mxGeometry x="-0.8224" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="680" y="370"/>
+                            <mxPoint x="640" y="370"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                        <mxPoint x="640" y="370" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_router_to_admin" value="6b. Return HTML / JSON Response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.821;entryY=0.984;entryDx=0;entryDy=0;strokeColor=#1a73e8;strokeWidth=1.5;dashed=1;fontSize=10;entryPerimeter=0;" parent="1" source="web_router_middleware" target="admin_dashboard_ui" edge="1">
+                    <mxGeometry x="0.1679" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="783" y="392"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_user_to_osm" value="1c. Load Basemap Tiles" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;fontSize=10;" parent="1" source="user_portal_ui" target="osm_api" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_router_to_auth" value="2a. Route &amp; Auth Middleware" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;fontSize=10;" edge="1" parent="1" source="web_router_middleware" target="auth_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_router_to_map" value="2b. Route &amp; Admin Middleware" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;fontSize=10;" edge="1" parent="1" source="web_router_middleware" target="map_koleksi_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_router_to_pendaftaran" value="2c. Route &amp; Verified Middleware" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.772;entryY=0.019;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;fontSize=10;entryPerimeter=0;" edge="1" parent="1" source="web_router_middleware" target="pendaftaran_controllers">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="550" y="435"/>
+                            <mxPoint x="770" y="435"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_auth_to_google" value="3a. Google Socialite Auth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;fontSize=10;" parent="1" source="auth_controllers" target="google_oauth" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_map_to_services" value="3b. Optimasi AVIF" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.16;exitY=1.011;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;fontSize=10;exitPerimeter=0;" edge="1" parent="1" source="map_koleksi_controllers" target="image_mail_services">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="378" y="560"/>
+                            <mxPoint x="240" y="560"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_pendaftaran_to_services" value="3c. Notifikasi Email" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.853;entryY=0.003;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;fontSize=10;entryPerimeter=0;" parent="1" source="pendaftaran_controllers" target="image_mail_services" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="710" y="570"/>
+                            <mxPoint x="385" y="570"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_services_to_smtp" value="4a. SMTP Relay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;fontSize=10;" parent="1" source="image_mail_services" target="smtp_gmail" edge="1">
+                    <mxGeometry x="0.52" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_auth_to_models" value="4b. User Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;fontSize=10;" edge="1" parent="1" source="auth_controllers" target="eloquent_models">
+                    <mxGeometry x="0.2857" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_map_to_models" value="4c. Spasial &amp; Katalog Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.434;exitY=1.023;exitDx=0;exitDy=0;strokeColor=#b06000;strokeWidth=1.5;fontSize=10;exitPerimeter=0;" edge="1" parent="1" source="map_koleksi_controllers">
+                    <mxGeometry x="-0.2954" relative="1" as="geometry">
+                        <mxPoint x="640" y="840" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="444" y="620"/>
+                            <mxPoint x="640" y="620"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_pendaftaran_to_models" value="4d. Reservasi Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;fontSize=10;" edge="1" parent="1" source="pendaftaran_controllers" target="eloquent_models">
+                    <mxGeometry x="0.2854" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge_smtp_to_services" value="4a. Return SMTP Response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="smtp_gmail" target="image_mail_services">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_models_to_auth" value="4b. Return User Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.05;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="eloquent_models" target="auth_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_models_to_map" value="4c. Return Koleksi/MapMarker Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="eloquent_models" target="map_koleksi_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_models_to_pendaftaran" value="4d. Return Pendaftaran Records" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.95;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;strokeColor=#b06000;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="eloquent_models" target="pendaftaran_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_osm_to_user" value="1c. Return Tile Images" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="osm_api" target="user_portal_ui">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_google_to_auth" value="3a. Return OAuth User Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeColor=#c5221f;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="google_oauth" target="auth_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_services_to_map" value="3b. Return AVIF Path" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="image_mail_services" target="map_koleksi_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge_services_to_pendaftaran" value="3c. Return Mail Status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;strokeColor=#137333;strokeWidth=1.5;dashed=1;fontSize=10;" edge="1" parent="1" source="image_mail_services" target="pendaftaran_controllers">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

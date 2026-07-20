@@ -42,12 +42,12 @@ class MapController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:150'],
             'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
             'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
             'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
-            'type' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
@@ -79,12 +79,12 @@ class MapController extends Controller
     public function update(Request $request, MapMarker $map)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:150'],
             'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
             'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
             'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
-            'type' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],
@@ -132,12 +132,12 @@ class MapController extends Controller
     public function syncOffline(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:150'],
             'geometry_type' => ['required', 'in:point,polyline,polygon,linestring'],
             'latitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['required_if:geometry_type,point', 'nullable', 'numeric', 'between:-180,180'],
             'geojson' => ['required_if:geometry_type,polyline,polygon', 'nullable', 'string'],
-            'type' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:2048'],

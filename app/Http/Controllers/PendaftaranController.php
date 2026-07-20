@@ -47,15 +47,15 @@ class PendaftaranController extends Controller
         ]);
 
         $request->validate([
-            'nama_lengkap'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
-            'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/',
+            'nama_lengkap'      => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
             'tanggal_kunjungan' => 'required|date|after_or_equal:today',
-            'instansi'          => 'required|string',
+            'instansi'          => 'required|string|max:150',
             'keperluan'         => 'required|string|max:500',
 
-            'rombongan.*.nama'     => 'nullable|string|max:255',
-            'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/',
-            'rombongan.*.instansi' => 'nullable|string|max:255',
+            'rombongan.*.nama'     => 'nullable|string|max:100',
+            'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'rombongan.*.instansi' => 'nullable|string|max:150',
         ], [
             'nama_lengkap.regex'               => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'nomor_hp.regex'                   => 'Nomor HP harus berupa angka kode negara yang valid (e.g. +62812345...).',
@@ -132,15 +132,15 @@ class PendaftaranController extends Controller
         ]);
 
         $request->validate([
-            'nama_lengkap'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
-            'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/',
+            'nama_lengkap'      => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'          => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
             'tanggal_kunjungan' => 'required|date|after_or_equal:today',
-            'instansi'          => 'required|string',
+            'instansi'          => 'required|string|max:150',
             'keperluan'         => 'required|string|max:500',
 
-            'rombongan.*.nama'     => 'nullable|string|max:255',
-            'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/',
-            'rombongan.*.instansi' => 'nullable|string|max:255',
+            'rombongan.*.nama'     => 'nullable|string|max:100',
+            'rombongan.*.nomor_hp' => 'nullable|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'rombongan.*.instansi' => 'nullable|string|max:150',
         ], [
             'nama_lengkap.regex'               => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
             'nomor_hp.regex'                   => 'Nomor HP harus berupa angka kode negara yang valid.',
@@ -230,10 +230,10 @@ class PendaftaranController extends Controller
         ]);
 
         $request->validate([
-            'nama_lengkap'         => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
-            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/',
-            'institusi'            => 'required|string|max:255',
-            'program_studi'        => 'nullable|string|max:255',
+            'nama_lengkap'         => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'institusi'            => 'required|string|max:150',
+            'program_studi'        => 'nullable|string|max:100',
             'jenjang'              => 'required|in:S1,S2,S3,Dosen,Peneliti,Umum',
             'judul_penelitian'     => 'required|string|max:500',
             'bidang_penelitian'    => 'required|string|max:500',
@@ -316,10 +316,10 @@ class PendaftaranController extends Controller
         ]);
 
         $request->validate([
-            'nama_lengkap'         => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
-            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/',
-            'institusi'            => 'required|string|max:255',
-            'program_studi'        => 'nullable|string|max:255',
+            'nama_lengkap'         => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'institusi'            => 'required|string|max:150',
+            'program_studi'        => 'nullable|string|max:100',
             'jenjang'              => 'required|in:S1,S2,S3,Dosen,Peneliti,Umum',
             'judul_penelitian'     => 'required|string|max:500',
             'bidang_penelitian'    => 'required|string|max:500',
