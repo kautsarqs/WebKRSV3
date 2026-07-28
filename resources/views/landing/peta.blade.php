@@ -7,15 +7,6 @@
 <style>
     #map { height: 600px; width: 100%; z-index: 10; border-radius: 1.75rem; }
 
-    .leaflet-container:focus,
-    .leaflet-container *:focus,
-    .leaflet-interactive:focus,
-    path.leaflet-interactive:focus,
-    svg.leaflet-zoom-animated path:focus {
-        outline: none !important;
-        box-shadow: none !important;
-    }
-
     .leaflet-container svg {
         max-width: none !important;
         max-height: none !important;
@@ -151,29 +142,29 @@
     .blue-dot {
         width: 14px;
         height: 14px;
-        background-color: #2563eb;
+        background-color: #3b82f6;
         border-radius: 50%;
-        border: 2.5px solid #ffffff;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5);
+        border: 2.5px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         z-index: 2;
     }
     .pulse-ring {
         position: absolute;
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         border: 3px solid #3b82f6;
         border-radius: 50%;
-        background-color: rgba(59, 130, 246, 0.25);
-        animation: pulse-animation 1.8s infinite ease-out;
+        background-color: rgba(59, 130, 246, 0.15);
+        animation: pulse-animation 1.6s infinite ease-out;
         z-index: 1;
     }
     @keyframes pulse-animation {
         0% {
-            transform: scale(0.4);
+            transform: scale(0.5);
             opacity: 1;
         }
         100% {
-            transform: scale(2.4);
+            transform: scale(2.0);
             opacity: 0;
         }
     }
@@ -181,10 +172,14 @@
 @endpush
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-10">
-        <h1 class="font-heading text-4xl font-bold mb-2">Peta Digital Kawasan</h1>
-        <p class="text-zinc-650 font-normal">Sistem Informasi Geografis (WebGIS) persebaran koleksi tumbuhan.</p>
+<div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="text-center mb-10 relative">
+        <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 font-heading">
+            Peta Kawasan Interaktif
+        </h1>
+        <p class="text-base md:text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed font-light font-inter">
+            Temukan lokasi fisik penyebaran spesies tumbuhan, zona taman konservasi, dan fasilitas umum Kebun Raya secara langsung.
+        </p>
     </div>
 
     <div class="p-2.5 bg-white border border-zinc-200 rounded-[2.5rem] shadow-2xl shadow-zinc-250/30">
@@ -193,12 +188,6 @@
                  destinationName: '',
                  remainingDistance: '---',
                  remainingTime: '---',
-                 showMultiRouteModal: false,
-                 waypoints: [],
-                 totalDistanceStr: '0 m',
-                 totalTimeStr: '0 mnt',
-                 legsDetails: [],
-                 selectedMarkerToAdd: '',
                  startNav(detail) {
                      this.isNavigating = true;
                      this.destinationName = detail.name;
@@ -216,17 +205,11 @@
              }"
              @start-nav.window="startNav($event.detail)"
              @update-nav.window="updateNav($event.detail)"
-             @update-multi-route.window="
-                 waypoints = JSON.parse(JSON.stringify($event.detail.waypoints || []));
-                 totalDistanceStr = $event.detail.totalDistance || '0 m';
-                 totalTimeStr = $event.detail.totalTime || '0 mnt';
-                 legsDetails = JSON.parse(JSON.stringify($event.detail.legs || []));
-             "
              class="map-wrapper">
-            <div id="map" class="bg-zinc-50"></div>
+            <div id="map" class="bg-zinc-50" style="height: 600px; width: 100%; border-radius: 1.75rem;"></div>
 
             <div x-show="isNavigating"
-                 x-transition:enter="transition ease-out duration-350"
+                 x-transition:enter="transition ease-out duration-355"
                  x-transition:enter-start="opacity-0 translate-y-12 scale-95"
                  x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                  x-transition:leave="transition ease-in duration-250"
@@ -265,7 +248,7 @@
                     </div>
 
                     <div class="flex items-center gap-2.5 sm:gap-3 bg-zinc-50/50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border border-zinc-100/75">
-                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shadow-xs shrink-0">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-orange-50 text-orange-650 flex items-center justify-center shadow-xs shrink-0">
                             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="flex flex-col">
@@ -273,38 +256,6 @@
                             <span class="font-extrabold text-zinc-900 text-xs sm:text-sm" x-text="remainingTime">---</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            {{-- Floating Multi-Route Active Bar --}}
-            <div x-show="waypoints.length >= 2 && !isNavigating"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-8"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 translate-y-8"
-                 class="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] w-[90%] max-w-md bg-white/95 backdrop-blur-md border border-zinc-200/80 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-3 text-zinc-900">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
-                        🗺️
-                    </div>
-                    <div class="min-w-0">
-                        <div class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> Rute Multi-Point (<span x-text="waypoints.length"></span> Titik)
-                        </div>
-                        <div class="text-xs font-extrabold text-zinc-900 truncate">
-                            <span x-text="totalDistanceStr"></span> &bull; <span x-text="totalTimeStr"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <button @click="showMultiRouteModal = true" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[10px] font-bold transition-all shadow-xs cursor-pointer">
-                        Rincian
-                    </button>
-                    <button @click="window.clearMultiRoute()" class="p-1.5 bg-zinc-100 hover:bg-red-50 text-zinc-400 hover:text-red-600 rounded-xl transition-all cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
                 </div>
             </div>
 
@@ -317,216 +268,13 @@
                      notificationType: 'info',
                      confirmCallback: null
                  }"
-                 @map-alert.window="
-                     notificationTitle = $event.detail.title;
-                     notificationMessage = $event.detail.message;
-                     notificationType = $event.detail.type;
-                     confirmCallback = $event.detail.confirmCallback;
-                     showNotification = true;
-                 ">
-
-                <button @click="showSettingsModal = true; $dispatch('close-layer-dropdown')"
-                        class="px-3 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/50 rounded-2xl shadow-md flex items-center gap-1.5 text-[10px] font-bold text-zinc-700 hover:bg-white transition-all cursor-pointer select-none">
-                    <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>Pengaturan Peta</span>
-                </button>
-
-                <button @click="showMultiRouteModal = true; $dispatch('close-layer-dropdown')"
-                        class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500/80 rounded-2xl shadow-md flex items-center gap-1.5 text-[10px] font-bold transition-all cursor-pointer select-none">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    <span>Rencana Rute</span>
-                    <span x-show="waypoints.length > 0" class="px-1.5 py-0.2 bg-white text-emerald-800 rounded-full text-[9px] font-extrabold" x-text="waypoints.length"></span>
-                </button>
-
-                {{-- Modal Perencanaan Rute Multi-Point --}}
-                <template x-teleport="body">
-                <div x-show="showMultiRouteModal"
-                     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     x-cloak>
-
-                    <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="showMultiRouteModal = false"></div>
-
-                    <div class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200/50 p-6 flex flex-col gap-4 text-zinc-800 max-h-[90vh] overflow-y-auto">
-                        <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
-                                    📍
-                                </div>
-                                <div>
-                                    <h3 class="font-heading font-bold text-base text-zinc-900">Perencanaan Rute (A ➔ B ➔ C)</h3>
-                                    <p class="text-[11px] text-zinc-500">Pilih beberapa titik lokasi secara berurutan untuk melihat rute & waktu jalan kaki.</p>
-                                </div>
-                            </div>
-                            <button @click="showMultiRouteModal = false" class="text-zinc-400 hover:text-zinc-600 p-1 rounded-lg hover:bg-zinc-100 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-
-                        {{-- Form Tambah Waypoint --}}
-                        <div class="flex items-center gap-2">
-                            <select id="select-waypoint-dropdown" x-model="selectedMarkerToAdd" class="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2 text-xs font-medium focus:ring-emerald-500 focus:border-emerald-500">
-                                <option value="">-- Pilih Titik Kunjungan --</option>
-                                <option value="gps">📍 Lokasi Saya saat ini (GPS)</option>
-                                @foreach($markers->filter(fn($m) => $m->geometry_type === 'point') as $m)
-                                    <option value="{{ $m->id }}" data-name="{{ addslashes($m->name) }}" data-lat="{{ $m->latitude }}" data-lng="{{ $m->longitude }}">{{ $m->name }} ({{ Str::of($m->type)->replace('_', ' ')->title() }})</option>
-                                @endforeach
-                            </select>
-                            <button @click="if (selectedMarkerToAdd) { window.addWaypointFromDropdown(selectedMarkerToAdd); selectedMarkerToAdd = ''; }"
-                                    class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer">
-                                + Tambah
-                            </button>
-                        </div>
-
-                        {{-- Waypoints List --}}
-                        <div class="flex flex-col gap-2 my-1">
-                            <template x-if="waypoints.length === 0">
-                                <div class="text-center py-8 bg-zinc-50 border border-dashed border-zinc-200 rounded-2xl">
-                                    <p class="text-xs text-zinc-400 font-medium">Belum ada titik kunjungan dipilih.</p>
-                                    <p class="text-[10px] text-zinc-400 mt-1">Pilih titik dari dropdown di atas atau klik tombol <strong>"+ RUTE"</strong> pada marker di peta.</p>
-                                </div>
-                            </template>
-
-                            <template x-for="(wp, index) in waypoints" :key="index">
-                                <div class="flex items-center justify-between bg-zinc-50 border border-zinc-200/80 p-3 rounded-2xl">
-                                    <div class="flex items-center gap-3 min-w-0">
-                                        <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-extrabold flex items-center justify-center shrink-0 shadow-xs" x-text="index + 1"></span>
-                                        <span class="text-xs font-bold text-zinc-900 truncate" x-text="wp.name"></span>
-                                    </div>
-                                    <div class="flex items-center gap-1 shrink-0">
-                                        <button @click="window.moveMultiWaypoint(index, -1)" :disabled="index === 0" class="p-1 text-zinc-400 hover:text-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
-                                        </button>
-                                        <button @click="window.moveMultiWaypoint(index, 1)" :disabled="index === waypoints.length - 1" class="p-1 text-zinc-400 hover:text-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
-                                        </button>
-                                        <button @click="window.removeMultiWaypoint(index)" class="p-1 text-red-400 hover:text-red-600">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div x-show="waypoints.length > 0" class="flex items-center justify-between gap-2 border-t border-zinc-100 pt-3">
-                            <button @click="window.reverseMultiWaypoints()" class="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[11px] font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                                Balik Urutan Rute
-                            </button>
-                            <button @click="window.clearMultiRoute()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-[11px] font-bold rounded-xl transition-all cursor-pointer">
-                                Hapus Semua
-                            </button>
-                        </div>
-
-                        {{-- Statistics Card --}}
-                        <div x-show="waypoints.length >= 2" class="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-4 text-white shadow-lg flex flex-col gap-3">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="bg-white/10 backdrop-blur-xs rounded-xl p-2.5">
-                                    <span class="text-[9px] uppercase tracking-wider text-emerald-100 font-bold">Total Jarak</span>
-                                    <p class="text-base font-extrabold" x-text="totalDistanceStr">0 m</p>
-                                </div>
-                                <div class="bg-white/10 backdrop-blur-xs rounded-xl p-2.5">
-                                    <span class="text-[9px] uppercase tracking-wider text-emerald-100 font-bold">Estimasi Jalan Kaki</span>
-                                    <p class="text-base font-extrabold" x-text="totalTimeStr">0 mnt</p>
-                                </div>
-                            </div>
-
-                            {{-- Leg Details --}}
-                            <div class="border-t border-white/20 pt-2 flex flex-col gap-1.5 text-xs">
-                                <span class="text-[10px] font-bold text-emerald-100 uppercase tracking-wider">Rincian Per Segmen:</span>
-                                <template x-for="(leg, idx) in legsDetails" :key="idx">
-                                    <div class="flex items-center justify-between text-[11px] bg-black/15 px-2.5 py-1.5 rounded-lg">
-                                        <span class="truncate max-w-[220px]" x-text="(idx + 1) + '. ' + leg.from + ' ➔ ' + leg.to"></span>
-                                        <span class="font-bold shrink-0 ml-2" x-text="leg.distanceStr + ' (' + leg.timeStr + ')'"></span>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </template>
-
-                <template x-teleport="body">
-                <div x-show="showSettingsModal"
-                     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-200"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     x-cloak>
-
-                    <div class="fixed inset-0 bg-black/60 backdrop-blur-xs" @click="showSettingsModal = false"></div>
-
-                    <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-zinc-200/50 p-6 flex flex-col gap-4 text-zinc-800 transform transition-all duration-300"
-                         x-show="showSettingsModal"
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-
-                        <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <h3 class="font-heading font-bold text-base text-zinc-900">Pengaturan Peta</h3>
-                            </div>
-                            <button @click="showSettingsModal = false" class="text-zinc-400 hover:text-zinc-600 transition-colors p-1 rounded-lg hover:bg-zinc-100 cursor-pointer" aria-label="Tutup Pengaturan">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div class="flex flex-col gap-4 py-2">
-
-                            <div class="flex flex-col gap-1.5">
-                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Status GPS</span>
-                                <div id="gps-status" class="bg-zinc-50 border border-zinc-100 rounded-2xl p-3.5 flex items-center justify-between">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-zinc-100 text-zinc-500">
-                                        GPS Menghubungkan...
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col gap-1.5">
-                                <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest pl-0.5">Peta Offline</span>
-                                <div class="bg-zinc-50 border border-zinc-100 rounded-2xl p-4 flex flex-col gap-3">
-                                    <button id="download-btn" onclick="downloadVisibleArea()" class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer shadow-sm hover:shadow-md">
-                                        Unduh Peta
-                                    </button>
-                                    <button id="clear-btn" onclick="clearCachedMap()" class="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer">
-                                        Hapus Cache
-                                    </button>
-
-                                    <div id="download-progress" class="hidden mt-1">
-                                        <div class="w-full bg-zinc-200 rounded-full h-1.5 overflow-hidden">
-                                            <div id="progress-bar" class="bg-emerald-500 h-1.5 w-0 transition-all duration-150"></div>
-                                        </div>
-                                        <p id="progress-text" class="text-[9px] text-zinc-500 mt-1.5 text-center font-semibold"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </template>
+                  @map-alert.window="
+                      notificationTitle = $event.detail.title;
+                      notificationMessage = $event.detail.message;
+                      notificationType = $event.detail.type;
+                      confirmCallback = $event.detail.confirmCallback;
+                      showNotification = true;
+                  ">
 
                 <template x-teleport="body">
                 <div x-show="showNotification"
@@ -556,12 +304,15 @@
                                  'bg-red-50 text-red-600': notificationType === 'error',
                                  'bg-amber-50 text-amber-600': notificationType === 'confirm' || notificationType === 'warning'
                              }">
+
                             <template x-if="notificationType === 'success'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                             </template>
+
                             <template x-if="notificationType === 'error'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </template>
+
                             <template x-if="notificationType === 'confirm' || notificationType === 'warning'">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             </template>
@@ -641,15 +392,13 @@
                     $isBatas = str_contains($typeNormIdx, 'batas');
                     $isJalanUtama = str_contains($typeNormIdx, 'jalanutama');
                     $isJalanLain  = str_contains($typeNormIdx, 'jalanlain');
-                    $lineColor = $isJalanUtama ? '#b8b8b8' : ($isJalanLain ? '#c8c8c8' : $color);
+                    $lineColor = $isJalanUtama ? '#808080' : ($isJalanLain ? '#808080' : $color);
                     $lineWidth = $isJalanUtama ? '5.5' : ($isJalanLain ? '2.5' : '3.0');
                 @endphp
                 <div class="inline-flex items-center gap-2.5 px-3.5 py-2 rounded-2xl text-xs font-bold bg-white border border-zinc-200/80 shadow-xs">
                     @if($firstGeomType === 'point')
-                        {{-- Point: titik bundar penanda lokasi --}}
                         <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs" style="background-color: {{ $color }}; border: 2px solid #ffffff; box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.2);"></span>
                     @elseif($firstGeomType === 'polygon')
-                        {{-- Polygon: persis dengan simbol Kelola Peta --}}
                         <svg class="w-8 h-6 shrink-0" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 42 C10 28, 16 10, 32 9 C48 8, 56 22, 54 38 C52 50, 40 54, 32 54 C22 54, 14 52, 12 42 Z"
                                   stroke="{{ $color }}" stroke-width="3.5"
@@ -657,7 +406,6 @@
                                   fill="{{ $color }}" fill-opacity="{{ $isBatas ? '0.08' : '0.18' }}"/>
                         </svg>
                     @else
-                        {{-- LineString / Polyline: persis dengan simbol Kelola Peta --}}
                         <svg class="w-8 h-6 shrink-0" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M8 50 C16 36, 20 18, 32 28 C42 37, 46 14, 56 12"
                                   stroke="{{ $lineColor }}"
@@ -718,11 +466,6 @@
                                     class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-lg transition-colors cursor-pointer">
                                 PETA
                             </button>
-                            <button onclick="window.addWaypointFromDropdown({{ $marker->id }})"
-                                    class="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-white text-[9px] font-bold rounded-lg transition-colors cursor-pointer"
-                                    title="Tambah ke Rute Multi-Point">
-                                + RUTE
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -736,169 +479,22 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+<script src="{{ asset('js/offline-maps.js') }}"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
-    function getTileUrlForCoords(layer, coords) {
-        var url = layer._url;
-        url = url.replace('{z}', coords.z)
-                 .replace('{x}', coords.x)
-                 .replace('{y}', coords.y);
-        if (url.indexOf('{s}') !== -1 && layer.options.subdomains) {
-            var subdomains = layer.options.subdomains;
-            var index = Math.abs(coords.x + coords.y) % subdomains.length;
-            var s = typeof subdomains === 'string' ? subdomains[index] : subdomains[index];
-            url = url.replace('{s}', s);
-        }
-        return url;
-    }
-
-    L.TileLayer.Offline = L.TileLayer.extend({
-        getTileKey: function(coords) {
-
-            var cleanUrl = (this._url || "").replace(/[^a-zA-Z0-9]/g, "").substring(0, 20);
-            return `${cleanUrl}_tile_${coords.z}_${coords.x}_${coords.y}`;
-        },
-        createTile: function(coords, done) {
-            var tile = document.createElement('img');
-            var url = getTileUrlForCoords(this, coords);
-            var key = this.getTileKey(coords);
-
-            localforage.getItem(key).then(function(blob) {
-                if (blob) {
-                    var objectUrl = URL.createObjectURL(blob);
-                    tile.onload = function() {
-                        URL.revokeObjectURL(objectUrl);
-                        done(null, tile);
-                    };
-                    tile.onerror = function() {
-                        done(new Error("Gagal render blob tile"), tile);
-                    };
-                    tile.src = objectUrl;
-                } else {
-
-                    fetch(url)
-                        .then(function(res) {
-                            if (!res.ok) throw new Error("Gagal mengambil tile");
-                            return res.blob();
-                        })
-                        .then(function(blob) {
-                            localforage.setItem(key, blob);
-                            var objectUrl = URL.createObjectURL(blob);
-                            tile.onload = function() {
-                                URL.revokeObjectURL(objectUrl);
-                                done(null, tile);
-                            };
-                            tile.onerror = function() {
-                                done(new Error("Gagal render downloaded tile"), tile);
-                            };
-                            tile.src = objectUrl;
-                        })
-                        .catch(function(err) {
-                            console.warn("Offline fallback ke normal image src:", url);
-                            tile.onload = function() {
-                                done(null, tile);
-                            };
-                            tile.onerror = function() {
-                                done(err, tile);
-                            };
-                            tile.src = url;
-                        });
-                }
-            }).catch(function(err) {
-                console.error(err);
-                tile.onload = function() {
-                    done(null, tile);
-                };
-                tile.onerror = function() {
-                    done(err, tile);
-                };
-                tile.src = url;
-            });
-
-            return tile;
-        }
-    });
-
-    L.tileLayer.offline = function(urlTemplate, options) {
-        return new L.TileLayer.Offline(urlTemplate, options);
-    };
-
     var bounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]);
     var map = L.map('map', {
+        scrollWheelZoom: true,
         zoomControl: false,
-        attributionControl: false,
         maxBounds: bounds,
         maxBoundsViscosity: 0.8,
         minZoom: 8
-    }).setView([1.271885, 109.477339], 13.8);
+    }).setView([1.2706202914994014, 109.48517276551188], 14);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // --- Custom Modern Glassmorphic Zoom & Scale Control Widget ---
-    var CustomMapControls = L.Control.extend({
-        options: { position: 'bottomright' },
-        onAdd: function(map) {
-            var container = L.DomUtil.create('div', 'flex items-center gap-2 mb-3 mr-3 z-[1000]');
-            container.innerHTML = `
-                <div class="px-3.5 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex items-center gap-2 text-zinc-800 text-[10px] font-bold select-none cursor-default">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                    <span class="text-zinc-400 uppercase tracking-widest text-[8px] font-bold">Skala</span>
-                    <span id="custom-scale-text" class="text-zinc-900 font-mono font-extrabold text-xs">1 km</span>
-                </div>
-                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex flex-col overflow-hidden">
-                    <button id="btn-zoom-in" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base border-b border-zinc-100/80 cursor-pointer" title="Perbesar Peta">+</button>
-                    <button id="btn-zoom-out" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base cursor-pointer" title="Perkecil Peta">&minus;</button>
-                </div>
-            `;
-
-            L.DomEvent.disableClickPropagation(container);
-            L.DomEvent.disableScrollPropagation(container);
-
-            setTimeout(function() {
-                document.getElementById('btn-zoom-in')?.addEventListener('click', function() { map.zoomIn(); });
-                document.getElementById('btn-zoom-out')?.addEventListener('click', function() { map.zoomOut(); });
-            }, 100);
-
-            return container;
-        }
-    });
-
-    map.addControl(new CustomMapControls());
-
-    function updateScaleDisplay() {
-        var center = map.getCenter();
-        var zoom = map.getZoom();
-        var metersPerPx = 156543.03392 * Math.cos(center.lat * Math.PI / 180) / Math.pow(2, zoom);
-        var rawMeters = metersPerPx * 90;
-
-        var niceText = '1 km';
-        if (rawMeters >= 2500) {
-            niceText = Math.round(rawMeters / 1000) + ' km';
-        } else if (rawMeters >= 750) {
-            niceText = '1 km';
-        } else if (rawMeters >= 350) {
-            niceText = '500 m';
-        } else if (rawMeters >= 180) {
-            niceText = '250 m';
-        } else if (rawMeters >= 90) {
-            niceText = '100 m';
-        } else if (rawMeters >= 40) {
-            niceText = '50 m';
-        } else if (rawMeters >= 15) {
-            niceText = '20 m';
-        } else {
-            niceText = Math.max(5, Math.round(rawMeters)) + ' m';
-        }
-
-        var scaleEl = document.getElementById('custom-scale-text');
-        if (scaleEl) scaleEl.textContent = niceText;
-    }
-
-    map.on('zoom zoomend move moveend viewreset zoomlevelschange', updateScaleDisplay);
-    setTimeout(updateScaleDisplay, 100);
-
-    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+    var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
     var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
-    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxNativeZoom: 17,
         maxZoom: 17,
         attribution: 'Map data: &copy; OpenStreetMap contributors',
@@ -977,14 +573,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (firstLocationCheck) {
+                    map.setView(latlng, 16);
                     firstLocationCheck = false;
                 }
 
-                document.getElementById('gps-status').innerHTML = `
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-green-50 text-green-700 border border-green-100">
-                        GPS Aktif (${accuracy.toFixed(1)}m)
-                    </span>
-                `;
+                var statusEl = document.getElementById('gps-status');
+                if (statusEl) {
+                    statusEl.innerHTML = `
+                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-green-50 text-green-700 border border-green-100">
+                            GPS Aktif (${accuracy.toFixed(1)}m)
+                        </span>
+                    `;
+                }
             },
             function(error) {
                 console.warn("GPS error:", error);
@@ -993,11 +593,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (error.code === error.POSITION_UNAVAILABLE) text = "Lokasi Hilang";
                 else if (error.code === error.TIMEOUT) text = "GPS Timeout";
 
-                document.getElementById('gps-status').innerHTML = `
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
-                        ${text}
-                    </span>
-                `;
+                var statusEl = document.getElementById('gps-status');
+                if (statusEl) {
+                    statusEl.innerHTML = `
+                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                            ${text}
+                        </span>
+                    `;
+                }
             },
             {
                 enableHighAccuracy: true,
@@ -1006,11 +609,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
     } else {
-        document.getElementById('gps-status').innerHTML = `
-            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
-                Tak Didukung
-            </span>
-        `;
+        var statusEl = document.getElementById('gps-status');
+        if (statusEl) {
+            statusEl.innerHTML = `
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-red-50 text-red-700 border border-red-100">
+                    Tak Didukung
+                </span>
+            `;
+        }
     }
 
     function getTileCoordsForBounds(bounds, zoom) {
@@ -1040,40 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }));
     };
 
-    map.on('click', function(e) {
-        if (!userMarker) {
-            var latlng = e.latlng;
-            var userIcon = L.divIcon({
-                className: 'user-location-marker',
-                html: '<div class="pulse-ring"></div><div class="blue-dot"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
-            });
-            userMarker = L.marker(latlng, { icon: userIcon }).addTo(map);
-            userAccuracyCircle = L.circle(latlng, {
-                radius: 15,
-                color: '#3b82f6',
-                fillColor: '#3b82f6',
-                fillOpacity: 0.15,
-                weight: 1
-            }).addTo(map);
-
-            var statusEl = document.getElementById('gps-status');
-            if (statusEl) {
-                statusEl.innerHTML = `
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                        Lokasi Manual (Tap Peta)
-                    </span>
-                `;
-            }
-            if (window.multiWaypoints && window.multiWaypoints.length > 0) {
-                window.updateMultiRoute();
-            }
-        }
-    });
-
     window.downloadVisibleArea = function() {
-
         function getTileUrlForQueue(layer, tile) {
             var url = layer._url;
             url = url.replace('{z}', tile.z)
@@ -1109,21 +682,19 @@ document.addEventListener("DOMContentLoaded", function () {
             var text = document.getElementById('progress-text');
             var btn = document.getElementById('download-btn');
 
-            progressDiv.classList.remove('hidden');
-            btn.disabled = true;
-            btn.innerText = "Mengunduh...";
+            if (progressDiv) progressDiv.classList.remove('hidden');
+            if (btn) { btn.disabled = true; btn.innerText = "Mengunduh..."; }
 
             function updateProgress() {
                 var totalProcessed = downloaded + failed;
                 var percentage = Math.round((totalProcessed / tiles.length) * 100);
-                bar.style.width = percentage + '%';
-                text.innerText = `Mengunduh: ${totalProcessed}/${tiles.length} (${percentage}%)`;
+                if (bar) bar.style.width = percentage + '%';
+                if (text) text.innerText = `Mengunduh: ${totalProcessed}/${tiles.length} (${percentage}%)`;
 
                 if (totalProcessed === tiles.length) {
                     setTimeout(function() {
-                        progressDiv.classList.add('hidden');
-                        btn.disabled = false;
-                        btn.innerText = "Unduh Peta";
+                        if (progressDiv) progressDiv.classList.add('hidden');
+                        if (btn) { btn.disabled = false; btn.innerText = "Unduh Peta"; }
                         if (downloaded > 0) {
                             var successMsg = `Selesai! ${downloaded} petak peta berhasil disimpan offline.` + (failed > 0 ? ` (${failed} petak gagal diunduh).` : '');
                             window.showMapAlert("Unduhan Selesai", successMsg, "success");
@@ -1154,7 +725,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         updateProgress();
                         downloadNext();
                     } else {
-
                         setTimeout(function() {
                             fetch(url)
                                 .then(function(r) {
@@ -1213,57 +783,27 @@ document.addEventListener("DOMContentLoaded", function () {
             function(approved) {
                 if (approved) {
                     var btn = document.getElementById('clear-btn');
-                    btn.disabled = true;
-                    btn.innerText = "Menghapus...";
+                    if (btn) { btn.disabled = true; btn.innerText = "Menghapus..."; }
 
                     localforage.clear().then(function() {
                         window.showMapAlert("Sukses", "Cache berhasil dibersihkan.", "success");
-                        btn.disabled = false;
-                        btn.innerText = "Hapus Cache";
+                        if (btn) { btn.disabled = false; btn.innerText = "Hapus Cache"; }
                         currentLayer.redraw();
                     }).catch(function(err) {
-                        btn.disabled = false;
-                        btn.innerText = "Hapus Cache";
+                        if (btn) { btn.disabled = false; btn.innerText = "Hapus Cache"; }
                     });
                 }
             }
         );
     }
 
-    // --- Auto-download Kebun Raya Sambas tiles on page load (background) ---
-    function autoDownloadKRS() {
-        if (!navigator.onLine) return;
+    setTimeout(function() {
+        if (window.autoDownloadKRS) {
+            window.autoDownloadKRS(map, [roadLayer, satelliteLayer, terrainLayer]);
+        }
+    }, 3000);
 
-        var bounds = L.latLngBounds([1.2599, 109.4751], [1.2799, 109.4951]);
-        var zooms = [13, 14, 15, 16, 17];
-        var tiles = [];
-
-        zooms.forEach(function(z) {
-            tiles = tiles.concat(getTileCoordsForBounds(bounds, z));
-        });
-
-        tiles.forEach(function(tile) {
-            var url = satelliteLayer.getTileUrl(tile);
-            var key = satelliteLayer.getTileKey(tile);
-
-            localforage.getItem(key).then(function(val) {
-                if (!val) {
-                    fetch(url)
-                        .then(function(r) { return r.blob(); })
-                        .then(function(blob) {
-                            localforage.setItem(key, blob);
-                        })
-                        .catch(function(e) {
-
-                        });
-                }
-            });
-        });
-    }
-
-    setTimeout(autoDownloadKRS, 3000);
-
-    var markers = @json($markers);
+    var markers = @json($markers ?? []);
     var storageBase = "{{ \Illuminate\Support\Facades\Storage::url('') }}".replace(/\/$/, '');
 
     var roadPolylines = [];
@@ -1296,9 +836,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-    console.log('Road polylines extracted for routing:', roadPolylines.length, roadPolylines.map(function(r){ return r.type; }));
 
-    // --- Logika Matematika Navigasi (Haversine & Vector Snapping) ---
     function getHaversineDistance(p1, p2) {
         var R = 6371000;
         var phi1 = p1.lat * Math.PI / 180;
@@ -1373,15 +911,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function buildGraphAndRunDijkstra(startLatLng, endLatLng) {
-        console.log("Dijkstra started. start:", startLatLng, "end:", endLatLng);
-        console.log("Available roadPolylines:", roadPolylines);
-
         var snapS = findClosestSnapPoint(startLatLng);
         var snapE = findClosestSnapPoint(endLatLng);
-        console.log("snapS:", snapS, "snapE:", snapE);
 
         if (!snapS.point || !snapE.point || roadPolylines.length === 0) {
-            console.log("No snap points or roadPolylines empty. Snapping failed.");
             return {
                 path: [startLatLng, endLatLng],
                 distance: getHaversineDistance(startLatLng, endLatLng),
@@ -1415,9 +948,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Semua vertex (termasuk endpoint) hanya dihubungkan jika jarak < 30m.
         roadPolylines.forEach(function(polyline, i) {
-            var pathLen = polyline.path.length;
             polyline.path.forEach(function(v, vIdx) {
                 var closestDist = Infinity;
                 var closestPoint = null;
@@ -1436,9 +967,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }
                 });
-
-                // Hubungkan vertex (termasuk endpoint) hanya jika jarak ke jalan lain < 30m
-                // CATATAN: Endpoint tidak boleh "selalu" terhubung tanpa batas jarak,
 
                 var shouldConnect = closestPoint && closestDist < 30.0;
                 if (shouldConnect) {
@@ -1516,7 +1044,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             pathCoords.reverse();
 
-            console.log("Dijkstra path successfully found! nodes count:", pathCoords.length);
             return {
                 path: pathCoords,
                 distance: distances[endKey],
@@ -1525,7 +1052,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 isStraightLine: false
             };
         } else {
-            console.log("Dijkstra failed: target is unreachable in the graph. startKey:", startKey, "endKey:", endKey);
             return {
                 path: [startLatLng, endLatLng],
                 distance: getHaversineDistance(startLatLng, endLatLng),
@@ -1559,7 +1085,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 dashArray: '8, 8'
             }).addTo(map);
         } else {
-
             navSnapStartLine = L.polyline([userCoord, routingResult.snapStart], {
                 color: '#3b82f6',
                 weight: 4,
@@ -1586,38 +1111,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.currentNavTarget = null;
-    window.arrivalTimeout = null;
-
-    function playChime() {
-        try {
-            var AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return;
-            var ctx = new AudioContext();
-            var osc = ctx.createOscillator();
-            var gain = ctx.createGain();
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-
-            gain.gain.setValueAtTime(0.5, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.8);
-        } catch (e) {
-            console.error("Gagal memutar chime:", e);
-        }
-    }
 
     window.startNavigation = function(id, name, lat, lng) {
-        if (window.arrivalTimeout) {
-            clearTimeout(window.arrivalTimeout);
-            window.arrivalTimeout = null;
-        }
         window.currentNavTarget = { id: id, name: name, lat: lat, lng: lng };
         map.closePopup();
         window.updateNavigationRouting();
@@ -1626,11 +1121,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.stopNavigation = function() {
         window.currentNavTarget = null;
         clearNavigationLayers();
-        window.dispatchEvent(new CustomEvent('stop-nav'));
-        if (window.arrivalTimeout) {
-            clearTimeout(window.arrivalTimeout);
-            window.arrivalTimeout = null;
-        }
     };
 
     function updateFloatingPanel(name, totalDistMeters) {
@@ -1665,11 +1155,10 @@ document.addEventListener("DOMContentLoaded", function () {
             window.dispatchEvent(new CustomEvent('start-nav', {
                 detail: {
                     name: window.currentNavTarget.name,
-                    distance: 'Menunggu GPS...',
-                    time: 'Atau tap peta utk lokasi Anda'
+                    distance: 'Mencari GPS...',
+                    time: '---'
                 }
             }));
-            window.showMapAlert("Informasi Navigasi", "Sistem sedang mencari lokasi GPS Anda. Jika Anda sedang offline atau GPS tidak tersedia, silakan TAP/KLIK di mana saja pada peta untuk menentukan posisi Anda saat ini secara manual.", "info");
             return;
         }
 
@@ -1689,286 +1178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         updateFloatingPanel(window.currentNavTarget.name, totalDistMeters);
-
-        if (totalDistMeters <= 10.0 && !window.arrivalTimeout) {
-            playChime();
-
-            if ('speechSynthesis' in window) {
-                var speechMsg = new SpeechSynthesisUtterance("Sudah sampai di lokasi");
-                speechMsg.lang = 'id-ID';
-                window.speechSynthesis.speak(speechMsg);
-            }
-
-            window.dispatchEvent(new CustomEvent('map-alert', {
-                detail: {
-                    title: "Sampai di Lokasi",
-                    message: "Anda telah tiba di " + window.currentNavTarget.name + ". Navigasi akan dihentikan otomatis dalam 5 detik.",
-                    type: "success"
-                }
-            }));
-
-            window.arrivalTimeout = setTimeout(function() {
-                window.stopNavigation();
-            }, 5000);
-        }
     };
-
-    // --- Logika Navigasi Multi-Point (A ➔ B ➔ C...) ---
-    window.multiWaypoints = [];
-    window.multiRoutePolylines = [];
-    window.multiRouteMarkers = [];
-
-    window.addMultiWaypoint = function(wp) {
-        if (!wp || !wp.name) return;
-
-        // Prevent adding duplicate waypoints
-        var isDuplicate = window.multiWaypoints.some(function(item) {
-            return item.id == wp.id;
-        });
-
-        if (isDuplicate) {
-            window.showMapAlert("Lokasi Sudah Ada", `Titik "${wp.name}" sudah ada dalam rute Anda.`, "warning");
-            return;
-        }
-
-        window.multiWaypoints.push(wp);
-        window.updateMultiRoute();
-    };
-
-    window.addWaypointFromDropdown = function(markerIdOrGps) {
-        if (markerIdOrGps === 'gps') {
-            if (!userMarker) {
-                window.showMapAlert("GPS Belum Siap", "Lokasi Anda belum terdeteksi. Silakan aktifkan GPS atau TAP di mana saja pada peta untuk menentukan lokasi posisi Anda.", "warning");
-                return;
-            }
-            var userLatLng = userMarker.getLatLng();
-            window.addMultiWaypoint({
-                id: 'gps',
-                name: '📍 Lokasi Saya',
-                lat: userLatLng.lat,
-                lng: userLatLng.lng
-            });
-        } else {
-            var markerObj = markers.find(function(m) { return m.id == markerIdOrGps; });
-            if (markerObj) {
-                var lat = markerObj.latitude;
-                var lng = markerObj.longitude;
-                if (!lat || !lng) {
-                    if (markerObj.geojson) {
-                        try {
-                            var coords = JSON.parse(markerObj.geojson);
-                            if (coords.length > 0) {
-                                var flat = Array.isArray(coords[0][0]) ? coords[0] : coords;
-                                var sumLat = 0, sumLng = 0;
-                                flat.forEach(function(c) { sumLat += parseFloat(c[0]); sumLng += parseFloat(c[1]); });
-                                lat = sumLat / flat.length;
-                                lng = sumLng / flat.length;
-                            }
-                        } catch(e){}
-                    }
-                }
-                if (lat && lng) {
-                    window.addMultiWaypoint({
-                        id: markerObj.id,
-                        name: markerObj.name,
-                        lat: parseFloat(lat),
-                        lng: parseFloat(lng)
-                    });
-                } else {
-                    window.showMapAlert("Koordinat Tidak Valid", "Lokasi ini tidak memiliki titik lokasi yang valid.", "error");
-                }
-            }
-        }
-    };
-
-    window.removeMultiWaypoint = function(index) {
-        window.multiWaypoints.splice(index, 1);
-        window.updateMultiRoute();
-    };
-
-    window.moveMultiWaypoint = function(index, direction) {
-        var newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= window.multiWaypoints.length) return;
-        var temp = window.multiWaypoints[index];
-        window.multiWaypoints[index] = window.multiWaypoints[newIndex];
-        window.multiWaypoints[newIndex] = temp;
-        window.updateMultiRoute();
-    };
-
-    window.reverseMultiWaypoints = function() {
-        window.multiWaypoints.reverse();
-        window.updateMultiRoute();
-    };
-
-    window.clearMultiRoute = function() {
-        window.multiWaypoints = [];
-        window.clearMultiRouteLayers();
-        window.updateMultiRouteUI([], "0 m", "0 mnt", []);
-    };
-
-    window.clearMultiRouteLayers = function() {
-        window.multiRoutePolylines.forEach(function(l) { map.removeLayer(l); });
-        window.multiRouteMarkers.forEach(function(m) { map.removeLayer(m); });
-        window.multiRoutePolylines = [];
-        window.multiRouteMarkers = [];
-    };
-
-    window.updateMultiRouteUI = function(wps, distStr, timeStr, legs) {
-        window.dispatchEvent(new CustomEvent('update-multi-route', {
-            detail: {
-                waypoints: wps,
-                totalDistance: distStr,
-                totalTime: timeStr,
-                legs: legs
-            }
-        }));
-    };
-
-    function formatDist(meters) {
-        if (meters < 1000) {
-            return Math.round(meters) + ' m';
-        }
-        return (meters / 1000).toFixed(2) + ' km';
-    }
-
-    function formatTimeMin(meters) {
-        var min = Math.round(meters / (1.25 * 60));
-        if (min < 1) return '< 1 mnt';
-        return min + ' mnt';
-    }
-
-    window.updateMultiRoute = function() {
-        window.clearMultiRouteLayers();
-
-        if (window.multiWaypoints.length < 2) {
-            if (window.multiWaypoints.length === 1) {
-                var wp = window.multiWaypoints[0];
-                var latlng = getWaypointLatLng(wp);
-                if (latlng) {
-                    var m = L.marker(latlng, {
-                        icon: L.divIcon({
-                            className: 'multi-wp-marker',
-                            html: '<div style="background:#10b981;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;border:2.5px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,0.35);cursor:pointer;">1</div>',
-                            iconSize: [28, 28],
-                            iconAnchor: [14, 14]
-                        })
-                    }).addTo(map);
-                    m.bindTooltip(`<b>1. ${wp.name}</b>`, { permanent: false, direction: 'top' });
-                    if (wp.id && wp.id !== 'gps' && window.mapLayers && window.mapLayers[wp.id]) {
-                        m.on('click', function() {
-                            window.mapLayers[wp.id].openPopup();
-                        });
-                    }
-                    window.multiRouteMarkers.push(m);
-                }
-            }
-            window.updateMultiRouteUI(window.multiWaypoints, "0 m", "0 mnt", []);
-            return;
-        }
-
-        var totalDistMeters = 0;
-        var legs = [];
-        var legColors = ['#059669', '#2563eb', '#7c3aed', '#d97706', '#db2777', '#0891b2'];
-
-        for (var i = 0; i < window.multiWaypoints.length - 1; i++) {
-            var startWp = window.multiWaypoints[i];
-            var endWp = window.multiWaypoints[i+1];
-
-            var startLatLng = getWaypointLatLng(startWp);
-            var endLatLng = getWaypointLatLng(endWp);
-
-            if (!startLatLng || !endLatLng) continue;
-
-            var result = buildGraphAndRunDijkstra(startLatLng, endLatLng);
-            var color = legColors[i % legColors.length];
-
-            var legDist = 0;
-            if (result.isStraightLine) {
-                legDist = result.distance;
-                var poly = L.polyline([startLatLng, endLatLng], {
-                    color: color,
-                    weight: 5,
-                    opacity: 0.85,
-                    dashArray: '8, 8'
-                }).addTo(map);
-                window.multiRoutePolylines.push(poly);
-            } else {
-                var distUserToSnapS = getHaversineDistance(startLatLng, result.snapStart);
-                var distSnapEToTarget = getHaversineDistance(result.snapEnd, endLatLng);
-                legDist = distUserToSnapS + result.distance + distSnapEToTarget;
-
-                var p1 = L.polyline([startLatLng, result.snapStart], {
-                    color: color,
-                    weight: 4,
-                    opacity: 0.8,
-                    dashArray: '4, 6'
-                }).addTo(map);
-                window.multiRoutePolylines.push(p1);
-
-                var pathLatLngs = result.path.map(function(p) { return L.latLng(p.lat, p.lng); });
-                var p2 = L.polyline(pathLatLngs, {
-                    color: color,
-                    weight: 6,
-                    opacity: 0.95
-                }).addTo(map);
-                window.multiRoutePolylines.push(p2);
-
-                var p3 = L.polyline([result.snapEnd, endLatLng], {
-                    color: color,
-                    weight: 4,
-                    opacity: 0.8,
-                    dashArray: '4, 6'
-                }).addTo(map);
-                window.multiRoutePolylines.push(p3);
-            }
-
-            totalDistMeters += legDist;
-            legs.push({
-                from: startWp.name,
-                to: endWp.name,
-                distanceStr: formatDist(legDist),
-                timeStr: formatTimeMin(legDist)
-            });
-        }
-
-        window.multiWaypoints.forEach(function(wp, idx) {
-            var latlng = getWaypointLatLng(wp);
-            if (latlng) {
-                var label = (idx + 1).toString();
-                var pinColor = idx === 0 ? '#10b981' : (idx === window.multiWaypoints.length - 1 ? '#ef4444' : '#2563eb');
-                var m = L.marker(latlng, {
-                    icon: L.divIcon({
-                        className: 'multi-wp-marker',
-                        html: `<div style="background:${pinColor};color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;border:2.5px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,0.4);cursor:pointer;">${label}</div>`,
-                        iconSize: [28, 28],
-                        iconAnchor: [14, 14]
-                    })
-                }).addTo(map);
-                m.bindTooltip(`<b>${label}. ${wp.name}</b>`, { permanent: false, direction: 'top' });
-
-                if (wp.id && wp.id !== 'gps' && window.mapLayers && window.mapLayers[wp.id]) {
-                    m.on('click', function() {
-                        window.mapLayers[wp.id].openPopup();
-                    });
-                }
-
-                window.multiRouteMarkers.push(m);
-            }
-        });
-
-        window.updateMultiRouteUI(window.multiWaypoints, formatDist(totalDistMeters), formatTimeMin(totalDistMeters), legs);
-    };
-
-    function getWaypointLatLng(wp) {
-        if (wp.id === 'gps') {
-            if (userMarker) return userMarker.getLatLng();
-            return null;
-        }
-        if (wp.lat && wp.lng) {
-            return L.latLng(wp.lat, wp.lng);
-        }
-        return null;
-    }
 
     window.mapLayers = window.mapLayers || {};
 
@@ -2011,19 +1221,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var navButtonHtml = '';
         if (targetLat && targetLng && geomType !== 'polyline') {
-            navButtonHtml = `<div class="flex items-center gap-1.5 shrink-0">
-                <button onclick="window.startNavigation(${marker.id}, '${marker.name.replace(/'/g, "\\'")}', ${targetLat}, ${targetLng})" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1.5 rounded-lg text-[10px] transition-all duration-200 shadow-sm cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    Navigasi
-                </button>
-                <button onclick="window.addWaypointFromDropdown(${marker.id})" class="inline-flex items-center gap-1 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold px-2.5 py-1.5 rounded-lg text-[10px] transition-all duration-200 shadow-sm cursor-pointer" title="Tambah ke Rute Multi-Point">
-                    + Rute
-                </button>
-            </div>`;
+            navButtonHtml = `<button onclick="window.startNavigation(${marker.id}, '${marker.name.replace(/'/g, "\\'")}', ${targetLat}, ${targetLng})" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg text-[10px] transition-all duration-200 shadow-sm cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Navigasi
+            </button>`;
         }
 
         var badgeHtml = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2" style="color: ${marker.color}; border: 1px solid ${marker.color}40; background-color: ${marker.color}15;">${typeLabel}</span>`;
-        var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div>${badgeHtml}<h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between gap-2"><a href="#marker-detail-${marker.id}" onclick="document.getElementById('marker-detail-${marker.id}')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="inline-flex items-center text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">LIHAT DETAIL</a>${navButtonHtml}</div></div></div>`;
+        var popupContent = `<div class="flex flex-col font-sans text-left bg-white w-full">${imageHtml}<div class="p-5"><div>${badgeHtml}<h3 class="font-heading font-bold text-lg leading-tight text-zinc-900 m-0">${marker.name}</h3></div>${marker.description ? `<p class="text-sm text-zinc-500 leading-relaxed m-0 mt-1 line-clamp-3">${marker.description}</p>` : ''}<div class="mt-4 pt-4 border-t border-zinc-100 flex items-center justify-between gap-2"><a href="{{ url('/peta') }}/${marker.id}" class="inline-flex items-center text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors">LIHAT DETAIL</a>${navButtonHtml}</div></div></div>`;
 
         var leafletLayer = null;
         if (geomType === 'point' && marker.latitude && marker.longitude) {
@@ -2043,28 +1248,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 var coordinates = JSON.parse(marker.geojson);
                 if (coordinates.length > 0) {
                     if (geomType === 'polyline' || geomType === 'linestring') {
-                        var markerTypeNorm = (marker.type || '').toLowerCase().replace(/[\s\-]+/g, '_');
                         var lineColor = marker.color;
                         var lineWidth = 4.5;
+                        var lineDash = '';
 
-                        if (markerTypeNorm === 'jalan_utama') {
-                            lineColor = '#b8b8b8';
-                            lineWidth = 4;
-                        } else if (markerTypeNorm === 'jalan_lain') {
-                            lineColor = '#c8c8c8';
-                            lineWidth = 2;
+                        if (marker.type === 'jalan_utama') {
+                            lineColor = '#808080';
+                            lineWidth = 6;
+                        } else if (marker.type === 'jalan_lain') {
+                            lineColor = '#808080';
+                            lineWidth = 3;
                         }
 
-                        leafletLayer = L.polyline(coordinates, { color: lineColor, weight: lineWidth }).addTo(map);
+                        var polyOptions = { color: lineColor, weight: lineWidth };
+                        if (lineDash) polyOptions.dashArray = lineDash;
+
+                        leafletLayer = L.polyline(coordinates, polyOptions).addTo(map);
                     } else if (geomType === 'polygon') {
-                        var markerTypeNorm = (marker.type || '').toLowerCase().replace(/[\s\-_]+/g, ' ');
-                        var isBatas = markerTypeNorm.includes('batas');
                         leafletLayer = L.polygon(coordinates, {
-                            color: marker.color || '#10b981',
-                            fillColor: marker.color || '#10b981',
-                            fillOpacity: isBatas ? 0.08 : 0.18,
-                            weight: isBatas ? 3 : 2.5,
-                            dashArray: isBatas ? '10, 8' : null
+                            color: marker.color,
+                            fillColor: marker.color,
+                            fillOpacity: 0.12,
+                            weight: 3,
+                            dashArray: '6, 6'
                         }).addTo(map);
                     }
                 }
@@ -2078,7 +1284,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    window.focusOnMarker = function(id) {
+    window.focusOnMarker = function(id, geomType, lat, lng) {
         var layer = window.mapLayers[id];
         if (layer) {
             if (layer.getLatLng) {
@@ -2090,6 +1296,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 map.fitBounds(bounds, { maxZoom: 17 });
                 layer.openPopup();
             }
+        } else if (geomType === 'point' && lat && lng) {
+            map.setView([lat, lng], 17, { animate: true });
         }
 
         var mapContainer = document.getElementById('map') || document.getElementById('home-map');
