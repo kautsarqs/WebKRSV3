@@ -146,6 +146,9 @@
                         @if($pengunjungRegistrations->isNotEmpty())
                             <div class="grid grid-cols-1 gap-4">
                                 @foreach($pengunjungRegistrations as $reg)
+                                    @php
+                                        $isUpcoming = \Carbon\Carbon::parse($reg->tanggal_kunjungan)->gte(today());
+                                    @endphp
                                     <div class="bg-zinc-50/60 border border-zinc-200/60 rounded-2xl p-5 flex flex-col justify-between hover:border-zinc-300 transition-colors">
                                         <div class="flex items-start justify-between gap-3 mb-3">
                                             <div>
@@ -154,17 +157,13 @@
                                                 <p class="text-xs text-zinc-500">Jumlah: {{ $reg->jumlah_rombongan }} orang</p>
                                             </div>
                                             <div>
-                                                @if($reg->status === 'pending')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wide">
-                                                        Pending
-                                                    </span>
-                                                @elseif($reg->status === 'disetujui')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-55/15 text-emerald-700 border border-emerald-200/40 uppercase tracking-wide">
-                                                        Disetujui
+                                                @if($isUpcoming)
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-wide">
+                                                        Terdaftar
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-55/15 text-red-700 border border-red-200/40 uppercase tracking-wide">
-                                                        Ditolak
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-zinc-100 text-zinc-500 border border-zinc-200 uppercase tracking-wide">
+                                                        Selesai
                                                     </span>
                                                 @endif
                                             </div>
@@ -175,20 +174,7 @@
                                             </p>
                                         @endif
 
-                                        @if($reg->catatan_admin)
-                                             <div class="mt-2 text-xs text-red-800 bg-red-55/15 border border-red-200/40 p-2.5 rounded-xl">
-                                                 <p class="font-bold">Catatan Admin:</p>
-                                                 <p class="mt-0.5">{{ $reg->catatan_admin }}</p>
-                                             </div>
-                                        @endif
-
-                                        @if($reg->status === 'ditolak' && $reg->editedVersion)
-                                             <div class="mt-4 flex items-center justify-end pt-3 border-t border-zinc-200/60">
-                                                 <span class="text-xs text-zinc-500 font-semibold italic flex items-center gap-1.5">
-                                                     🔄 Sudah diperbaiki / diajukan kembali
-                                                 </span>
-                                             </div>
-                                        @elseif($reg->status !== 'disetujui')
+                                        @if($isUpcoming)
                                             <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
                                                 <a href="{{ route('dashboard.pengunjung.edit', $reg->id) }}"
                                                    class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
@@ -299,4 +285,22 @@
         </div>
 
     </div>
+
+    <script>
+        // Polling otomatis untuk update dashboard user jika ada riwayat baru
+        (function() {
+            let initialUserPengunjungCount = {{ $pengunjungRegistrations->count() }};
+            let initialUserPenelitiCount = {{ $penelitiRegistrations->count() }};
+            setInterval(function() {
+                fetch("{{ route('pendaftaran.status') }}")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.user_pengunjung_count !== initialUserPengunjungCount || data.user_peneliti_count !== initialUserPenelitiCount) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }, 5000);
+        })();
+    </script>
 </x-dashboard-layout>

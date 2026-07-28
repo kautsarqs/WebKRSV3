@@ -9,25 +9,25 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "storage/images/logoKRS_square.png",
+      "src": "/storage/images/logoKRS_square.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "storage/images/logoKRS_square.png",
+      "src": "/storage/images/logoKRS_square.png",
       "sizes": "500x500",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "storage/images/logoKRS_square.png",
+      "src": "/storage/images/logoKRS_square.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "storage/images/logoKRS_square.png",
+      "src": "/storage/images/logoKRS_square.png",
       "sizes": "500x500",
       "type": "image/png",
       "purpose": "maskable"

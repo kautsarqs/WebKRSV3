@@ -41,12 +41,30 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="flex flex-col items-center justify-center p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-2xl text-center space-y-1">
                         <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-space">Spesimen</span>
-                        <span class="text-xs font-bold text-zinc-700 font-inter">{{ $koleksi->spesies ? 'Teridentifikasi' : 'General' }}</span>
+                        <span class="text-xs font-bold text-zinc-700 font-inter">{{ $koleksi->spesies ? 'Teridentifikasi' : 'Belum Teridentifikasi' }}</span>
                     </div>
                     <div class="flex flex-col items-center justify-center p-3.5 bg-zinc-50 border border-zinc-200/80 rounded-2xl text-center space-y-1">
                         <span class="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-space">Famili</span>
                         <span class="text-xs font-bold text-zinc-700 font-inter">{{ $koleksi->famili ?: '-' }}</span>
                     </div>
+                </div>
+
+                {{-- Card Lokasi VAK / Zona --}}
+                <div class="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-800 font-space block">Lokasi VAK</span>
+                            <span class="text-sm font-extrabold text-zinc-900 font-inter">{{ $koleksi->vak ? $koleksi->vak->name : 'Belum Ditentukan' }}</span>
+                        </div>
+                    </div>
+                    @if($koleksi->vak)
+                        <a href="{{ route('peta') }}?marker={{ $koleksi->vak->id }}" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs shrink-0 flex items-center gap-1.5 font-space">
+                            Lihat di Peta ➔
+                        </a>
+                    @endif
                 </div>
             </div>
 

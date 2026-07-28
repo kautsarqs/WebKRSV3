@@ -14,27 +14,28 @@
 
             <div class="space-y-1 mb-8">
                 <h3 class="text-2xl font-bold font-space text-zinc-900 tracking-tight">Edit Marker Peta</h3>
-                <p class="text-zinc-500 text-sm font-inter">Perbarui informasi marker peta.</p>
+                <p class="text-zinc-500 text-sm font-inter">Perbarui informasi marker dan geometri di peta digital.</p>
             </div>
+
+            @php
+                $rawName = old('name', $map->name ?? '');
+                $isVakPrefix = (bool) preg_match('/^VAK\s+(.+)$/i', trim($rawName), $matches);
+                $vakNumber = $isVakPrefix ? $matches[1] : old('vak_number', '');
+                $singleName = $rawName;
+            @endphp
 
             <form method="POST" action="{{ route('admin.maps.update', $map) }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
-                <div class="space-y-2">
-                    <label for="name" class="block text-sm font-bold text-zinc-700 font-space ml-1">Nama Marker/Fitur</label>
-                    <input id="name" type="text" name="name" value="{{ old('name', $map->name) }}" required
-                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" />
-                    @error('name') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                </div>
-
+                <!-- 1. Tipe Geometri (Atas) -->
                 <div class="space-y-2">
                     <label for="geometry_type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Tipe Geometri</label>
                     <div class="relative">
                         <select name="geometry_type" id="geometry_type" onchange="changeGeometryType(this.value)" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
-                            <option value="point" {{ old('geometry_type', $map->geometry_type) === 'point' ? 'selected' : '' }}>Point (Marker Lokasi Bangunan)</option>
+                            <option value="point" {{ old('geometry_type', $map->geometry_type) === 'point' ? 'selected' : '' }}>Point (Marker Lokasi Bangunan/Tanaman)</option>
                             <option value="linestring" {{ old('geometry_type', $map->geometry_type) === 'linestring' || old('geometry_type', $map->geometry_type) === 'polyline' ? 'selected' : '' }}>LineString (Garis Jalan/Jalur Navigasi)</option>
-                            <option value="polygon" {{ old('geometry_type', $map->geometry_type) === 'polygon' ? 'selected' : '' }}>Polygon (Batas Wilayah)</option>
+                            <option value="polygon" {{ old('geometry_type', $map->geometry_type) === 'polygon' ? 'selected' : '' }}>Polygon (Batas Wilayah / VAK)</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -43,6 +44,72 @@
                     @error('geometry_type') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
+                <!-- 2. Jenis / Kategori Marker (Tengah) -->
+                <div class="space-y-2" id="type-wrapper">
+                    <label for="type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Kategori/Tipe Marker</label>
+                    <input id="type" type="text" name="type" list="types-list" value="{{ old('type', str_replace('vak_zona', 'VAK', $map->type)) }}" required oninput="handleTypeChange()"
+                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Ketik atau pilih kategori (misal: Batas Wilayah, VAK, dll.)" />
+                    <datalist id="types-list">
+                        <option value="Batas Wilayah">Batas Wilayah (Garis Putus-putus)</option>
+                        <option value="VAK">VAK (Garis Solid / Utuh)</option>
+                        <option value="Jalan Utama">Jalan Utama (Jalur Navigasi)</option>
+                        <option value="Jalan Lain">Jalan Lain (Jalur Penghubung)</option>
+                        @foreach($existingTypes ?? ['Area Koleksi', 'Fasilitas Umum', 'Kantor Pengelola', 'Pos Keamanan'] as $t)
+                            <option value="{{ Str::title(str_replace('_', ' ', $t)) }}"></option>
+                        @endforeach
+                    </datalist>
+                    @error('type') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="space-y-2 hidden" id="jenis-polygon-wrapper">
+                    <label for="jenis_polygon" class="block text-sm font-bold text-zinc-700 font-space ml-1">Jenis Tampilan Polygon Area</label>
+                    @php
+                        $currType = old('type', $map->type);
+                        $isBatasSel = (strtolower($currType) === 'batas wilayah' || strtolower($currType) === 'batas_wilayah');
+                    @endphp
+                    <select id="jenis_polygon" onchange="document.getElementById('type').value = this.value; handleTypeChange();" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm cursor-pointer">
+                        <option value="Batas Wilayah" {{ $isBatasSel ? 'selected' : '' }}>Batas Wilayah (Garis Putus-putus / Dashed)</option>
+                        <option value="VAK" {{ !$isBatasSel ? 'selected' : '' }}>VAK (Garis Utuh / Solid)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2 hidden" id="jenis-jalan-wrapper">
+                    <label for="jenis_jalan" class="block text-sm font-bold text-zinc-700 font-space ml-1">Jenis Jalan</label>
+                    @php
+                        $isJalanUtamaSel = (strtolower($currType) === 'jalan utama' || strtolower($currType) === 'jalan_utama');
+                    @endphp
+                    <select id="jenis_jalan" onchange="document.getElementById('type').value = this.value; handleTypeChange();" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm cursor-pointer">
+                        <option value="Jalan Utama" {{ $isJalanUtamaSel ? 'selected' : '' }}>Jalan Utama (Sinkronisasi Navigasi - Abu-abu)</option>
+                        <option value="Jalan Lain" {{ !$isJalanUtamaSel ? 'selected' : '' }}>Jalan Lain (Penghubung Tipis - Abu-abu Muda)</option>
+                    </select>
+                </div>
+
+                <!-- 3. Nama Marker (Di Bawah Jenis) -->
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-bold text-zinc-700 font-space ml-1">Nama Marker</label>
+                    <input type="hidden" id="name" name="name" value="{{ $rawName }}" />
+
+                    <!-- Input biasa untuk Non-VAK -->
+                    <div id="single-name-container">
+                        <input id="name_single" type="text" value="{{ $singleName }}" oninput="updateCombinedName()"
+                            class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Contoh: Area Koleksi A, Batas Wilayah KRS, Pos Utama" />
+                    </div>
+
+                    <!-- Input 2 bagian terpisah khusus VAK Polygon -->
+                    <div id="vak-name-container" class="hidden flex items-center gap-3">
+                        <div class="w-28 shrink-0">
+                            <input type="text" value="VAK" readonly disabled
+                                class="w-full px-4 py-3 bg-zinc-100 border border-zinc-300 rounded-xl text-zinc-700 font-extrabold font-space text-center select-none cursor-not-allowed" />
+                        </div>
+                        <div class="flex-1">
+                            <input id="vak_number_input" type="text" value="{{ $vakNumber }}" oninput="updateCombinedName()"
+                                class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400 font-bold" placeholder="Ketik penomoran VAK (misal: II, I, A1)" />
+                        </div>
+                    </div>
+                    @error('name') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- 4. Peta Drawing Pen Tool -->
                 <div class="space-y-2">
                     <label class="block text-sm font-bold text-zinc-700 font-space ml-1">Gambar di Peta (Klik-Klik Seperti Pen Tool)</label>
                     <div class="border border-zinc-200 rounded-2xl overflow-hidden shadow-sm relative">
@@ -84,10 +151,11 @@
 
                 <input type="hidden" id="geojson" name="geojson" value="{{ old('geojson', $map->geojson) }}" />
 
+                <!-- 5. Koordinat Manual -->
                 <div id="coords-input-container" class="space-y-6">
                     <div class="space-y-2">
                         <label for="coordinates" class="block text-sm font-bold text-zinc-700 font-space ml-1">Koordinat Manual (Latitude, Longitude)</label>
-                        <input id="coordinates" type="text" value="{{ old('coordinates', $map->latitude . ', ' . $map->longitude) }}"
+                        <input id="coordinates" type="text" value="{{ old('coordinates', $map->latitude && $map->longitude ? $map->latitude . ', ' . $map->longitude : '') }}"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400"
                             placeholder="1.269936, 109.485157 atau klik peta di atas" />
                         <p class="text-xs text-zinc-400 ml-1">Otomatis terisi ketika Anda mengklik peta di atas.</p>
@@ -109,26 +177,7 @@
                     </div>
                 </div>
 
-                <div class="space-y-2" id="type-wrapper">
-                    <label for="type" class="block text-sm font-bold text-zinc-700 font-space ml-1">Kategori/Tipe Marker</label>
-                    <input id="type" type="text" name="type" list="types-list" value="{{ old('type', $map->type) }}" required
-                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Ketik atau pilih kategori (misal: Area Koleksi, Spot Foto, dll.)" />
-                    <datalist id="types-list">
-                        @foreach($existingTypes ?? ['area_koleksi', 'fasilitas_umum', 'kantor_pengelola', 'pos_keamanan'] as $t)
-                            <option value="{{ $t }}"></option>
-                        @endforeach
-                    </datalist>
-                    @error('type') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="space-y-2 hidden" id="jenis-jalan-wrapper">
-                    <label for="jenis_jalan" class="block text-sm font-bold text-zinc-700 font-space ml-1">Jenis Jalan</label>
-                    <select id="jenis_jalan" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm cursor-pointer">
-                        <option value="jalan_utama" {{ old('type', $map->type) === 'jalan_utama' ? 'selected' : '' }}>Jalan Utama (Sinkronisasi Navigasi - Kuning/Oranye)</option>
-                        <option value="jalan_lain" {{ old('type', $map->type) === 'jalan_lain' ? 'selected' : '' }}>Jalan Lain (Penghubung Tipis - Abu-abu)</option>
-                    </select>
-                </div>
-
+                <!-- 6. Deskripsi (Opsional) -->
                 <div class="space-y-2" id="desc-wrapper">
                     <label for="description" class="block text-sm font-bold text-zinc-700 font-space ml-1">Deskripsi (Opsional)</label>
                     <textarea id="description" name="description" rows="3"
@@ -136,38 +185,37 @@
                     @error('description') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
+                <!-- 7. Warna Marker -->
                 <div class="space-y-2" id="color-wrapper">
                     <label for="color" class="block text-sm font-bold text-zinc-700 font-space ml-1">Warna Marker</label>
                     <div class="flex items-center gap-3">
-                        <input id="color" type="color" name="color" value="{{ old('color', $map->color) }}"
+                        <input id="color" type="color" name="color" value="{{ old('color', $map->color ?: '#3b82f6') }}"
                             class="w-16 h-12 bg-white/50 border border-zinc-300 rounded-xl cursor-pointer" />
-                        <input id="color-text" type="text" value="{{ old('color', $map->color) }}"
+                        <input id="color-text" type="text" value="{{ old('color', $map->color ?: '#3b82f6') }}"
                             class="flex-1 px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400 font-mono text-sm"
                             placeholder="#3b82f6" pattern="^#[0-9A-Fa-f]{6}$" readonly />
                     </div>
                     @error('color') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                    <p class="text-xs text-zinc-400 ml-1">Pilih warna untuk marker (format hex: #3b82f6)</p>
                 </div>
 
+                <!-- 8. Foto Marker (Opsional) -->
                 <div class="space-y-2" id="photo-wrapper">
                     <label for="photo" class="block text-sm font-bold text-zinc-700 font-space ml-1">Foto Marker (Opsional)</label>
                     @if($map->photo)
-                        <div class="mb-3">
-                            <img src="{{ \Illuminate\Support\Facades\Storage::url($map->photo) }}" alt="{{ $map->name }}" class="w-full h-48 object-cover rounded-xl border border-zinc-200 shadow-sm">
-                            <p class="text-xs text-zinc-500 mt-2">Foto saat ini</p>
+                        <div class="mb-2 w-32 h-24 rounded-xl overflow-hidden border border-zinc-200 shadow-xs relative">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($map->photo) }}" alt="{{ $map->name }}" class="w-full h-full object-cover">
                         </div>
                     @endif
                     <input id="photo" type="file" name="photo" accept="image/*"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
                     @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF (maks. 2MB). Kosongkan jika tidak ingin mengubah foto.</p>
+                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF, WEBP, AVIF (maks. 10MB)</p>
                 </div>
 
-                <div class="pt-6 flex justify-end gap-3">
-                    <a href="{{ route('admin.maps.index') }}" class="px-6 py-3 bg-white border-2 border-zinc-200 text-zinc-700 font-bold rounded-xl hover:bg-zinc-50 hover:border-zinc-300 transition-all font-space">
-                        Batal
-                    </a>
-                    <button type="submit" class="px-6 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
-                        Simpan Perubahan
+                <div class="pt-6 flex justify-end">
+                    <button type="submit" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
+                        Perbarui Marker
                     </button>
                 </div>
             </form>
@@ -175,11 +223,20 @@
     </div>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .leaflet-container:focus,
+        .leaflet-container *:focus,
+        .leaflet-interactive:focus,
+        path.leaflet-interactive:focus,
+        svg.leaflet-zoom-animated path:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="{{ asset('js/offline-maps.js') }}"></script>
     <script>
-
         document.getElementById('color').addEventListener('input', function(e) {
             document.getElementById('color-text').value = e.target.value;
         });
@@ -187,43 +244,90 @@
         document.getElementById('coordinates').addEventListener('input', function(e) {
             const value = e.target.value.trim();
             if (value.includes(',')) {
-                const parts = value.split(',').map(p => p.trim());
-                if (parts.length >= 2) {
-                    document.getElementById('latitude').value = parts[0] || '';
-                    document.getElementById('longitude').value = parts[1] || '';
+                const parts = value.split(',');
+                const lat = parseFloat(parts[0].trim());
+                const lng = parseFloat(parts[1].trim());
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
+                    currentPoints = [[lat, lng]];
+                    redrawShape();
+                    adminMap.panTo([lat, lng]);
                 }
             }
         });
 
-        var mapCenter = [1.2706202914994014, 109.48517276551188];
+        function isVakPolygon() {
+            var geomType = document.getElementById('geometry_type').value;
+            var typeVal = (document.getElementById('type').value || '').trim();
+            var normType = typeVal.toLowerCase().replace(/[\s\-_]+/g, ' ');
 
-        var initialLat = "{{ $map->latitude }}";
-        var initialLng = "{{ $map->longitude }}";
-        var initialGeomType = "{{ $map->geometry_type }}";
-        var initialGeojson = `{!! $map->geojson !!}`;
-
-        if (initialGeomType === 'point' && initialLat && initialLng) {
-            mapCenter = [parseFloat(initialLat), parseFloat(initialLng)];
-        } else if (initialGeojson) {
-            try {
-                var coords = JSON.parse(initialGeojson);
-                if (coords.length > 0) mapCenter = coords[0];
-            } catch(e) {}
+            return geomType === 'polygon' && (normType === 'vak' || normType.includes('vak'));
         }
 
-        var adminMap = L.map('admin-map', { zoomControl: false }).setView(mapCenter, 15);
+        function handleTypeChange() {
+            var singleContainer = document.getElementById('single-name-container');
+            var vakContainer = document.getElementById('vak-name-container');
+
+            if (isVakPolygon()) {
+                if (singleContainer) singleContainer.classList.add('hidden');
+                if (vakContainer) vakContainer.classList.remove('hidden');
+            } else {
+                if (singleContainer) singleContainer.classList.remove('hidden');
+                if (vakContainer) vakContainer.classList.add('hidden');
+            }
+            updateCombinedName();
+        }
+
+        function updateCombinedName() {
+            var hiddenNameInput = document.getElementById('name');
+            if (isVakPolygon()) {
+                var vakVal = document.getElementById('vak_number_input').value.trim();
+                hiddenNameInput.value = vakVal ? 'VAK ' + vakVal : 'VAK';
+            } else {
+                var singleVal = document.getElementById('name_single').value.trim();
+                hiddenNameInput.value = singleVal;
+            }
+        }
+
+        var adminBounds = L.latLngBounds([[-3.0, 108.0], [2.5, 114.5]]);
+        var initialLat = {{ $map->latitude ?: 1.271885 }};
+        var initialLng = {{ $map->longitude ?: 109.477339 }};
+
+        var adminMap = L.map('admin-map', {
+            zoomControl: false,
+            attributionControl: false,
+            maxBounds: adminBounds,
+            maxBoundsViscosity: 0.8,
+            minZoom: 8
+        }).setView([initialLat, initialLng], 15);
+
         L.control.zoom({ position: 'bottomright' }).addTo(adminMap);
 
-        var roadLayer = L.tileLayer.offline('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { minZoom: 8, maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
-        var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { minZoom: 8, maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
-        var terrainLayer = L.tileLayer.offline('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { minZoom: 8, maxNativeZoom: 17, maxZoom: 17, attribution: 'Map data: &copy; OpenStreetMap', subdomains: 'abc', crossOrigin: true });
+        var adminRoadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
+        var adminSatelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
+        var adminTerrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxNativeZoom: 17, maxZoom: 17, attribution: 'Map data: &copy; OpenStreetMap', subdomains: 'abc', crossOrigin: true
+        });
 
-        var currentLayer = roadLayer.addTo(adminMap);
+        var currentAdminLayer = adminRoadLayer.addTo(adminMap);
+
+        window.switchAdminLayer = function(mode) {
+            adminMap.removeLayer(currentAdminLayer);
+            if(mode === 'satellite') currentAdminLayer = adminSatelliteLayer;
+            else if(mode === 'terrain') currentAdminLayer = adminTerrainLayer;
+            else currentAdminLayer = adminRoadLayer;
+            currentAdminLayer.addTo(adminMap);
+        };
 
         var existingLayerGroup = L.layerGroup().addTo(adminMap);
         var existingMarkersData = @json($existingMarkers ?? []);
+        var currentEditingId = {{ $map->id }};
 
         existingMarkersData.forEach(function(m) {
+            if (m.id === currentEditingId) return; // Abaikan marker yang sedang diedit
+
             var layer = null;
             if (m.geometry_type === 'point' && m.latitude && m.longitude) {
                 var latlng = [parseFloat(m.latitude), parseFloat(m.longitude)];
@@ -240,11 +344,14 @@
                     var coords = JSON.parse(m.geojson);
                     if (coords.length > 0) {
                         if (m.geometry_type === 'polygon') {
+                            var normType = (m.type || '').toLowerCase().replace(/[\s\-_]+/g, ' ');
+                            var isBatas = normType.includes('batas');
                             layer = L.polygon(coords, {
                                 color: m.color || '#3b82f6',
                                 fillColor: m.color || '#3b82f6',
-                                fillOpacity: 0.1,
-                                weight: 2
+                                fillOpacity: isBatas ? 0.08 : 0.15,
+                                weight: isBatas ? 3 : 2.5,
+                                dashArray: isBatas ? '10, 8' : null
                             }).bindTooltip(m.name, { sticky: true });
                         } else {
                             layer = L.polyline(coords, {
@@ -287,403 +394,197 @@
             }
         }
 
-        function downloadAdminMap() {
-            if (typeof window.downloadOfflineMaps === 'undefined') {
-                alert('Pustaka Offline Maps belum dimuat!');
-                return;
-            }
-            var btn = document.getElementById('btn-download-map');
-            var text = document.getElementById('download-map-text');
-            btn.disabled = true;
-            text.innerText = "Loading...";
+        var currentPoints = [];
+        var drawingLayer = null;
+        var undoHistory = [];
+        var redoHistory = [];
 
-            var currentZ = adminMap.getZoom();
-            var zooms = [currentZ - 2, currentZ - 1, currentZ, currentZ + 1, currentZ + 2];
-            window.downloadOfflineMaps(
-                adminMap,
-                [roadLayer, satelliteLayer, terrainLayer],
-                zooms,
-                {
-                    onProgress: function(d, f, t, p) { text.innerText = `${p}%`; },
-                    onSuccess: function() {
-                        text.innerText = "Unduh Area";
-                        btn.disabled = false;
-                        alert("Semua lapisan peta berhasil diunduh untuk area ini!");
-                    },
-                    onError: function(msg) {
-                        text.innerText = "Unduh Area";
-                        btn.disabled = false;
-                        alert(msg);
-                    }
-                }
-            );
+        // Load existing geometry coordinates into currentPoints
+        @if($map->geometry_type === 'point' && $map->latitude && $map->longitude)
+            currentPoints = [[{{ $map->latitude }}, {{ $map->longitude }}]];
+        @elseif($map->geojson)
+            try {
+                currentPoints = JSON.parse(@json($map->geojson));
+            } catch(e) {}
+        @endif
+
+        function updateHistoryButtons() {
+            document.getElementById('btn-undo').disabled = undoHistory.length === 0;
+            document.getElementById('btn-redo').disabled = redoHistory.length === 0;
         }
 
-        function switchAdminLayer(mode) {
-            adminMap.removeLayer(currentLayer);
-            if(mode === 'satellite') currentLayer = satelliteLayer;
-            else if(mode === 'terrain') currentLayer = terrainLayer;
-            else currentLayer = roadLayer;
-            currentLayer.addTo(adminMap);
-        }
-
-        var currentGeomType = initialGeomType || 'point';
-        var drawnItems = L.featureGroup().addTo(adminMap);
-        var clickedCoords = [];
-
-        var tempMarker = null;
-        var tempPolyline = null;
-        var tempPolygon = null;
-
-        var historyStack = [];
-        var redoStack = [];
-
-        function saveState() {
-            var state = {
-                geomType: currentGeomType,
-                coords: [...clickedCoords],
-                markerCoords: tempMarker ? [tempMarker.getLatLng().lat, tempMarker.getLatLng().lng] : null
-            };
-            historyStack.push(state);
-            redoStack = [];
-            updateUndoRedoButtons();
+        function pushStateToHistory() {
+            undoHistory.push(JSON.parse(JSON.stringify(currentPoints)));
+            redoHistory = [];
+            updateHistoryButtons();
         }
 
         function undo() {
-            if (historyStack.length === 0) return;
-
-            var currentState = {
-                geomType: currentGeomType,
-                coords: [...clickedCoords],
-                markerCoords: tempMarker ? [tempMarker.getLatLng().lat, tempMarker.getLatLng().lng] : null
-            };
-            redoStack.push(currentState);
-
-            var prevState = historyStack.pop();
-            applyState(prevState);
+            if (undoHistory.length === 0) return;
+            redoHistory.push(JSON.parse(JSON.stringify(currentPoints)));
+            currentPoints = undoHistory.pop();
+            redrawShape();
+            updateHistoryButtons();
         }
 
         function redo() {
-            if (redoStack.length === 0) return;
-
-            var currentState = {
-                geomType: currentGeomType,
-                coords: [...clickedCoords],
-                markerCoords: tempMarker ? [tempMarker.getLatLng().lat, tempMarker.getLatLng().lng] : null
-            };
-            historyStack.push(currentState);
-
-            var nextState = redoStack.pop();
-            applyState(nextState);
+            if (redoHistory.length === 0) return;
+            undoHistory.push(JSON.parse(JSON.stringify(currentPoints)));
+            currentPoints = redoHistory.pop();
+            redrawShape();
+            updateHistoryButtons();
         }
 
-        function applyState(state) {
-            if (state.geomType !== currentGeomType) {
-                currentGeomType = state.geomType;
-                document.getElementById('geometry_type').value = currentGeomType;
-                changeGeometryType(currentGeomType, false);
-            }
-
-            if (currentGeomType === 'point') {
-                drawnItems.clearLayers();
-                if (state.markerCoords) {
-                    var latlng = L.latLng(state.markerCoords[0], state.markerCoords[1]);
-                    createDraggableMarker(latlng);
-                    updateCoordsInputs(latlng.lat, latlng.lng);
-                } else {
-                    tempMarker = null;
-                    updateCoordsInputs(null, null);
-                }
-            } else {
-                clickedCoords = [...state.coords];
-                renderShape();
-            }
-            updateUndoRedoButtons();
-        }
-
-        function updateUndoRedoButtons() {
-            var btnUndo = document.getElementById('btn-undo');
-            var btnRedo = document.getElementById('btn-redo');
-            if (btnUndo) btnUndo.disabled = historyStack.length === 0;
-            if (btnRedo) btnRedo.disabled = redoStack.length === 0;
-        }
-
-        function updateCoordsInputs(lat, lng) {
-            if (lat !== null && lng !== null) {
-                document.getElementById('latitude').value = lat.toFixed(8);
-                document.getElementById('longitude').value = lng.toFixed(8);
-                document.getElementById('coordinates').value = `${lat.toFixed(8)}, ${lng.toFixed(8)}`;
-            } else {
-                document.getElementById('latitude').value = '';
-                document.getElementById('longitude').value = '';
-                document.getElementById('coordinates').value = '';
+        function resetDrawingWithHistory() {
+            if (currentPoints.length > 0) {
+                pushStateToHistory();
+                currentPoints = [];
+                redrawShape();
             }
         }
 
-        function createDraggableMarker(latlng) {
-            drawnItems.clearLayers();
-            tempMarker = L.marker(latlng, { draggable: true }).addTo(drawnItems);
-
-            var dragStartLatLng = null;
-            tempMarker.on('dragstart', function() {
-                dragStartLatLng = tempMarker.getLatLng();
-            });
-
-            tempMarker.on('dragend', function() {
-                var newLatLng = tempMarker.getLatLng();
-                var snapped = getSnappedLatLng(newLatLng);
-                tempMarker.setLatLng(snapped);
-
-                var state = {
-                    geomType: 'point',
-                    coords: [],
-                    markerCoords: [dragStartLatLng.lat, dragStartLatLng.lng]
-                };
-                historyStack.push(state);
-                redoStack = [];
-
-                updateCoordsInputs(snapped.lat, snapped.lng);
-                updateUndoRedoButtons();
-            });
-        }
-
-        if (currentGeomType === 'point' && initialLat && initialLng) {
-            createDraggableMarker([parseFloat(initialLat), parseFloat(initialLng)]);
-        } else if (initialGeojson) {
-            try {
-                clickedCoords = JSON.parse(initialGeojson);
-                renderShape();
-            } catch(e) {
-                console.error("Gagal parse geojson:", e);
-            }
-        }
-
-        function changeGeometryType(type, clearHistory = true) {
-            currentGeomType = type;
-
-            if (clearHistory) {
-                resetDrawing();
-                historyStack = [];
-                redoStack = [];
-                updateUndoRedoButtons();
-            }
-
-            var coordsInputContainer = document.getElementById('coords-input-container');
-            var drawInfo = document.getElementById('draw-info');
-
-            var typeWrapper = document.getElementById('type-wrapper');
-            var jenisJalanWrapper = document.getElementById('jenis-jalan-wrapper');
+        function changeGeometryType(val) {
+            var coordsContainer = document.getElementById('coords-input-container');
+            var jenisJalan = document.getElementById('jenis-jalan-wrapper');
+            var jenisPolygon = document.getElementById('jenis-polygon-wrapper');
             var descWrapper = document.getElementById('desc-wrapper');
             var colorWrapper = document.getElementById('color-wrapper');
             var photoWrapper = document.getElementById('photo-wrapper');
 
-            var typeInput = document.getElementById('type');
-            var jenisJalanInput = document.getElementById('jenis_jalan');
-
-            if (type === 'point') {
-                if(coordsInputContainer) coordsInputContainer.classList.remove('hidden');
-                drawInfo.innerText = "Klik pada peta untuk menempatkan titik marker (seret pin untuk menyesuaikan).";
-
+            // 1. Point: Show coords, desc, color, photo
+            if (val === 'point') {
+                if (coordsContainer) coordsContainer.classList.remove('hidden');
                 if (descWrapper) descWrapper.classList.remove('hidden');
-                if (photoWrapper) photoWrapper.classList.remove('hidden');
-                if (typeWrapper) typeWrapper.classList.remove('hidden');
                 if (colorWrapper) colorWrapper.classList.remove('hidden');
-                if (jenisJalanWrapper) jenisJalanWrapper.classList.add('hidden');
+                if (photoWrapper) photoWrapper.classList.remove('hidden');
 
-                if (typeInput.value === 'jalan_utama' || typeInput.value === 'jalan_lain') {
-                    typeInput.value = '';
+                if (jenisJalan) jenisJalan.classList.add('hidden');
+                if (jenisPolygon) jenisPolygon.classList.add('hidden');
+            }
+            // 2. LineString: Show jenis_jalan. Hide desc, color, photo, coords, polygon.
+            else if (val === 'linestring' || val === 'polyline') {
+                if (jenisJalan) {
+                    jenisJalan.classList.remove('hidden');
+                    var typeInput = document.getElementById('type');
+                    if (typeInput && (!typeInput.value || typeInput.value === 'Point' || typeInput.value.includes('VAK') || typeInput.value.includes('Batas'))) {
+                        typeInput.value = document.getElementById('jenis_jalan').value;
+                    }
                 }
+                if (coordsContainer) coordsContainer.classList.add('hidden');
+                if (descWrapper) descWrapper.classList.add('hidden');
+                if (colorWrapper) colorWrapper.classList.add('hidden');
+                if (photoWrapper) photoWrapper.classList.add('hidden');
+                if (jenisPolygon) jenisPolygon.classList.add('hidden');
+            }
+            // 3. Polygon: Show jenis_polygon, color. Hide desc, photo, coords, jalan.
+            else if (val === 'polygon') {
+                if (jenisPolygon) {
+                    jenisPolygon.classList.remove('hidden');
+                    var typeInput = document.getElementById('type');
+                    if (typeInput && (!typeInput.value || typeInput.value === 'Point' || typeInput.value.includes('Jalan'))) {
+                        typeInput.value = document.getElementById('jenis_polygon').value;
+                    }
+                }
+                if (colorWrapper) colorWrapper.classList.remove('hidden');
 
-                document.getElementById('description').removeAttribute('disabled');
-                document.getElementById('photo').removeAttribute('disabled');
-                document.getElementById('coordinates').removeAttribute('disabled');
-                document.getElementById('latitude').removeAttribute('disabled');
-                document.getElementById('longitude').removeAttribute('disabled');
-            } else {
-                if(coordsInputContainer) coordsInputContainer.classList.add('hidden');
-
+                if (coordsContainer) coordsContainer.classList.add('hidden');
                 if (descWrapper) descWrapper.classList.add('hidden');
                 if (photoWrapper) photoWrapper.classList.add('hidden');
+                if (jenisJalan) jenisJalan.classList.add('hidden');
+            }
 
-                document.getElementById('description').setAttribute('disabled', 'true');
-                document.getElementById('photo').setAttribute('disabled', 'true');
-                document.getElementById('coordinates').setAttribute('disabled', 'true');
-                document.getElementById('latitude').setAttribute('disabled', 'true');
-                document.getElementById('longitude').setAttribute('disabled', 'true');
+            handleTypeChange();
 
-                if (type === 'polyline' || type === 'linestring') {
-                    drawInfo.innerText = "Klik peta berulang kali (seperti pen tool) untuk menggambar garis rute/jalan.";
-                    if (typeWrapper) typeWrapper.classList.add('hidden');
-                    if (colorWrapper) colorWrapper.classList.add('hidden');
-                    if (jenisJalanWrapper) {
-                        jenisJalanWrapper.classList.remove('hidden');
-                        typeInput.value = jenisJalanInput.value;
-                    }
-                } else {
-                    drawInfo.innerText = "Klik peta berulang kali (seperti pen tool) untuk menggambar poligon wilayah.";
-                    if (typeWrapper) typeWrapper.classList.remove('hidden');
-                    if (colorWrapper) colorWrapper.classList.remove('hidden');
-                    if (jenisJalanWrapper) jenisJalanWrapper.classList.add('hidden');
-
-                    if (typeInput.value === 'jalan_utama' || typeInput.value === 'jalan_lain') {
-                        typeInput.value = '';
-                    }
-                }
+            var info = document.getElementById('draw-info');
+            if (info) {
+                if (val === 'point') info.innerText = "Klik pada peta untuk menempatkan titik marker.";
+                else if (val === 'linestring' || val === 'polyline') info.innerText = "Klik beberapa kali pada peta untuk membuat garis jalan.";
+                else if (val === 'polygon') info.innerText = "Klik beberapa kali pada peta untuk menggambar area polygon.";
             }
         }
 
-        document.getElementById('jenis_jalan').addEventListener('change', function(e) {
-            document.getElementById('type').value = e.target.value;
-            renderShape();
-        });
+        function updateGeoJSONInput() {
+            const geojsonInput = document.getElementById('geojson');
+            const geomType = document.getElementById('geometry_type').value;
 
-        var snapTolerance = 15;
-        function getSnappedLatLng(latlng) {
-            var minDistance = Infinity;
-            var snappedLatLng = latlng;
-            var clickPoint = adminMap.latLngToContainerPoint(latlng);
+            if (geomType === 'point' && currentPoints.length > 0) {
+                const pt = currentPoints[0];
+                document.getElementById('latitude').value = pt[0];
+                document.getElementById('longitude').value = pt[1];
+                document.getElementById('coordinates').value = `${pt[0]}, ${pt[1]}`;
+                geojsonInput.value = '';
+            } else if (currentPoints.length > 0) {
+                geojsonInput.value = JSON.stringify(currentPoints);
+            } else {
+                geojsonInput.value = '';
+            }
+        }
 
-            if (typeof existingLayerGroup !== 'undefined') {
-                existingLayerGroup.eachLayer(function(layer) {
-                    if (layer instanceof L.Marker) {
-                        var p = adminMap.latLngToContainerPoint(layer.getLatLng());
-                        var dist = clickPoint.distanceTo(p);
-                        if (dist < snapTolerance && dist < minDistance) {
-                            minDistance = dist;
-                            snappedLatLng = layer.getLatLng();
-                        }
-                    } else if (layer instanceof L.Polyline || layer instanceof L.Polygon) {
-                        var latlngs = layer.getLatLngs();
-                        var flatLatLngs = latlngs.flat(Infinity);
-                        flatLatLngs.forEach(function(ll) {
-                            var p = adminMap.latLngToContainerPoint(ll);
-                            var dist = clickPoint.distanceTo(p);
-                            if (dist < snapTolerance && dist < minDistance) {
-                                minDistance = dist;
-                                snappedLatLng = ll;
-                            }
-                        });
-                    }
-                });
+        function redrawShape() {
+            if (drawingLayer) {
+                adminMap.removeLayer(drawingLayer);
+                drawingLayer = null;
             }
 
-            clickedCoords.forEach(function(coord) {
-                var ll = L.latLng(coord[0], coord[1]);
-                var p = adminMap.latLngToContainerPoint(ll);
-                var dist = clickPoint.distanceTo(p);
-                if (dist < snapTolerance && dist < minDistance) {
-                    minDistance = dist;
-                    snappedLatLng = ll;
-                }
-            });
+            const geomType = document.getElementById('geometry_type').value;
+            const currentColor = document.getElementById('color').value || '#3b82f6';
+            const currentType = (document.getElementById('type').value || '').toLowerCase().replace(/[\s\-_]+/g, ' ');
 
-            return snappedLatLng;
+            if (currentPoints.length === 0) {
+                updateGeoJSONInput();
+                return;
+            }
+
+            if (geomType === 'point') {
+                const pt = currentPoints[0];
+                drawingLayer = L.marker([pt[0], pt[1]]).addTo(adminMap);
+            } else if (geomType === 'linestring' || geomType === 'polyline') {
+                drawingLayer = L.polyline(currentPoints, {
+                    color: currentType.includes('lain') ? '#c8c8c8' : '#b8b8b8',
+                    weight: currentType.includes('lain') ? 2 : 4
+                }).addTo(adminMap);
+            } else if (geomType === 'polygon') {
+                var isBatas = currentType.includes('batas');
+                drawingLayer = L.polygon(currentPoints, {
+                    color: currentColor,
+                    fillColor: currentColor,
+                    fillOpacity: isBatas ? 0.08 : 0.15,
+                    weight: isBatas ? 3 : 2.5,
+                    dashArray: isBatas ? '10, 8' : null
+                }).addTo(adminMap);
+            }
+
+            updateGeoJSONInput();
         }
 
         adminMap.on('click', function(e) {
-            var snapped = getSnappedLatLng(e.latlng);
-            var lat = snapped.lat;
-            var lng = snapped.lng;
+            const geomType = document.getElementById('geometry_type').value;
+            const lat = parseFloat(e.latlng.lat.toFixed(6));
+            const lng = parseFloat(e.latlng.lng.toFixed(6));
 
-            if (currentGeomType === 'point') {
-                saveState();
-                createDraggableMarker(snapped);
-                updateCoordsInputs(lat, lng);
+            pushStateToHistory();
+
+            if (geomType === 'point') {
+                currentPoints = [[lat, lng]];
             } else {
-                saveState();
-                clickedCoords.push([lat, lng]);
-                renderShape();
+                currentPoints.push([lat, lng]);
             }
+
+            redrawShape();
         });
-
-        function renderShape() {
-            drawnItems.clearLayers();
-
-            if (clickedCoords.length === 0) return;
-
-            // Gambar titik anchor (vertex)
-            clickedCoords.forEach(function(coord, idx) {
-                L.circleMarker(coord, {
-                    radius: 5,
-                    color: '#1e293b',
-                    fillColor: '#3b82f6',
-                    fillOpacity: 1,
-                    weight: 2
-                }).addTo(drawnItems);
-            });
-
-            var colorVal = document.getElementById('color').value || '#3b82f6';
-
-            if (currentGeomType === 'polyline' || currentGeomType === 'linestring') {
-                if (clickedCoords.length >= 2) {
-                    var roadType = document.getElementById('jenis_jalan').value;
-                    var roadColor = '#808080';
-                    var roadWeight = 4.5;
-                    if (roadType === 'jalan_utama') {
-                        roadColor = '#808080';
-                        roadWeight = 6;
-                    } else if (roadType === 'jalan_lain') {
-                        roadColor = '#808080';
-                        roadWeight = 3;
-                    }
-                    tempPolyline = L.polyline(clickedCoords, { color: roadColor, weight: roadWeight }).addTo(drawnItems);
-                }
-                document.getElementById('geojson').value = JSON.stringify(clickedCoords);
-            } else if (currentGeomType === 'polygon') {
-                if (clickedCoords.length >= 3) {
-                    tempPolygon = L.polygon(clickedCoords, { color: colorVal, fillColor: colorVal, fillOpacity: 0.15, weight: 3 }).addTo(drawnItems);
-                }
-                document.getElementById('geojson').value = JSON.stringify(clickedCoords);
-            }
-        }
-
-        document.getElementById('color').addEventListener('input', function() {
-            renderShape();
-        });
-
-        function resetDrawing() {
-            clickedCoords = [];
-            drawnItems.clearLayers();
-            tempMarker = null;
-            document.getElementById('geojson').value = '';
-            if (document.getElementById('latitude')) document.getElementById('latitude').value = '';
-            if (document.getElementById('longitude')) document.getElementById('longitude').value = '';
-            if (document.getElementById('coordinates')) document.getElementById('coordinates').value = '';
-        }
-
-        function resetDrawingWithHistory() {
-            saveState();
-            resetDrawing();
-        }
 
         document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
                 e.preventDefault();
                 undo();
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+            } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
                 e.preventDefault();
                 redo();
             }
         });
 
-        changeGeometryType(document.getElementById('geometry_type').value, false);
-
-        document.querySelector('form').addEventListener('submit', function(e) {
-            if (currentGeomType === 'polyline' || currentGeomType === 'linestring') {
-                var roadType = document.getElementById('jenis_jalan').value;
-                document.getElementById('type').value = roadType;
-                document.getElementById('color').value = '#808080';
-            }
-        });
-
-        // Auto-download Kebun Raya Sambas tiles on page load (background)
-        setTimeout(function() {
-            if (window.autoDownloadKRS) {
-                window.autoDownloadKRS(adminMap, [roadLayer, satelliteLayer, terrainLayer]);
-            }
-        }, 3000);
+        // Initialize shape & field visibility on page load
+        redrawShape();
+        changeGeometryType(document.getElementById('geometry_type').value);
     </script>
-
 </x-dashboard-layout>
-

@@ -51,6 +51,23 @@
             Verifikasi Email
         </a>
     </div>
+    @elseif(!$isOpen)
+    <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden p-8 text-center">
+        <div class="max-w-md mx-auto">
+            <svg class="w-16 h-16 text-red-300 mx-auto mb-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H4.5a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            <h2 class="text-2xl font-bold mb-2 font-heading text-zinc-900">Pendaftaran Ditutup</h2>
+            <p class="text-zinc-500 mb-6">
+                Maaf, pendaftaran kunjungan ke Kebun Raya Sambas sedang <strong>ditutup sementara</strong> oleh pengelola.
+                Silakan coba kembali di lain waktu atau hubungi pihak pengelola untuk informasi lebih lanjut.
+            </p>
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3 px-6 rounded-xl transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 19-7-7 7-7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5"/></svg>
+                Kembali ke Beranda
+            </a>
+        </div>
+    </div>
     @else
     <div class="bg-white rounded-3xl shadow-xl shadow-zinc-200/50 border border-zinc-100 overflow-hidden p-8">
         <form id="form-pendaftaran" action="{{ route('pendaftaran.pengunjung.store') }}" method="POST" class="space-y-6">
@@ -127,6 +144,22 @@
 @endsection
 
 @push('scripts')
+<script>
+    // Polling otomatis untuk deteksi perubahan status pendaftaran (buka/kunci oleh admin)
+    (function() {
+        const initialIsOpen = {{ isset($isOpen) && $isOpen ? 'true' : 'false' }};
+        setInterval(function() {
+            fetch("{{ route('pendaftaran.status') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.is_open !== initialIsOpen) {
+                        window.location.reload();
+                    }
+                })
+                .catch(err => console.error(err));
+        }, 5000);
+    })();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.12/build/js/intlTelInput.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

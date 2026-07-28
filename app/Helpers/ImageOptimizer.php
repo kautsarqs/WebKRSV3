@@ -86,8 +86,30 @@ class ImageOptimizer
             return $file->store($directory, $disk);
         }
 
-        imagealphablending($image, false);
-        imagesavealpha($image, true);
+        // Auto downscale image if width or height exceeds 2048px (reduces 10MB camera shots to ~200KB)
+        $origWidth = imagesx($image);
+        $origHeight = imagesy($image);
+        $maxDimension = 2048;
+
+        if ($origWidth > $maxDimension || $origHeight > $maxDimension) {
+            if ($origWidth >= $origHeight) {
+                $newWidth = $maxDimension;
+                $newHeight = (int) round(($origHeight / $origWidth) * $maxDimension);
+            } else {
+                $newHeight = $maxDimension;
+                $newWidth = (int) round(($origWidth / $origHeight) * $maxDimension);
+            }
+
+            $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($resizedImage, false);
+            imagesavealpha($resizedImage, true);
+            imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+            imagedestroy($image);
+            $image = $resizedImage;
+        } else {
+            imagealphablending($image, false);
+            imagesavealpha($image, true);
+        }
 
         if (function_exists('imageavif')) {
             $tempAvif = tempnam(sys_get_temp_dir(), 'avif_');

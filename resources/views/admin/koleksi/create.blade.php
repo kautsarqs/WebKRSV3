@@ -27,6 +27,25 @@
                     @error('title') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
+                <div class="space-y-2">
+                    <label for="map_marker_id" class="block text-sm font-bold text-zinc-700 font-space ml-1">Lokasi VAK Tanaman</label>
+                    <div class="relative">
+                        <select id="map_marker_id" name="map_marker_id" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
+                            <option value="">-- Pilih VAK Lokasi (Opsional) --</option>
+                            @foreach($vaks as $vak)
+                                <option value="{{ $vak->id }}" {{ old('map_marker_id') == $vak->id ? 'selected' : '' }}>
+                                    {{ $vak->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400 ml-1">Pilih blok VAK area peta di mana tanaman ini berada.</p>
+                    @error('map_marker_id') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                </div>
+
                 <div class="p-6 border border-zinc-200 rounded-2xl bg-zinc-50/50 space-y-4">
                     <h4 class="text-sm font-bold text-zinc-800 font-space border-b border-zinc-200 pb-2">Klasifikasi Taksonomi Tumbuhan</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -118,7 +137,7 @@
                     <input id="photo" type="file" name="photo" accept="image/*"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
                     @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF (maks. 10MB)</p>
+                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF, WEBP, AVIF (maks. 10MB)</p>
                 </div>
 
                 <div class="pt-6 flex justify-end">

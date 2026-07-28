@@ -24,8 +24,27 @@
                 <div class="space-y-2">
                     <label for="title" class="block text-sm font-bold text-zinc-700 font-space ml-1">Judul Koleksi</label>
                     <input id="title" type="text" name="title" value="{{ old('title', $koleksi->title) }}" required autofocus
-                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" />
+                        class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm placeholder-zinc-400" placeholder="Contoh: Anggrek Bulan" />
                     @error('title') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label for="map_marker_id" class="block text-sm font-bold text-zinc-700 font-space ml-1">Lokasi VAK Tanaman</label>
+                    <div class="relative">
+                        <select id="map_marker_id" name="map_marker_id" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
+                            <option value="">-- Pilih VAK Lokasi (Opsional) --</option>
+                            @foreach($vaks as $vak)
+                                <option value="{{ $vak->id }}" {{ old('map_marker_id', $koleksi->map_marker_id) == $vak->id ? 'selected' : '' }}>
+                                    {{ $vak->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400 ml-1">Pilih blok VAK area peta di mana tanaman ini berada.</p>
+                    @error('map_marker_id') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="p-6 border border-zinc-200 rounded-2xl bg-zinc-50/50 space-y-4">
@@ -105,7 +124,6 @@
                         </div>
                     </div>
                 </div>
-                </div>
 
                 <div class="space-y-2">
                     <label for="description" class="block text-sm font-bold text-zinc-700 font-space ml-1">Deskripsi</label>
@@ -116,20 +134,20 @@
 
                 <div class="space-y-2">
                     <label for="photo" class="block text-sm font-bold text-zinc-700 font-space ml-1">Foto Koleksi</label>
-                    @if ($koleksi->photo)
-                        <div class="my-2">
-                            <img src="{{ Storage::url($koleksi->photo) }}" alt="Current photo" class="w-32 h-32 object-cover rounded-xl border border-zinc-200 shadow-sm">
-                            <p class="text-xs text-zinc-500 mt-1 ml-1">Foto saat ini</p>
+                    @if($koleksi->photo)
+                        <div class="mb-2 w-32 h-32 rounded-xl overflow-hidden border border-zinc-200 shadow-xs relative">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($koleksi->photo) }}" alt="{{ $koleksi->title }}" class="w-full h-full object-cover">
                         </div>
                     @endif
                     <input id="photo" type="file" name="photo" accept="image/*"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
                     @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                    <p class="text-xs text-zinc-400 ml-1">Kosongkan jika tidak ingin mengubah foto. Format: JPEG, PNG, JPG, GIF (maks. 10MB)</p>
+                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF, WEBP, AVIF (maks. 10MB)</p>
                 </div>
+
                 <div class="pt-6 flex justify-end">
                     <button type="submit" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
-                        Update Koleksi
+                        Perbarui Koleksi
                     </button>
                 </div>
             </form>
@@ -185,6 +203,6 @@
             input.addEventListener('input', updateScientificNamePreview);
         });
 
-        document.addEventListener('DOMContentLoaded', updateScientificNamePreview);
+        updateScientificNamePreview();
     </script>
 </x-dashboard-layout>

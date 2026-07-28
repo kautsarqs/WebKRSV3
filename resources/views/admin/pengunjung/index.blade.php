@@ -6,7 +6,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900 font-space">Kelola Pengunjung</h2>
-                <p class="text-zinc-500 text-sm mt-1">Daftar permohonan kunjungan rombongan ke Kebun Raya Sambas.</p>
+                <p class="text-zinc-500 text-sm mt-1">Daftar pendaftaran kunjungan rombongan ke Kebun Raya Sambas.</p>
             </div>
 
             <div class="flex items-center gap-3 flex-wrap">
@@ -43,17 +43,47 @@
             </div>
         @endif
 
-        <div class="flex items-center gap-2 overflow-x-auto pb-2">
-            <a href="{{ route('admin.pengunjung.index') }}"
-               class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ !request('status') ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
-                Semua
-            </a>
-            @foreach(['pending' => 'Pending', 'disetujui' => 'Disetujui', 'ditolak' => 'Ditolak'] as $val => $label)
-                <a href="{{ route('admin.pengunjung.index', ['status' => $val]) }}"
-                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request('status') === $val ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-650 hover:bg-zinc-200' }}">
-                    {{ $label }}
-                </a>
-            @endforeach
+        {{-- Toggle Buka/Kunci Pendaftaran --}}
+        @php
+            $isOpen = \App\Models\Setting::isPendaftaranPengunjungOpen();
+        @endphp
+        <div class="flex items-center justify-between bg-white border border-zinc-200/80 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                @if($isOpen)
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                    </div>
+                @else
+                    <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                @endif
+                <div>
+                    <p class="text-sm font-bold text-zinc-800 font-space">
+                        Pendaftaran Kunjungan
+                        @if($isOpen)
+                            <span class="text-emerald-600">Terbuka</span>
+                        @else
+                            <span class="text-red-600">Dikunci</span>
+                        @endif
+                    </p>
+                    <p class="text-xs text-zinc-500 mt-0.5">
+                        @if($isOpen)
+                            Pengunjung dapat mengisi formulir pendaftaran kunjungan.
+                        @else
+                            Formulir pendaftaran kunjungan sedang ditutup untuk umum.
+                        @endif
+                    </p>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('admin.pengunjung.toggle') }}">
+                @csrf
+                <button type="submit"
+                        class="relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 {{ $isOpen ? 'bg-emerald-500 focus:ring-emerald-500' : 'bg-zinc-300 focus:ring-zinc-400' }}"
+                        title="{{ $isOpen ? 'Klik untuk mengunci pendaftaran' : 'Klik untuk membuka pendaftaran' }}">
+                    <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform duration-300 {{ $isOpen ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                </button>
+            </form>
         </div>
 
         <div class="bg-white border border-zinc-200/80 rounded-3xl overflow-hidden shadow-sm">
@@ -69,7 +99,6 @@
                             <th class="px-6 py-4">Tanggal Kunjungan</th>
                             <th class="px-6 py-4 text-center">Jumlah Rombongan</th>
                             <th class="px-6 py-4">Tujuan</th>
-                            <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -108,26 +137,17 @@
                                     {{ $row->keperluan ?? '-' }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($row->status === 'pending')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase">Pending</span>
-                                    @elseif($row->status === 'disetujui')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">Disetujui</span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 uppercase">Ditolak</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="grid grid-cols-2 gap-1.5 w-full max-w-[180px] mx-auto">
+                                    <div class="flex items-center justify-center gap-1.5">
 
                                         <button type="button"
                                                 onclick="openRombonganModal({{ json_encode($row->nama_lengkap) }}, {{ json_encode($allMembers) }})"
-                                                class="col-span-1 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                class="px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Lihat Semua
                                         </button>
 
                                         <button type="button"
                                                 onclick="confirmDelete({{ $row->id }}, {{ json_encode($row->nama_lengkap) }})"
-                                                class="col-span-1 px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
+                                                class="px-2 py-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
                                             Hapus
                                         </button>
                                         <form id="delete-form-{{ $row->id }}" method="POST" action="{{ route('admin.pengunjung.destroy', $row->id) }}" style="display:none;">
@@ -135,32 +155,12 @@
                                             @method('DELETE')
                                         </form>
 
-                                        @if($row->status === 'pending')
-                                            <form method="POST" action="{{ route('admin.pengunjung.status', $row->id) }}" class="col-span-1">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="disetujui">
-                                                <button type="submit" class="w-full px-2 py-1.5 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">Setujui</button>
-                                            </form>
-                                            <button type="button"
-                                                    onclick="openTolakPengunjungModal('{{ route('admin.pengunjung.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }})"
-                                                    class="col-span-1 px-2 py-1.5 bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
-                                                Tolak
-                                            </button>
-                                        @endif
-                                        @if($row->status === 'ditolak')
-                                            <button type="button"
-                                                    onclick="openEditCatatanPengunjungModal('{{ route('admin.pengunjung.status', $row->id) }}', {{ json_encode($row->nama_lengkap) }}, {{ json_encode($row->catatan_admin) }})"
-                                                    class="col-span-2 px-2 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-[10px] sm:text-xs font-bold rounded-lg transition-all text-center">
-                                                Alasan Penolakan
-                                            </button>
-                                        @endif
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-zinc-400">
+                                <td colspan="7" class="px-6 py-12 text-center text-zinc-400">
                                     Tidak ada data pendaftaran pengunjung.
                                 </td>
                             </tr>
@@ -177,6 +177,7 @@
         </div>
     </div>
 
+    {{-- Modal: Confirm Delete --}}
     <div id="modal-confirm-delete" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -196,6 +197,7 @@
         </div>
     </div>
 
+    {{-- Modal: Bulk Delete Confirm --}}
     <div id="modal-confirm-bulk" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:420px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
             <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
@@ -215,6 +217,7 @@
         </div>
     </div>
 
+    {{-- Modal: Rombongan Detail --}}
     <div id="rombongan-modal" style="display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:24px; padding:0; max-width:560px; width:90%; max-height:80vh; box-shadow:0 25px 50px rgba(0,0,0,0.15); display:flex; flex-direction:column; overflow:hidden;">
             <div style="padding:24px 24px 16px; border-bottom:1px solid #f4f4f5; display:flex; align-items:center; justify-content:space-between;">
@@ -225,28 +228,6 @@
             <div style="padding:16px 24px; border-top:1px solid #f4f4f5; display:flex; justify-content:flex-end;">
                 <button onclick="closeRombonganModal()" style="padding:8px 20px;background:#18181b;border:none;border-radius:12px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tutup</button>
             </div>
-        </div>
-    </div>
-
-    <div id="modal-tolak-pengunjung" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:20px; padding:28px 32px; max-width:460px; width:90%; box-shadow:0 25px 50px rgba(0,0,0,0.15);">
-            <p id="modal-tolak-title-pengunjung" style="font-size:16px;font-weight:700;color:#18181b;margin:0 0 6px 0;font-family:'Space Grotesk',sans-serif;">Tolak Pendaftaran Pengunjung</p>
-            <p id="tolak-subtitle-pengunjung" style="font-size:13px;color:#71717a;margin:0 0 18px 0;">Berikan alasan penolakan.</p>
-            <form id="tolak-form-pengunjung" method="POST" action="">
-                @csrf
-                @method('PATCH')
-                <input type="hidden" name="status" value="ditolak">
-                <div style="margin-bottom:16px;">
-                    <label style="font-size:12px;font-weight:700;color:#3f3f46;display:block;margin-bottom:6px;">Catatan / Alasan Penolakan</label>
-                    <textarea name="catatan_admin" id="tolak-catatan-pengunjung" rows="4" required
-                              style="width:100%;border:1px solid #e5e5e5;border-radius:12px;padding:10px 14px;font-size:13px;resize:none;box-sizing:border-box;outline:none;"
-                              placeholder="Contoh: Tanggal kunjungan penuh atau keperluan tidak sesuai."></textarea>
-                </div>
-                <div style="display:flex;gap:10px;justify-content:flex-end;">
-                    <button type="button" onclick="closeTolakPengunjungModal()" style="padding:8px 18px;background:#f4f4f5;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#3f3f46;cursor:pointer;">Batal</button>
-                    <button type="submit" id="modal-tolak-submit-btn-pengunjung" style="padding:8px 18px;background:#dc2626;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;">Tolak Permohonan</button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -331,26 +312,6 @@
         document.getElementById('rombongan-modal').style.display = 'none';
     }
 
-    function openTolakPengunjungModal(url, nama) {
-        document.getElementById('tolak-form-pengunjung').action = url;
-        document.getElementById('tolak-subtitle-pengunjung').textContent = 'Berikan alasan penolakan untuk pengunjung: ' + nama;
-        document.getElementById('tolak-catatan-pengunjung').value = '';
-        document.getElementById('modal-tolak-title-pengunjung').textContent = 'Tolak Pendaftaran Pengunjung';
-        document.getElementById('modal-tolak-submit-btn-pengunjung').textContent = 'Tolak Pendaftaran';
-        document.getElementById('modal-tolak-pengunjung').style.display = 'flex';
-    }
-    function openEditCatatanPengunjungModal(url, nama, catatan) {
-        document.getElementById('tolak-form-pengunjung').action = url;
-        document.getElementById('tolak-subtitle-pengunjung').textContent = 'Edit alasan penolakan untuk pengunjung: ' + nama;
-        document.getElementById('tolak-catatan-pengunjung').value = catatan || '';
-        document.getElementById('modal-tolak-title-pengunjung').textContent = 'Edit Alasan Penolakan';
-        document.getElementById('modal-tolak-submit-btn-pengunjung').textContent = 'Simpan Perubahan';
-        document.getElementById('modal-tolak-pengunjung').style.display = 'flex';
-    }
-    function closeTolakPengunjungModal() {
-        document.getElementById('modal-tolak-pengunjung').style.display = 'none';
-    }
-
     document.getElementById('modal-confirm-delete').addEventListener('click', function(e) {
         if (e.target === this) closeConfirmDelete();
     });
@@ -360,8 +321,21 @@
     document.getElementById('rombongan-modal').addEventListener('click', function(e) {
         if (e.target === this) closeRombonganModal();
     });
-    document.getElementById('modal-tolak-pengunjung').addEventListener('click', function(e) {
-        if (e.target === this) closeTolakPengunjungModal();
-    });
+
+    // Auto-polling untuk update real-time saat ada pengunjung baru atau status toggle berubah
+    (function() {
+        var initialCount = {{ $pengunjungs->total() }};
+        var initialIsOpen = {{ $isOpen ? 'true' : 'false' }};
+        setInterval(function() {
+            fetch("{{ route('pendaftaran.status') }}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.total_pengunjung !== initialCount || data.is_open !== initialIsOpen) {
+                        window.location.reload();
+                    }
+                })
+                .catch(err => console.error(err));
+        }, 5000);
+    })();
     </script>
 </x-dashboard-layout>

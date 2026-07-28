@@ -46,6 +46,15 @@
 }
 
 @layer utilities {
+    /* Remove black focus ring / outline on Leaflet map SVG elements & map container */
+    .leaflet-container:focus,
+    .leaflet-container *:focus,
+    .leaflet-interactive:focus,
+    path.leaflet-interactive:focus,
+    svg.leaflet-zoom-animated path:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
     
     .bg-grid-black {
         background-size: 40px 40px;

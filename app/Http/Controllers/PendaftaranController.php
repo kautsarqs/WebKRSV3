@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\PendaftaranPenelitiMail;
 use App\Models\PendaftaranPeneliti;
 use App\Models\PendaftaranPengunjung;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,24 @@ class PendaftaranController extends Controller
         if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice');
         }
-        return view('landing.pengunjung');
+
+        $isOpen = Setting::isPendaftaranPengunjungOpen();
+        return view('landing.pengunjung', compact('isOpen'));
+    }
+
+    public function getStatus()
+    {
+        $userId = Auth::id();
+        $userPengunjungCount = $userId ? PendaftaranPengunjung::where('user_id', $userId)->count() : 0;
+        $userPenelitiCount = $userId ? PendaftaranPeneliti::where('user_id', $userId)->count() : 0;
+
+        return response()->json([
+            'is_open' => Setting::isPendaftaranPengunjungOpen(),
+            'total_pengunjung' => PendaftaranPengunjung::count(),
+            'total_peneliti' => PendaftaranPeneliti::count(),
+            'user_pengunjung_count' => $userPengunjungCount,
+            'user_peneliti_count' => $userPenelitiCount,
+        ]);
     }
 
     public function storePengunjung(Request $request)
@@ -29,6 +47,10 @@ class PendaftaranController extends Controller
         }
         if (!Auth::user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice');
+        }
+
+        if (!Setting::isPendaftaranPengunjungOpen()) {
+            return redirect()->route('pendaftaran.pengunjung')->with('error', 'Pendaftaran kunjungan sedang ditutup oleh admin.');
         }
 
         $cleanRombongan = [];
@@ -87,10 +109,10 @@ class PendaftaranController extends Controller
             'keperluan'         => $request->keperluan,
             'instansi'          => $request->instansi,
             'rombongan_details' => $rombonganDetails,
-            'status'            => 'pending',
+            'status'            => 'disetujui',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil dikirim! Menunggu konfirmasi admin.');
+        return redirect()->route('dashboard')->with('success', 'Pendaftaran kunjungan berhasil! Selamat berkunjung ke Kebun Raya Sambas.');
     }
 
     public function editPengunjung($id)
@@ -99,8 +121,9 @@ class PendaftaranController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        if ($pengunjung->status === 'disetujui') {
-            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
+        // User can edit if the visit date hasn't passed yet
+        if (\Carbon\Carbon::parse($pengunjung->tanggal_kunjungan)->lt(today())) {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran kunjungan yang sudah lewat tidak dapat diubah.');
         }
 
         return view('dashboard.pengunjung.edit', compact('pengunjung'));
@@ -112,8 +135,8 @@ class PendaftaranController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        if ($pengunjung->status === 'disetujui') {
-            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
+        if (\Carbon\Carbon::parse($pengunjung->tanggal_kunjungan)->lt(today())) {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran kunjungan yang sudah lewat tidak dapat diubah.');
         }
 
         $cleanRombongan = [];
@@ -162,36 +185,18 @@ class PendaftaranController extends Controller
 
         $jumlahRombongan = 1 + count($rombonganDetails);
 
-        if ($pengunjung->status === 'ditolak') {
-            PendaftaranPengunjung::create([
-                'user_id'           => Auth::id(),
-                'nama_lengkap'      => $request->nama_lengkap,
-                'no_identitas'      => $pengunjung->no_identitas ?? '0000000000000000',
-                'nomor_hp'          => $request->nomor_hp,
-                'tanggal_kunjungan' => $request->tanggal_kunjungan,
-                'jumlah_rombongan'  => $jumlahRombongan,
-                'keperluan'         => $request->keperluan,
-                'instansi'          => $request->instansi,
-                'rombongan_details' => $rombonganDetails,
-                'status'            => 'pending',
-                'parent_id'         => $pengunjung->id,
-            ]);
+        $pengunjung->update([
+            'nama_lengkap'      => $request->nama_lengkap,
+            'nomor_hp'          => $request->nomor_hp,
+            'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            'jumlah_rombongan'  => $jumlahRombongan,
+            'keperluan'         => $request->keperluan,
+            'instansi'          => $request->instansi,
+            'rombongan_details' => $rombonganDetails,
+            'status'            => 'disetujui',
+        ]);
 
-            return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung baru berhasil dikirim dari perbaikan pendaftaran sebelumnya.');
-        } else {
-            $pengunjung->update([
-                'nama_lengkap'      => $request->nama_lengkap,
-                'nomor_hp'          => $request->nomor_hp,
-                'tanggal_kunjungan' => $request->tanggal_kunjungan,
-                'jumlah_rombongan'  => $jumlahRombongan,
-                'keperluan'         => $request->keperluan,
-                'instansi'          => $request->instansi,
-                'rombongan_details' => $rombonganDetails,
-                'status'            => 'pending',
-            ]);
-
-            return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil diperbarui.');
-        }
+        return redirect()->route('dashboard')->with('success', 'Data kunjungan berhasil diperbarui.');
     }
 
     public function destroyPengunjungUser($id)
@@ -200,12 +205,12 @@ class PendaftaranController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        if ($pengunjung->status === 'disetujui') {
-            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat dibatalkan.');
+        if (\Carbon\Carbon::parse($pengunjung->tanggal_kunjungan)->lt(today())) {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran kunjungan yang sudah lewat tidak dapat dibatalkan.');
         }
 
         $pengunjung->delete();
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran pengunjung berhasil dibatalkan.');
+        return redirect()->route('dashboard')->with('success', 'Pendaftaran kunjungan berhasil dibatalkan.');
     }
 
     public function createPeneliti()

@@ -41,6 +41,7 @@ Route::get('/peta/{map}', [MapController::class, 'publicShow'])->name('peta.show
 
 Route::get('/pendaftaran/pengunjung', [PendaftaranController::class, 'createPengunjung'])->name('pendaftaran.pengunjung');
 Route::post('/pendaftaran/pengunjung', [PendaftaranController::class, 'storePengunjung'])->name('pendaftaran.pengunjung.store');
+Route::get('/api/pendaftaran/status', [PendaftaranController::class, 'getStatus'])->name('pendaftaran.status');
 
 Route::get('/pendaftaran/peneliti', [PendaftaranController::class, 'createPeneliti'])->name('pendaftaran.peneliti');
 Route::post('/pendaftaran/peneliti', [PendaftaranController::class, 'storePeneliti'])->name('pendaftaran.peneliti.store');
@@ -112,9 +113,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $totalPengunjung = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->sum('jumlah_rombongan') ?? 0;
             $totalPeneliti = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->count();
 
-            $pengunjungPending = \App\Models\PendaftaranPengunjung::where('status', 'pending')->count();
-            $pengunjungSetuju = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->count();
-            $pengunjungTolak = \App\Models\PendaftaranPengunjung::where('status', 'ditolak')->count();
+            $pengunjungTotal = \App\Models\PendaftaranPengunjung::count();
+            $pendaftaranKunjunganOpen = \App\Models\Setting::isPendaftaranPengunjungOpen();
 
             $penelitiPending = \App\Models\PendaftaranPeneliti::where('status', 'pending')->count();
             $penelitiSedang = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->where('status_penelitian', 'sedang')->count();
@@ -123,7 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             return view('admin.dashboard', compact(
                 'totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti',
-                'pengunjungPending', 'pengunjungSetuju', 'pengunjungTolak',
+                'pengunjungTotal', 'pendaftaranKunjunganOpen',
                 'penelitiPending', 'penelitiSedang', 'penelitiSelesai', 'penelitiTolak'
             ));
         })->name('admin.dashboard');
@@ -138,7 +138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pengunjung', [PendaftaranManageController::class, 'indexPengunjung'])->name('admin.pengunjung.index');
         Route::post('/pengunjung/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyPengunjung'])->name('admin.pengunjung.bulk-delete');
         Route::get('/pengunjung/export/{format}', [PendaftaranManageController::class, 'exportPengunjung'])->name('admin.pengunjung.export');
-        Route::patch('/pengunjung/{id}/status', [PendaftaranManageController::class, 'updatePengunjungStatus'])->name('admin.pengunjung.status');
+        Route::post('/pengunjung/toggle', [PendaftaranManageController::class, 'togglePendaftaranPengunjung'])->name('admin.pengunjung.toggle');
         Route::delete('/pengunjung/{id}', [PendaftaranManageController::class, 'destroyPengunjung'])->name('admin.pengunjung.destroy');
 
         Route::get('/peneliti', [PendaftaranManageController::class, 'indexPeneliti'])->name('admin.peneliti.index');

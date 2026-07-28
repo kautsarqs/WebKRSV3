@@ -48,7 +48,7 @@
                     <thead class="bg-zinc-50/50 border-b border-zinc-200/60">
                         <tr>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Nama</th>
-                            <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Foto</th>
+                            <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Foto / Simbol</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Koordinat</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Tipe</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Warna</th>
@@ -66,12 +66,16 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     @if($marker->geometry_type === 'polygon')
-                                        <div class="w-16 h-16 bg-zinc-50 rounded-lg border border-zinc-200 flex items-center justify-center overflow-hidden shadow-xs" title="Polygon">
+                                        @php
+                                            $normTypeIdx = strtolower(str_replace([' ', '-', '_'], '', $marker->type ?? ''));
+                                            $isBatas = str_contains($normTypeIdx, 'batas');
+                                        @endphp
+                                        <div class="w-16 h-16 bg-zinc-50 rounded-lg border border-zinc-200 flex items-center justify-center overflow-hidden shadow-xs" title="{{ $marker->type }}">
                                             <svg class="w-11 h-11" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M12 42 C10 28, 16 10, 32 9 C48 8, 56 22, 54 38 C52 50, 40 54, 32 54 C22 54, 14 52, 12 42 Z"
                                                       stroke="{{ $marker->color ?? '#3b82f6' }}" stroke-width="3.5"
-                                                      stroke-dasharray="6 3.5" stroke-linecap="round" stroke-linejoin="round"
-                                                      fill="{{ $marker->color ?? '#3b82f6' }}" fill-opacity="0.12"/>
+                                                      stroke-dasharray="{{ $isBatas ? '8 5' : 'none' }}" stroke-linecap="round" stroke-linejoin="round"
+                                                      fill="{{ $marker->color ?? '#3b82f6' }}" fill-opacity="{{ $isBatas ? '0.08' : '0.18' }}"/>
                                             </svg>
                                         </div>
                                     @elseif($marker->geometry_type === 'linestring' || $marker->geometry_type === 'polyline')

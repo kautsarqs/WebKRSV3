@@ -49,6 +49,7 @@
                     <thead class="bg-zinc-50/50 border-b border-zinc-200/60">
                         <tr>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Judul</th>
+                            <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Lokasi VAK</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Foto</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide">Deskripsi</th>
                             <th class="px-6 py-4 font-bold text-zinc-900 font-space tracking-wide text-right">Aksi</th>
@@ -59,6 +60,18 @@
                             <tr class="hover:bg-white/40 transition-colors group">
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-zinc-700 font-space group-hover:text-zinc-900 transition-colors">{{ $koleksi->title }}</div>
+                                    @if($koleksi->genus || $koleksi->spesies)
+                                        <div class="text-xs text-emerald-700 italic font-serif">{{ $koleksi->genus }} {{ $koleksi->spesies }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($koleksi->vak)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                                            📍 {{ $koleksi->vak->name }}
+                                        </span>
+                                    @else
+                                        <span class="text-xs text-zinc-400 font-medium">-</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     @if($koleksi->photo)

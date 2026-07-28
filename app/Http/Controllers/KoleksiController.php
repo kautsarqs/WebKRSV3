@@ -13,7 +13,7 @@ class KoleksiController extends Controller
 
     public function index(Request $request)
     {
-        $query = Koleksi::query();
+        $query = Koleksi::with('vak');
 
         if ($request->has('search') && $request->search != '') {
             $query->where('title', 'ilike', '%' . $request->search . '%');
@@ -26,7 +26,12 @@ class KoleksiController extends Controller
     public function create()
     {
         $categories = \App\Models\Category::all();
-        return view('admin.koleksi.create', compact('categories'));
+        $vaks = \App\Models\MapMarker::where('geometry_type', 'polygon')
+            ->where('type', 'not ilike', '%batas%')
+            ->where('name', 'not ilike', '%batas%')
+            ->orderBy('name', 'asc')
+            ->get();
+        return view('admin.koleksi.create', compact('categories', 'vaks'));
     }
 
     public function store(Request $request)
@@ -35,6 +40,7 @@ class KoleksiController extends Controller
             'title' => 'required|string|max:150',
             'description' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'map_marker_id' => 'nullable|exists:map_markers,id',
             'kerajaan' => 'nullable|string|max:50',
             'divisi' => 'nullable|string|max:50',
             'kelas' => 'nullable|string|max:50',
@@ -57,6 +63,7 @@ class KoleksiController extends Controller
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'photo' => $path,
+                'map_marker_id' => $validated['map_marker_id'] ?? null,
                 'kerajaan' => $validated['kerajaan'] ?? null,
                 'divisi' => $validated['divisi'] ?? null,
                 'kelas' => $validated['kelas'] ?? null,
@@ -80,12 +87,18 @@ class KoleksiController extends Controller
 
     public function show(Koleksi $koleksi)
     {
+        $koleksi->load('vak');
         return view('koleksi.show', compact('koleksi'));
     }
 
     public function edit(Koleksi $koleksi)
     {
-        return view('admin.koleksi.edit', compact('koleksi'));
+        $vaks = \App\Models\MapMarker::where('geometry_type', 'polygon')
+            ->where('type', 'not ilike', '%batas%')
+            ->where('name', 'not ilike', '%batas%')
+            ->orderBy('name', 'asc')
+            ->get();
+        return view('admin.koleksi.edit', compact('koleksi', 'vaks'));
     }
 
     public function update(Request $request, Koleksi $koleksi)
@@ -94,6 +107,7 @@ class KoleksiController extends Controller
             'title' => 'required|string|max:150',
             'description' => 'required|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'map_marker_id' => 'nullable|exists:map_markers,id',
             'kerajaan' => 'nullable|string|max:50',
             'divisi' => 'nullable|string|max:50',
             'kelas' => 'nullable|string|max:50',
@@ -119,6 +133,7 @@ class KoleksiController extends Controller
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'photo' => $path,
+                'map_marker_id' => $validated['map_marker_id'] ?? null,
                 'kerajaan' => $validated['kerajaan'] ?? null,
                 'divisi' => $validated['divisi'] ?? null,
                 'kelas' => $validated['kelas'] ?? null,

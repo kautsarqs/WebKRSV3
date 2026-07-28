@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PendaftaranPeneliti;
 use App\Models\PendaftaranPengunjung;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -24,20 +25,14 @@ class PendaftaranManageController extends Controller
         return view('admin.pengunjung.index', compact('pengunjungs'));
     }
 
-    public function updatePengunjungStatus(Request $request, $id)
+    public function togglePendaftaranPengunjung()
     {
-        $request->validate([
-            'status' => 'required|in:disetujui,ditolak',
-            'catatan_admin' => 'nullable|string|max:500',
-        ]);
+        $currentValue = Setting::getValue('pendaftaran_pengunjung_open', 'true');
+        $newValue = $currentValue === 'true' ? 'false' : 'true';
+        Setting::setValue('pendaftaran_pengunjung_open', $newValue);
 
-        $pengunjung = PendaftaranPengunjung::findOrFail($id);
-        $pengunjung->update([
-            'status' => $request->status,
-            'catatan_admin' => $request->status === 'ditolak' ? $request->catatan_admin : null,
-        ]);
-
-        return back()->with('success', 'Status pendaftaran pengunjung berhasil diperbarui.');
+        $statusLabel = $newValue === 'true' ? 'dibuka' : 'dikunci';
+        return back()->with('success', 'Pendaftaran kunjungan pengunjung berhasil ' . $statusLabel . '.');
     }
 
     public function indexPeneliti(Request $request)

@@ -14,6 +14,7 @@ class Koleksi extends Model
         'description',
         'photo',
         'category_id',
+        'map_marker_id',
         'kerajaan',
         'divisi',
         'kelas',
@@ -38,5 +39,10 @@ class Koleksi extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function vak()
+    {
+        return $this->belongsTo(MapMarker::class, 'map_marker_id');
     }
 }

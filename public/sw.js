@@ -1,4 +1,4 @@
-const CACHE_NAME = 'krs-cache-1783485551';
+const CACHE_NAME = 'krs-cache-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/build/assets/app-CiZ6hk-B.js',
