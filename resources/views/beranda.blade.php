@@ -894,7 +894,7 @@ document.addEventListener("DOMContentLoaded", function () {
         onAdd: function(map) {
             var container = L.DomUtil.create('div', 'flex items-end gap-2 mb-3 mr-3 z-[1000]');
             container.innerHTML = `
-                <div class="px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex items-center gap-1.5 sm:gap-2 text-zinc-800 text-[10px] font-bold select-none cursor-default shrink-0">
+                <div class="h-8 px-3 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-full shadow-lg flex items-center gap-1.5 text-zinc-800 text-[10px] font-bold select-none cursor-default shrink-0">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0 inline-block"></span>
                     <span class="text-zinc-400 uppercase tracking-widest text-[8px] font-bold">Skala</span>
                     <span id="custom-scale-text" class="text-zinc-900 font-mono font-extrabold text-xs">1 km</span>
