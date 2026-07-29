@@ -306,16 +306,17 @@
         var CustomMapControls = L.Control.extend({
             options: { position: 'bottomright' },
             onAdd: function(map) {
-                var container = L.DomUtil.create('div', 'flex items-end gap-2 mb-3 mr-3 z-[1000]');
+                var container = L.DomUtil.create('div', 'custom-map-controls-container');
+                container.style.cssText = 'display: flex !important; align-items: flex-end !important; gap: 8px !important; margin-bottom: 12px !important; margin-right: 12px !important; z-index: 1000 !important; pointer-events: auto !important;';
                 container.innerHTML = `
-                <div class="h-8 px-3 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-full shadow-lg flex items-center gap-1.5 text-zinc-800 text-[10px] font-bold select-none cursor-default shrink-0">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0 inline-block"></span>
-                    <span class="text-zinc-400 uppercase tracking-widest text-[8px] font-bold">Skala</span>
-                    <span id="custom-scale-text" class="text-zinc-900 font-mono font-extrabold text-xs">1 km</span>
-                </div>
-                    <div class="bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex flex-col overflow-hidden shrink-0">
-                        <button id="btn-zoom-in" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base border-b border-zinc-100/80 cursor-pointer" title="Perbesar Peta">+</button>
-                        <button id="btn-zoom-out" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base cursor-pointer" title="Perkecil Peta">&minus;</button>
+                    <div style="height: 32px !important; padding: 0 12px !important; background: rgba(255, 255, 255, 0.92) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border: 1px solid rgba(228, 228, 231, 0.8) !important; border-radius: 9999px !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; display: flex !important; align-items: center !important; gap: 6px !important; flex-shrink: 0 !important; cursor: default !important; user-select: none !important;">
+                        <span style="width: 8px !important; height: 8px !important; border-radius: 9999px !important; background-color: #10b981 !important; flex-shrink: 0 !important; display: inline-block !important;"></span>
+                        <span style="color: #a1a1aa !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; font-size: 9px !important; font-weight: 700 !important; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important;">Skala</span>
+                        <span id="custom-scale-text" style="color: #18181b !important; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; font-weight: 800 !important; font-size: 12px !important;">1 km</span>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.92) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; border: 1px solid rgba(228, 228, 231, 0.8) !important; border-radius: 16px !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; flex-shrink: 0 !important;">
+                        <button id="btn-zoom-in" type="button" style="width: 32px !important; height: 32px !important; display: flex !important; align-items: center !important; justify-content: center !important; color: #3f3f46 !important; font-weight: 700 !important; font-size: 16px !important; border: none !important; border-bottom: 1px solid rgba(228, 228, 231, 0.6) !important; background: transparent !important; cursor: pointer !important;" title="Perbesar Peta">+</button>
+                        <button id="btn-zoom-out" type="button" style="width: 32px !important; height: 32px !important; display: flex !important; align-items: center !important; justify-content: center !important; color: #3f3f46 !important; font-weight: 700 !important; font-size: 16px !important; border: none !important; background: transparent !important; cursor: pointer !important;" title="Perkecil Peta">&minus;</button>
                     </div>
                 `;
 
