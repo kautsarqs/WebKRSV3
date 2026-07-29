@@ -894,12 +894,12 @@ document.addEventListener("DOMContentLoaded", function () {
         onAdd: function(map) {
             var container = L.DomUtil.create('div', 'flex items-end gap-2 mb-3 mr-3 z-[1000]');
             container.innerHTML = `
-                <div class="px-3.5 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex items-center gap-2 text-zinc-800 text-[10px] font-bold select-none cursor-default">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                <div class="px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex items-center gap-1.5 sm:gap-2 text-zinc-800 text-[10px] font-bold select-none cursor-default shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0 inline-block"></span>
                     <span class="text-zinc-400 uppercase tracking-widest text-[8px] font-bold">Skala</span>
                     <span id="custom-scale-text" class="text-zinc-900 font-mono font-extrabold text-xs">1 km</span>
                 </div>
-                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex flex-col overflow-hidden">
+                <div class="bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex flex-col overflow-hidden shrink-0">
                     <button id="btn-zoom-in" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base border-b border-zinc-100/80 cursor-pointer" title="Perbesar Peta">+</button>
                     <button id="btn-zoom-out" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base cursor-pointer" title="Perkecil Peta">&minus;</button>
                 </div>
