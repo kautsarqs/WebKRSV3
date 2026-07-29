@@ -303,7 +303,67 @@
             minZoom: 8
         }).setView([initialLat, initialLng], 15);
 
-        L.control.zoom({ position: 'bottomright' }).addTo(adminMap);
+        var CustomMapControls = L.Control.extend({
+            options: { position: 'bottomright' },
+            onAdd: function(map) {
+                var container = L.DomUtil.create('div', 'flex items-end gap-2 mb-3 mr-3 z-[1000]');
+                container.innerHTML = `
+                    <div class="px-3.5 py-2 bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex items-center gap-2 text-zinc-800 text-[10px] font-bold select-none cursor-default">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                        <span class="text-zinc-400 uppercase tracking-widest text-[8px] font-bold">Skala</span>
+                        <span id="custom-scale-text" class="text-zinc-900 font-mono font-extrabold text-xs">1 km</span>
+                    </div>
+                    <div class="bg-white/90 backdrop-blur-md border border-zinc-200/60 rounded-2xl shadow-lg flex flex-col overflow-hidden">
+                        <button id="btn-zoom-in" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base border-b border-zinc-100/80 cursor-pointer" title="Perbesar Peta">+</button>
+                        <button id="btn-zoom-out" type="button" class="w-8 h-8 flex items-center justify-center text-zinc-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors font-bold text-base cursor-pointer" title="Perkecil Peta">&minus;</button>
+                    </div>
+                `;
+
+                L.DomEvent.disableClickPropagation(container);
+                L.DomEvent.disableScrollPropagation(container);
+
+                setTimeout(function() {
+                    document.getElementById('btn-zoom-in')?.addEventListener('click', function() { adminMap.zoomIn(); });
+                    document.getElementById('btn-zoom-out')?.addEventListener('click', function() { adminMap.zoomOut(); });
+                }, 100);
+
+                return container;
+            }
+        });
+
+        adminMap.addControl(new CustomMapControls());
+
+        function updateScaleDisplay() {
+            var center = adminMap.getCenter();
+            var zoom = adminMap.getZoom();
+            var metersPerPx = 156543.03392 * Math.cos(center.lat * Math.PI / 180) / Math.pow(2, zoom);
+            var rawMeters = metersPerPx * 90;
+
+            var niceText = '1 km';
+            if (rawMeters >= 2500) {
+                niceText = Math.round(rawMeters / 1000) + ' km';
+            } else if (rawMeters >= 750) {
+                niceText = '1 km';
+            } else if (rawMeters >= 350) {
+                niceText = '500 m';
+            } else if (rawMeters >= 180) {
+                niceText = '250 m';
+            } else if (rawMeters >= 90) {
+                niceText = '100 m';
+            } else if (rawMeters >= 40) {
+                niceText = '50 m';
+            } else if (rawMeters >= 15) {
+                niceText = '20 m';
+            } else {
+                niceText = Math.max(5, Math.round(rawMeters)) + ' m';
+            }
+
+            var scaleEl = document.getElementById('custom-scale-text');
+            if (scaleEl) scaleEl.textContent = niceText;
+        }
+
+        adminMap.on('zoom zoomend move moveend viewreset zoomlevelschange', updateScaleDisplay);
+        setTimeout(updateScaleDisplay, 100);
 
         var adminRoadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
         var adminSatelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
@@ -320,6 +380,32 @@
             else currentAdminLayer = adminRoadLayer;
             currentAdminLayer.addTo(adminMap);
         };
+
+        function getPolygonVisualCenter(coords) {
+            if (!coords || coords.length === 0) return null;
+            var flat = (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) ? coords[0] : coords;
+            var area = 0, cx = 0, cy = 0;
+            var n = flat.length;
+            for (var i = 0; i < n; i++) {
+                var j = (i + 1) % n;
+                var p1 = flat[i], p2 = flat[j];
+                var x1 = parseFloat(p1[0]), y1 = parseFloat(p1[1]);
+                var x2 = parseFloat(p2[0]), y2 = parseFloat(p2[1]);
+                var f = (x1 * y2 - x2 * y1);
+                area += f;
+                cx += (x1 + x2) * f;
+                cy += (y1 + y2) * f;
+            }
+            area *= 0.5;
+            if (Math.abs(area) < 1e-9) {
+                var sumLat = 0, sumLng = 0;
+                flat.forEach(function(p) { sumLat += parseFloat(p[0]); sumLng += parseFloat(p[1]); });
+                return L.latLng(sumLat / flat.length, sumLng / flat.length);
+            }
+            cx /= (6 * area);
+            cy /= (6 * area);
+            return L.latLng(cx, cy);
+        }
 
         var existingLayerGroup = L.layerGroup().addTo(adminMap);
         var existingMarkersData = @json($existingMarkers ?? []);
@@ -345,7 +431,10 @@
                     if (coords.length > 0) {
                         if (m.geometry_type === 'polygon') {
                             var normType = (m.type || '').toLowerCase().replace(/[\s\-_]+/g, ' ');
+                            var mNameNorm = (m.name || '').toLowerCase();
                             var isBatas = normType.includes('batas');
+                            var isVak = normType.includes('vak') || mNameNorm.includes('vak');
+
                             layer = L.polygon(coords, {
                                 color: m.color || '#3b82f6',
                                 fillColor: m.color || '#3b82f6',
@@ -353,6 +442,25 @@
                                 weight: isBatas ? 3 : 2.5,
                                 dashArray: isBatas ? '10, 8' : null
                             }).bindTooltip(m.name, { sticky: true });
+
+                            if (isVak) {
+                                var center = getPolygonVisualCenter(coords);
+                                if (!center && layer.getBounds) center = layer.getBounds().getCenter();
+                                if (center) {
+                                    var labelText = (m.name || '').replace(/^VAK\s*/i, '').trim();
+                                    if (!labelText) labelText = m.name || 'VAK';
+                                    if (!labelText.endsWith('.')) labelText += '.';
+
+                                    var vakLabelIcon = L.divIcon({
+                                        className: 'vak-polygon-label-marker',
+                                        html: `<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; text-align:center; color:#000000; font-family:ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight:800; font-size:13px; text-shadow: 0 0 3px #ffffff, 0 0 5px #ffffff, 0 0 8px #ffffff; pointer-events:none; white-space:nowrap; line-height:1;">${labelText}</div>`,
+                                        iconSize: [60, 30],
+                                        iconAnchor: [30, 15]
+                                    });
+                                    var lblMarker = L.marker(center, { icon: vakLabelIcon, interactive: false });
+                                    existingLayerGroup.addLayer(lblMarker);
+                                }
+                            }
                         } else {
                             layer = L.polyline(coords, {
                                 color: m.color || '#3b82f6',
@@ -520,10 +628,15 @@
             }
         }
 
+        var drawingLabelMarker = null;
         function redrawShape() {
             if (drawingLayer) {
                 adminMap.removeLayer(drawingLayer);
                 drawingLayer = null;
+            }
+            if (drawingLabelMarker) {
+                adminMap.removeLayer(drawingLabelMarker);
+                drawingLabelMarker = null;
             }
 
             const geomType = document.getElementById('geometry_type').value;
@@ -552,6 +665,24 @@
                     weight: isBatas ? 3 : 2.5,
                     dashArray: isBatas ? '10, 8' : null
                 }).addTo(adminMap);
+
+                if (isVakPolygon() && drawingLayer && currentPoints.length >= 3) {
+                    var center = getPolygonVisualCenter(currentPoints);
+                    if (!center && drawingLayer.getBounds) center = drawingLayer.getBounds().getCenter();
+                    if (center) {
+                        var rawVal = document.getElementById('vak_number_input') ? document.getElementById('vak_number_input').value.trim() : '';
+                        var labelText = rawVal || 'VAK';
+                        if (!labelText.endsWith('.')) labelText += '.';
+
+                        var vakLabelIcon = L.divIcon({
+                            className: 'vak-polygon-label-marker',
+                            html: `<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; text-align:center; color:#000000; font-family:ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight:800; font-size:13px; text-shadow: 0 0 3px #ffffff, 0 0 5px #ffffff, 0 0 8px #ffffff; pointer-events:none; white-space:nowrap; line-height:1;">${labelText}</div>`,
+                            iconSize: [60, 30],
+                            iconAnchor: [30, 15]
+                        });
+                        drawingLabelMarker = L.marker(center, { icon: vakLabelIcon, interactive: false }).addTo(adminMap);
+                    }
+                }
             }
 
             updateGeoJSONInput();
