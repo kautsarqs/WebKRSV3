@@ -75,15 +75,21 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                     <div class="bg-white rounded-xl shadow-xl border border-zinc-100 p-1.5 ring-1 ring-zinc-900/5">
                         <a href="{{ route('pendaftaran.pengunjung') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm {{ request()->routeIs('pendaftaran.pengunjung') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900' }} rounded-lg transition-colors">
                             <span class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                <svg class="w-3.5 h-3.5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
                             </span>
                             Pengunjung
                         </a>
                         <a href="{{ route('pendaftaran.peneliti') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm {{ request()->routeIs('pendaftaran.peneliti') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900' }} rounded-lg transition-colors">
                             <span class="w-6 h-6 rounded-lg bg-violet-100 flex items-center justify-center">
-                                <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <svg class="w-3.5 h-3.5 text-violet-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
                             </span>
                             Peneliti
+                        </a>
+                        <a href="{{ route('pendaftaran.magang') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm {{ request()->routeIs('pendaftaran.magang') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900' }} rounded-lg transition-colors">
+                            <span class="w-6 h-6 rounded-lg bg-cyan-100 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 text-cyan-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </span>
+                            Magang
                         </a>
                     </div>
                 </div>
@@ -179,6 +185,7 @@ class="fixed top-0 w-full z-50 transition-all duration-500 border-b {{ $isHome ?
                 <div x-show="mobilePendaftaranOpen" style="display: none;" class="pl-4 mt-1 flex flex-col gap-1">
                     <a href="{{ route('pendaftaran.pengunjung') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('pendaftaran.pengunjung') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50' }}">Pengunjung</a>
                     <a href="{{ route('pendaftaran.peneliti') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('pendaftaran.peneliti') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50' }}">Peneliti</a>
+                    <a href="{{ route('pendaftaran.magang') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('pendaftaran.magang') ? 'text-emerald-800 font-bold bg-emerald-50/50' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50' }}">Magang</a>
                 </div>
             </div>
 

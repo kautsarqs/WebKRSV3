@@ -43,6 +43,7 @@
                 <ul class="space-y-4 text-sm text-zinc-500">
                     <li><a href="{{ route('pendaftaran.pengunjung') }}" class="hover:text-zinc-900 transition">Pendaftaran Pengunjung</a></li>
                     <li><a href="{{ route('pendaftaran.peneliti') }}" class="hover:text-zinc-900 transition">Pendaftaran Penelitian</a></li>
+                    <li><a href="{{ route('pendaftaran.magang') }}" class="hover:text-zinc-900 transition">Pendaftaran Magang</a></li>
                 </ul>
             </div>
 

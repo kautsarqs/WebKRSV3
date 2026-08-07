@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Peneliti Kebun Raya Sambas - {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') }}</title>
+    <title>Daftar Peserta Magang Kebun Raya Sambas - {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d F Y') }}</title>
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; margin: 35px; font-size: 11px; }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px; }
@@ -22,8 +22,8 @@
 </head>
 <body onload="window.print()">
     <div class="header">
-        <h1>Daftar Peneliti Kebun Raya Sambas</h1>
-        <p>Laporan Data Peneliti Terdaftar dan Disetujui - Dicetak pada {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d-m-Y H:i') }} WIB</p>
+        <h1>Daftar Peserta Magang Kebun Raya Sambas</h1>
+        <p>Laporan Data Peserta Magang Terdaftar dan Disetujui - Dicetak pada {{ \Carbon\Carbon::now('Asia/Jakarta')->translatedFormat('d-m-Y H:i') }} WIB</p>
     </div>
 
     <table>
@@ -34,17 +34,17 @@
                 <th style="width: 13%;">Nomor HP</th>
                 <th style="width: 17%;">Institusi</th>
                 <th style="width: 7%;">Jenjang</th>
-                <th style="width: 18%;">Judul Penelitian</th>
+                <th style="width: 18%;">Judul / Topik Magang</th>
                 <th style="width: 7%;">Mulai</th>
                 <th style="width: 7%;">Selesai</th>
                 <th style="width: 10%;" class="text-center">Status</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($penelitis as $index => $row)
+            @forelse($magangs as $index => $row)
                 @php
-                    $isSelesai = $row->status_penelitian === 'selesai' || ($row->tanggal_selesai && \Carbon\Carbon::parse($row->tanggal_selesai)->endOfDay()->isPast());
-                    $statusText = $isSelesai ? 'Selesai' : 'Masih Meneliti';
+                    $isSelesai = $row->status_magang === 'selesai' || ($row->tanggal_selesai && \Carbon\Carbon::parse($row->tanggal_selesai)->endOfDay()->isPast());
+                    $statusText = $isSelesai ? 'Selesai' : 'Masih Magang';
                 @endphp
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
@@ -52,7 +52,7 @@
                     <td>{{ $row->nomor_hp }}</td>
                     <td>{{ $row->institusi }} ({{ $row->program_studi ?? '-' }})</td>
                     <td>{{ $row->jenjang }}</td>
-                    <td>{{ $row->judul_penelitian }} ({{ $row->bidang_penelitian }})</td>
+                    <td>{{ $row->judul_magang }} ({{ $row->bidang_magang }})</td>
                     <td>{{ \Carbon\Carbon::parse($row->tanggal_mulai)->translatedFormat('d-m-Y') }}</td>
                     <td>{{ \Carbon\Carbon::parse($row->tanggal_selesai)->translatedFormat('d-m-Y') }}</td>
                     <td class="text-center">
@@ -63,7 +63,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" class="text-center">Tidak ada data peneliti yang disetujui.</td>
+                    <td colspan="9" class="text-center">Tidak ada data peserta magang yang disetujui.</td>
                 </tr>
             @endforelse
         </tbody>

@@ -43,7 +43,7 @@
                 <div>
                     <p class="text-emerald-400 text-sm font-semibold mb-1 tracking-wide">{{ $greeting }},</p>
                     <h1 class="text-3xl font-bold text-white leading-tight">{{ $user->name }} 👋</h1>
-                    <p class="text-zinc-400 text-sm mt-2 max-w-sm">Selamat datang di portal pengguna Kebun Raya Sambas. Jelajahi, daftarkan kunjungan, atau ajukan penelitian Anda.</p>
+                    <p class="text-zinc-400 text-sm mt-2 max-w-sm">Selamat datang di portal pengguna Kebun Raya Sambas. Jelajahi, daftarkan kunjungan, penelitian, atau magang Anda.</p>
                 </div>
                 <div class="shrink-0">
                     <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 flex items-center justify-center text-3xl">
@@ -90,6 +90,17 @@
                     </div>
                 </a>
 
+                <a href="{{ route('pendaftaran.magang') }}"
+                   class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-cyan-250 transition-all duration-300 hover:-translate-y-0.5">
+                    <div class="w-11 h-11 rounded-xl bg-cyan-100 flex items-center justify-center text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-colors shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-bold text-zinc-900 text-sm group-hover:text-cyan-700 transition-colors">Daftar Magang</p>
+                        <p class="text-xs text-zinc-500">Ajukan izin magang / PKL</p>
+                    </div>
+                </a>
+
                 <a href="{{ route('koleksi') }}"
                    class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-amber-250 transition-all duration-300 hover:-translate-y-0.5">
                     <div class="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors shrink-0">
@@ -112,17 +123,6 @@
                     </div>
                 </a>
 
-                <a href="{{ route('profile.edit') }}"
-                   class="group flex items-center gap-4 p-5 bg-white border border-zinc-200/80 rounded-2xl hover:shadow-lg hover:border-zinc-400 transition-all duration-300 hover:-translate-y-0.5">
-                    <div class="w-11 h-11 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-600 group-hover:bg-zinc-700 group-hover:text-white transition-colors shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </div>
-                    <div>
-                        <p class="font-bold text-zinc-900 text-sm group-hover:text-zinc-800 transition-colors">Edit Profil</p>
-                        <p class="text-xs text-zinc-500">Perbarui data akun Anda</p>
-                    </div>
-                </a>
-
             </div>
         </div>
 
@@ -132,14 +132,14 @@
                 Riwayat Pendaftaran Saya
             </h2>
 
-            @if($pengunjungRegistrations->isEmpty() && $penelitiRegistrations->isEmpty())
+            @if($pengunjungRegistrations->isEmpty() && $penelitiRegistrations->isEmpty() && $magangRegistrations->isEmpty())
                 <div class="text-center py-8 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
                     <svg class="w-12 h-12 text-zinc-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                     <p class="text-zinc-500 text-sm">Belum ada riwayat pendaftaran.</p>
                     <p class="text-xs text-zinc-400 mt-1">Silakan gunakan menu Aksi Cepat di atas untuk melakukan pendaftaran pertama Anda.</p>
                 </div>
             @else
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     <div>
                         <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Kunjungan</h3>
@@ -265,6 +265,73 @@
                             </div>
                         @endif
                     </div>
+
+                    <div class="lg:border-l lg:border-zinc-200/60 lg:pl-8 pt-6 lg:pt-0 border-t lg:border-t-0 border-zinc-200/60">
+                        <h3 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-4">Pendaftaran Magang</h3>
+                        @if($magangRegistrations->isNotEmpty())
+                            <div class="grid grid-cols-1 gap-4">
+                                @foreach($magangRegistrations as $reg)
+                                    <div class="bg-zinc-50/60 border border-zinc-200/60 rounded-2xl p-5 flex flex-col justify-between hover:border-zinc-300 transition-colors">
+                                        <div class="flex items-start justify-between gap-3 mb-3">
+                                            <div class="min-w-0 flex-1">
+                                                <h4 class="font-bold text-zinc-900 text-sm truncate" title="{{ $reg->judul_magang }}">{{ $reg->judul_magang }}</h4>
+                                                <p class="text-xs text-zinc-500 mt-1">Institusi: {{ $reg->institusi }}</p>
+                                                <p class="text-xs text-zinc-500">Mulai: {{ \Carbon\Carbon::parse($reg->tanggal_mulai)->translatedFormat('d F Y') }}</p>
+                                                <p class="text-xs text-zinc-500">Selesai: {{ \Carbon\Carbon::parse($reg->tanggal_selesai)->translatedFormat('d F Y') }}</p>
+                                            </div>
+                                            <div class="shrink-0">
+                                                @if($reg->status === 'pending')
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wide">
+                                                        Pending
+                                                    </span>
+                                                @elseif($reg->status === 'disetujui')
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-55/15 text-emerald-700 border border-emerald-200/40 uppercase tracking-wide">
+                                                        Disetujui
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-55/15 text-red-700 border border-red-200/40 uppercase tracking-wide">
+                                                        Ditolak
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @if($reg->catatan_admin)
+                                            <div class="mt-2 text-xs text-red-800 bg-red-50 border border-red-150 p-2.5 rounded-xl">
+                                                <p class="font-bold">Catatan Admin:</p>
+                                                <p class="mt-0.5">{{ $reg->catatan_admin }}</p>
+                                            </div>
+                                        @endif
+
+                                        @if($reg->status === 'ditolak' && $reg->editedVersion)
+                                             <div class="mt-4 flex items-center justify-end pt-3 border-t border-zinc-200/60">
+                                                 <span class="text-xs text-zinc-500 font-semibold italic flex items-center gap-1.5">
+                                                     🔄 Sudah diperbaiki / diajukan kembali
+                                                 </span>
+                                             </div>
+                                        @elseif($reg->status !== 'disetujui')
+                                            <div class="mt-4 flex items-center justify-end gap-2 border-t border-zinc-200/60 pt-3">
+                                                <a href="{{ route('dashboard.magang.edit', $reg->id) }}"
+                                                   class="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-bold transition-all">
+                                                    Edit
+                                                </a>
+                                                <form action="{{ route('dashboard.magang.destroy', $reg->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan permohonan magang ini?');" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="px-3 py-1.5 bg-red-50 hover:bg-red-650 hover:text-white text-red-650 rounded-lg text-xs font-bold transition-all">
+                                                        Batal
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="p-5 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200 text-center">
+                                <p class="text-xs text-zinc-400 italic">Belum ada riwayat pendaftaran magang.</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @endif
         </div>
@@ -277,7 +344,7 @@
                 <div>
                     <h3 class="font-bold text-emerald-900 mb-1">Tentang Portal ini</h3>
                     <p class="text-sm text-emerald-800/70 leading-relaxed">
-                        Portal ini menyediakan akses digital ke kawasan <strong>Kebun Raya Sambas</strong> — mulai dari peta interaktif, katalog koleksi flora, hingga pendaftaran kunjungan dan penelitian.
+                        Portal ini menyediakan akses digital ke kawasan <strong>Kebun Raya Sambas</strong> — mulai dari peta interaktif, katalog koleksi flora, hingga pendaftaran kunjungan, penelitian, dan magang.
                         Gunakan menu di atas untuk memulai.
                     </p>
                 </div>
@@ -291,11 +358,14 @@
         (function() {
             let initialUserPengunjungCount = {{ $pengunjungRegistrations->count() }};
             let initialUserPenelitiCount = {{ $penelitiRegistrations->count() }};
+            let initialUserMagangCount = {{ $magangRegistrations->count() }};
             setInterval(function() {
                 fetch("{{ route('pendaftaran.status') }}")
                     .then(res => res.json())
                     .then(data => {
-                        if (data.user_pengunjung_count !== initialUserPengunjungCount || data.user_peneliti_count !== initialUserPenelitiCount) {
+                        if (data.user_pengunjung_count !== initialUserPengunjungCount ||
+                            data.user_peneliti_count !== initialUserPenelitiCount ||
+                            data.user_magang_count !== initialUserMagangCount) {
                             window.location.reload();
                         }
                     })

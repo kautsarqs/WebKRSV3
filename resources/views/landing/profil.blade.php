@@ -26,7 +26,7 @@
                 <div class="text-sm text-zinc-650">Luas Area</div>
             </div>
             <div class="p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
-                <div class="text-3xl font-bold text-zinc-900 mb-1 font-heading">2002</div>
+                <div class="text-3xl font-bold text-zinc-900 mb-1 font-heading">2023</div>
                 <div class="text-sm text-zinc-650">Tahun Berdiri</div>
             </div>
         </div>
@@ -42,7 +42,7 @@
             </div>
             <h3 class="font-heading text-2xl font-black text-zinc-900 mb-4 group-hover:text-indigo-700 transition">Visi</h3>
             <p class="text-zinc-650 leading-relaxed font-inter italic text-base">
-                "Menjadi Kebun Raya bertaraf internasional yang unggul dalam konservasi tumbuhan tropis Kalimantan, penelitian, pendidikan, dan wisata lingkungan."
+                "Menjadi pusat Laboratorium Alam, Penelitian, Pendidikan dan Wisata berbasis Keanekaragaman Hayati endemik Kalimantan yang unggul, berdaya saing, serta berkontribusi bagi kelestarian alam Kabupaten Sambas."
             </p>
         </div>
 
@@ -51,24 +51,43 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
             </div>
             <h3 class="font-heading text-2xl font-black text-zinc-900 mb-4 group-hover:text-emerald-700 transition">Misi</h3>
-            <ul class="space-y-3.5 text-zinc-650 font-inter">
-                <li class="flex items-start gap-2.5">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                    <span>Melestarikan keanekaragaman tumbuhan secara ex-situ.</span>
+            <ol class="space-y-4 text-zinc-650 font-inter">
+                <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                    <div>
+                        <strong class="text-zinc-900 font-semibold block mb-0.5">Konservasi dan Pelestarian</strong>
+                        <span class="text-sm leading-relaxed block">Melaksanakan konservasi sumber daya alam hayati melalui Peta Zonasi. Data Koleksi. Penyelamatan dan Pelestarian Flora khas Kabupaten Sambas dan Kalimantan Barat.</span>
+                    </div>
                 </li>
-                <li class="flex items-start gap-2.5">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                    <span>Mengembangkan penelitian botani dan hortikultura.</span>
+                <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                    <div>
+                        <strong class="text-zinc-900 font-semibold block mb-0.5">Pusat Penelitian dan Pengembangan</strong>
+                        <span class="text-sm leading-relaxed block">Menjadi pusat penelitian Botani dan Ekologi lingkungan yang berkolaborasi dengan perguruan tinggi. lembaga riset. dan masyarakat serta Identifikasi terhadap varian Flora endemik dan spontan yang berada di Kebun Raya Sambas.</span>
+                    </div>
                 </li>
-                <li class="flex items-start gap-2.5">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                    <span>Menyediakan sarana edukasi lingkungan yang interaktif.</span>
+                <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                    <div>
+                        <strong class="text-zinc-900 font-semibold block mb-0.5">Pendidikan</strong>
+                        <span class="text-sm leading-relaxed block">Menyediakan sarana pendidikan dan penyuluhan tentang keanekaragaman hayati. pelestarian lingkungan. dan pemanfaatan sumber daya alam secara berkelanjutan serta melibatkan masyarakat dalam pelestarian lingkungan melalui program kemitraan. pelatihan. dan kegiatan berbasis ekonomi kreatif.</span>
+                    </div>
                 </li>
-                <li class="flex items-start gap-2.5">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                    <span>Mengembangkan potensi ekowisata daerah.</span>
+                <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+                    <div>
+                        <strong class="text-zinc-900 font-semibold block mb-0.5">Pariwisata Edukatif dan Rekreasi</strong>
+                        <span class="text-sm leading-relaxed block">Mengembangkan Kebun Raya Sambas sebagai destinasi wisata edukasi dan rekreasi berbasis lingkungan yang memberikan manfaat ekonomi bagi masyarakat.</span>
+                    </div>
                 </li>
-            </ul>
+                <li class="flex items-start gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">5</span>
+                    <div>
+                        <strong class="text-zinc-900 font-semibold block mb-0.5">Fungsi Jasa Lingkungan</strong>
+                        <span class="text-sm leading-relaxed block">Menjadikan Kebun Raya Sambas sebagai rumah bagi Flora dan Fauna serta berperan dalam menjaga keseimbangan iklim global.</span>
+                    </div>
+                </li>
+            </ol>
         </div>
     </div>
 </div>
@@ -109,4 +128,3 @@
 
 </div>
 @endsection
-

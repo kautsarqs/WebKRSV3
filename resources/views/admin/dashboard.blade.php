@@ -8,7 +8,7 @@
             <p class="text-zinc-500 text-sm mt-1 font-inter">Ringkasan aktivitas dan statistik website Kebun Raya Sambas.</p>
         </div>
 
-        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
 
             <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
                 <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
@@ -70,9 +70,21 @@
                 </div>
             </div>
 
+            <div class="relative bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40 hover:scale-[1.02] transition-transform duration-300 group">
+                <div class="flex flex-row items-center justify-between space-y-0 w-full mb-4">
+                    <h3 class="tracking-tight text-[11px] font-bold text-zinc-500 font-space uppercase">Peserta Magang</h3>
+                    <div class="p-2 bg-zinc-100 rounded-xl group-hover:bg-zinc-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-zinc-650"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-zinc-900 font-space">{{ $totalMagang }} <span class="text-xs text-zinc-400 font-normal">Orang</span></div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 mt-8">
+        <div class="grid gap-6 grid-cols-1 lg:grid-cols-3 mt-8">
 
             {{-- Pendaftaran Kunjungan Panel --}}
             <div class="bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40">
@@ -176,6 +188,62 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Status & Aktivitas Magang Panel --}}
+            <div class="bg-white/60 backdrop-blur-xl border border-zinc-200/60 rounded-3xl p-6 shadow-xl shadow-zinc-200/40">
+                <h4 class="text-xs font-bold text-zinc-400 font-space uppercase mb-6 tracking-wider">Status & Aktivitas Magang</h4>
+
+                <div class="space-y-5">
+                    @php
+                        $magangTotal = $magangPending + $magangSedang + $magangSelesai + $magangTolak;
+                        $magangTotal = $magangTotal > 0 ? $magangTotal : 1;
+                        $pendingMPct = round(($magangPending / $magangTotal) * 100);
+                        $sedangMPct = round(($magangSedang / $magangTotal) * 100);
+                        $selesaiMPct = round(($magangSelesai / $magangTotal) * 100);
+                        $tolakMPct = round(($magangTolak / $magangTotal) * 100);
+                    @endphp
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
+                            <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>Sedang Magang (Aktif)</span>
+                            <span class="font-mono text-zinc-500">{{ $magangSedang }} Orang ({{ $sedangMPct }}%)</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 h-3 rounded-full overflow-hidden border border-zinc-200/40">
+                            <div class="bg-cyan-500 h-full rounded-full transition-all duration-500" style="width: {{ $sedangMPct }}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
+                            <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-zinc-400"></span>Selesai Magang</span>
+                            <span class="font-mono text-zinc-500">{{ $magangSelesai }} Orang ({{ $selesaiMPct }}%)</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 h-3 rounded-full overflow-hidden border border-zinc-200/40">
+                            <div class="bg-zinc-400 h-full rounded-full transition-all duration-500" style="width: {{ $selesaiMPct }}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
+                            <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>Pending</span>
+                            <span class="font-mono text-zinc-500">{{ $magangPending }} Orang ({{ $pendingMPct }}%)</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 h-3 rounded-full overflow-hidden border border-zinc-200/40">
+                            <div class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: {{ $pendingMPct }}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-bold text-zinc-700 mb-1.5">
+                            <span class="flex items-center gap-1.5 font-space"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Ditolak</span>
+                            <span class="font-mono text-zinc-500">{{ $magangTolak }} Orang ({{ $tolakMPct }}%)</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 h-3 rounded-full overflow-hidden border border-zinc-200/40">
+                            <div class="bg-red-500 h-full rounded-full transition-all duration-500" style="width: {{ $tolakMPct }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -183,13 +251,13 @@
     <script>
         // Polling otomatis untuk refresh dashboard jika ada data pendaftaran baru / perubahan status toggle
         (function() {
-            let initialCount = {{ $pengunjungTotal + $totalPeneliti }};
+            let initialCount = {{ $pengunjungTotal + $totalPeneliti + $totalMagang }};
             let initialIsOpen = {{ $pendaftaranKunjunganOpen ? 'true' : 'false' }};
             setInterval(function() {
                 fetch("{{ route('pendaftaran.status') }}")
                     .then(res => res.json())
                     .then(data => {
-                        let currentCount = data.total_pengunjung + data.total_peneliti;
+                        let currentCount = data.total_pengunjung + data.total_peneliti + (data.total_magang || 0);
                         if (currentCount !== initialCount || data.is_open !== initialIsOpen) {
                             window.location.reload();
                         }

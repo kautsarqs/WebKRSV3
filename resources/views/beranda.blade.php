@@ -224,14 +224,7 @@
             Menjaga keanekaragaman hayati Kalimantan untuk masa depan yang lestari.
         </p>
 
-        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-xs sm:max-w-none mx-auto">
-            <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-full bg-emerald-800 text-white font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-950/30 text-xs sm:text-sm">
-                Pendaftaran Pengunjung
-            </a>
-            <a href="{{ route('pendaftaran.peneliti') }}" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-full bg-white/10 text-white font-semibold border border-white/30 hover:bg-white/20 backdrop-blur-md transition shadow-md text-xs sm:text-sm">
-                Pendaftaran Penelitian
-            </a>
-        </div>
+
     </div>
 
     <a href="#penelitian" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-white hover:text-emerald-400 transition-colors duration-300 animate-bounce">
@@ -854,16 +847,19 @@
             Ikut Serta Melestarikan <br>
             Hutan Tropis Kalimantan
         </h2>
-        <p class="text-base md:text-lg text-zinc-450 max-w-2xl mx-auto mb-12 font-inter font-light">
-            Anda dapat berkunjung langsung untuk edukasi alam atau mendaftar sebagai peneliti Kebun Raya Sambas.
+        <p class="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-12 font-inter font-light">
+            Anda dapat berkunjung langsung untuk edukasi alam, mendaftar sebagai peneliti, atau mengajukan kegiatan magang di Kebun Raya Sambas.
         </p>
 
-        <div class="flex flex-col sm:flex-row justify-center items-center gap-5">
-            <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg transition duration-300">
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-5 max-w-4xl mx-auto flex-wrap">
+            <a href="{{ route('pendaftaran.pengunjung') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg shadow-emerald-950/50 transition duration-300 hover:scale-105 text-center">
                 PENDAFTARAN KUNJUNGAN
             </a>
-            <a href="{{ route('pendaftaran.peneliti') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold font-space text-xs tracking-wider rounded-full border border-white/20 backdrop-blur-xs transition duration-300">
+            <a href="{{ route('pendaftaran.peneliti') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg shadow-emerald-950/50 transition duration-300 hover:scale-105 text-center">
                 PENDAFTARAN PENELITI
+            </a>
+            <a href="{{ route('pendaftaran.magang') }}" class="w-full sm:w-auto px-8 py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold font-space text-xs tracking-wider rounded-full shadow-lg shadow-emerald-950/50 transition duration-300 hover:scale-105 text-center">
+                PENDAFTARAN MAGANG
             </a>
         </div>
     </div>

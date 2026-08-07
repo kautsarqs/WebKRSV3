@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PendaftaranMagang;
 use App\Models\PendaftaranPeneliti;
 use App\Models\PendaftaranPengunjung;
 use App\Models\Setting;
@@ -240,5 +241,152 @@ class PendaftaranManageController extends Controller
         ]);
 
         return back()->with('success', 'Status penelitian berhasil diperbarui.');
+    }
+
+    public function indexMagang(Request $request)
+    {
+        $status = $request->get('status');
+        $query = PendaftaranMagang::with('user')->latest();
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $magangs = $query->paginate(15);
+        return view('admin.magang.index', compact('magangs'));
+    }
+
+    public function updateMagangStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:disetujui,ditolak',
+            'catatan_admin' => 'nullable|string|max:500',
+        ]);
+
+        $magang = PendaftaranMagang::findOrFail($id);
+        $magang->update([
+            'status' => $request->status,
+            'catatan_admin' => $request->catatan_admin,
+        ]);
+
+        return back()->with('success', 'Status pendaftaran magang berhasil diperbarui.');
+    }
+
+    public function exportMagang(Request $request, $format)
+    {
+        $magangs = PendaftaranMagang::with('user')->where('status', 'disetujui')->latest()->get();
+
+        if ($format === 'excel' || $format === 'csv') {
+            $filename = 'daftar-magang-' . date('Y-m-d') . '.csv';
+
+            $csvData = "\xEF\xBB\xBF";
+
+            $headers_row = [
+                'No',
+                'Nama Lengkap',
+                'No NIK',
+                'Nomor HP',
+                'Institusi',
+                'Program Studi',
+                'Jenjang',
+                'Judul / Topik Magang',
+                'Mulai',
+                'Selesai'
+            ];
+
+            $csvData .= implode(';', array_map(function($val) {
+                return '"' . str_replace('"', '""', $val) . '"';
+            }, $headers_row)) . "\r\n";
+
+            foreach ($magangs as $index => $row) {
+                $row_data = [
+                    $index + 1,
+                    $row->nama_lengkap,
+                    $row->no_identitas,
+                    $row->nomor_hp,
+                    $row->institusi,
+                    $row->program_studi ?? '-',
+                    $row->jenjang,
+                    $row->judul_magang,
+                    $row->tanggal_mulai->format('Y-m-d'),
+                    $row->tanggal_selesai->format('Y-m-d')
+                ];
+                $csvData .= implode(';', array_map(function($val) {
+                    return '"' . str_replace('"', '""', $val) . '"';
+                }, $row_data)) . "\r\n";
+            }
+
+            return response($csvData, 200, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
+        }
+
+        return view('admin.magang.print', compact('magangs'));
+    }
+
+    public function destroyMagang($id)
+    {
+        $magang = PendaftaranMagang::findOrFail($id);
+        if ($magang->surat_pengantar) {
+            $existingPaths = json_decode($magang->surat_pengantar, true);
+            if (is_array($existingPaths)) {
+                if (!empty($existingPaths['surat_izin'])) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($existingPaths['surat_izin']);
+                }
+                if (!empty($existingPaths['cv'])) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($existingPaths['cv']);
+                }
+            } else {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($magang->surat_pengantar);
+            }
+        }
+        $magang->delete();
+        return back()->with('success', 'Pendaftaran magang berhasil dihapus.');
+    }
+
+    public function bulkDestroyMagang(Request $request)
+    {
+        $ids = json_decode($request->ids_json, true);
+        if (empty($ids) || !is_array($ids)) {
+            return back()->with('error', 'Tidak ada data terpilih untuk dihapus.');
+        }
+
+        $magangs = PendaftaranMagang::whereIn('id', $ids)->get();
+        foreach ($magangs as $magang) {
+            if ($magang->surat_pengantar) {
+                $existingPaths = json_decode($magang->surat_pengantar, true);
+                if (is_array($existingPaths)) {
+                    if (!empty($existingPaths['surat_izin'])) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($existingPaths['surat_izin']);
+                    }
+                    if (!empty($existingPaths['cv'])) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($existingPaths['cv']);
+                    }
+                } else {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($magang->surat_pengantar);
+                }
+            }
+            $magang->delete();
+        }
+
+        return back()->with('success', 'Pendaftaran magang terpilih berhasil dihapus massal.');
+    }
+
+    public function updateMagangStatusMagang(Request $request, $id)
+    {
+        $request->validate([
+            'status_magang' => 'required|in:sedang,selesai',
+        ]);
+
+        $magang = PendaftaranMagang::findOrFail($id);
+        $magang->update([
+            'status_magang' => $request->status_magang,
+        ]);
+
+        return back()->with('success', 'Status magang berhasil diperbarui.');
     }
 }

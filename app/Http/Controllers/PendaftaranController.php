@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PendaftaranMagangMail;
 use App\Mail\PendaftaranPenelitiMail;
+use App\Models\PendaftaranMagang;
 use App\Models\PendaftaranPeneliti;
 use App\Models\PendaftaranPengunjung;
 use App\Models\Setting;
@@ -30,13 +32,16 @@ class PendaftaranController extends Controller
         $userId = Auth::id();
         $userPengunjungCount = $userId ? PendaftaranPengunjung::where('user_id', $userId)->count() : 0;
         $userPenelitiCount = $userId ? PendaftaranPeneliti::where('user_id', $userId)->count() : 0;
+        $userMagangCount = $userId ? PendaftaranMagang::where('user_id', $userId)->count() : 0;
 
         return response()->json([
             'is_open' => Setting::isPendaftaranPengunjungOpen(),
             'total_pengunjung' => PendaftaranPengunjung::count(),
             'total_peneliti' => PendaftaranPeneliti::count(),
+            'total_magang' => PendaftaranMagang::count(),
             'user_pengunjung_count' => $userPengunjungCount,
             'user_peneliti_count' => $userPenelitiCount,
+            'user_magang_count' => $userMagangCount,
         ]);
     }
 
@@ -433,5 +438,227 @@ class PendaftaranController extends Controller
 
         $peneliti->delete();
         return redirect()->route('dashboard')->with('success', 'Pendaftaran peneliti berhasil dibatalkan.');
+    }
+
+    public function createMagang()
+    {
+        if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+        return view('landing.magang');
+    }
+
+    public function storeMagang(Request $request)
+    {
+        if (Auth::guest()) {
+            return redirect()->route('login')->with('error', 'Anda harus login untuk melakukan pendaftaran.');
+        }
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+        ]);
+
+        $request->validate([
+            'nama_lengkap'         => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'institusi'            => 'required|string|max:150',
+            'program_studi'        => 'nullable|string|max:100',
+            'jenjang'              => 'required|in:SMK,D3,D4,S1,S2,Umum',
+            'judul_magang'         => 'required|string|max:500',
+            'bidang_magang'        => 'required|string|max:500',
+            'tanggal_mulai'        => 'required|date|after_or_equal:today',
+            'tanggal_selesai'      => 'required|date|after_or_equal:tanggal_mulai',
+            'tujuan_magang'        => 'required|string',
+            'surat_izin_magang'    => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'cv'                   => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ], [
+            'nama_lengkap.regex'      => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'nomor_hp.regex'          => 'Nomor HP harus berupa angka kode negara yang valid.',
+            'tanggal_mulai.after_or_equal' => 'Tanggal mulai tidak boleh tanggal yang sudah lewat.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh kurang dari tanggal mulai.',
+            'surat_izin_magang.required' => 'Dokumen Surat Izin Magang wajib diunggah.',
+            'cv.required'             => 'Dokumen Curriculum Vitae (CV) wajib diunggah.',
+        ]);
+
+        $izinPath = $request->file('surat_izin_magang')->store('surat_pengantar', 'public');
+        $cvPath = $request->file('cv')->store('surat_pengantar', 'public');
+
+        $suratPengantarPaths = json_encode([
+            'surat_izin' => $izinPath,
+            'cv' => $cvPath
+        ]);
+
+        $pendaftaran = PendaftaranMagang::create([
+            'user_id'           => Auth::id(),
+            'nama_lengkap'      => $request->nama_lengkap,
+            'no_identitas'      => '0000000000000000',
+            'nomor_hp'          => $request->nomor_hp,
+            'institusi'         => $request->institusi,
+            'program_studi'     => $request->program_studi,
+            'jenjang'           => $request->jenjang,
+            'judul_magang'      => $request->judul_magang,
+            'bidang_magang'     => $request->bidang_magang,
+            'tanggal_mulai'     => $request->tanggal_mulai,
+            'tanggal_selesai'   => $request->tanggal_selesai,
+            'jumlah_anggota'    => 1,
+            'tujuan_magang'     => $request->tujuan_magang,
+            'surat_pengantar'   => $suratPengantarPaths,
+            'status'            => 'pending',
+        ]);
+
+        $adminEmail = env('ADMIN_EMAIL', config('mail.from.address'));
+        try {
+            Mail::to($adminEmail)->send(new PendaftaranMagangMail($pendaftaran));
+        } catch (\Exception $e) {
+            Log::error('Gagal mengirim email notifikasi magang: ' . $e->getMessage());
+        }
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Permohonan magang berhasil dikirim! Notifikasi telah dikirimkan ke admin. Menunggu konfirmasi.');
+    }
+
+    public function editMagang($id)
+    {
+        $magang = PendaftaranMagang::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($magang->status === 'disetujui') {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
+        }
+
+        return view('dashboard.magang.edit', compact('magang'));
+    }
+
+    public function updateMagang(Request $request, $id)
+    {
+        $magang = PendaftaranMagang::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($magang->status === 'disetujui') {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat diubah.');
+        }
+
+        $request->merge([
+            'nomor_hp' => str_replace([' ', '-', '(', ')', '/'], '', $request->nomor_hp),
+        ]);
+
+        $request->validate([
+            'nama_lengkap'         => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+            'nomor_hp'             => 'required|regex:/^\+?[0-9]{10,15}$/|max:20',
+            'institusi'            => 'required|string|max:150',
+            'program_studi'        => 'nullable|string|max:100',
+            'jenjang'              => 'required|in:SMK,D3,D4,S1,S2,Umum',
+            'judul_magang'         => 'required|string|max:500',
+            'bidang_magang'        => 'required|string|max:500',
+            'tanggal_mulai'        => 'required|date|after_or_equal:today',
+            'tanggal_selesai'      => 'required|date|after_or_equal:tanggal_mulai',
+            'tujuan_magang'        => 'required|string',
+            'surat_izin_magang'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'cv'                   => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ], [
+            'nama_lengkap.regex'      => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            'nomor_hp.regex'          => 'Nomor HP harus berupa angka kode negara yang valid.',
+            'tanggal_mulai.after_or_equal' => 'Tanggal mulai tidak boleh tanggal yang sudah lewat.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh kurang dari tanggal mulai.',
+        ]);
+
+        $existingPaths = json_decode($magang->surat_pengantar, true) ?? [];
+
+        $izinPath = $existingPaths['surat_izin'] ?? null;
+        if ($request->hasFile('surat_izin_magang')) {
+            if ($izinPath && $magang->status !== 'ditolak') {
+                Storage::disk('public')->delete($izinPath);
+            }
+            $izinPath = $request->file('surat_izin_magang')->store('surat_pengantar', 'public');
+        }
+
+        $cvPath = $existingPaths['cv'] ?? null;
+        if ($request->hasFile('cv')) {
+            if ($cvPath && $magang->status !== 'ditolak') {
+                Storage::disk('public')->delete($cvPath);
+            }
+            $cvPath = $request->file('cv')->store('surat_pengantar', 'public');
+        }
+
+        $suratPengantarPaths = json_encode([
+            'surat_izin' => $izinPath,
+            'cv' => $cvPath
+        ]);
+
+        if ($magang->status === 'ditolak') {
+            $newMagang = PendaftaranMagang::create([
+                'user_id'           => Auth::id(),
+                'nama_lengkap'      => $request->nama_lengkap,
+                'no_identitas'      => $magang->no_identitas ?? '0000000000000000',
+                'nomor_hp'          => $request->nomor_hp,
+                'institusi'         => $request->institusi,
+                'program_studi'     => $request->program_studi,
+                'jenjang'           => $request->jenjang,
+                'judul_magang'      => $request->judul_magang,
+                'bidang_magang'     => $request->bidang_magang,
+                'tanggal_mulai'     => $request->tanggal_mulai,
+                'tanggal_selesai'   => $request->tanggal_selesai,
+                'jumlah_anggota'    => $magang->jumlah_anggota ?? 1,
+                'tujuan_magang'     => $request->tujuan_magang,
+                'surat_pengantar'   => $suratPengantarPaths,
+                'status'            => 'pending',
+                'parent_id'         => $magang->id,
+            ]);
+
+            $adminEmail = env('ADMIN_EMAIL', config('mail.from.address'));
+            try {
+                Mail::to($adminEmail)->send(new PendaftaranMagangMail($newMagang));
+            } catch (\Exception $e) {
+                Log::error('Gagal mengirim email notifikasi magang: ' . $e->getMessage());
+            }
+
+            return redirect()->route('dashboard')->with('success', 'Permohonan magang baru berhasil dikirim dari perbaikan permohonan sebelumnya.');
+        } else {
+            $magang->update([
+                'nama_lengkap'      => $request->nama_lengkap,
+                'nomor_hp'          => $request->nomor_hp,
+                'institusi'         => $request->institusi,
+                'program_studi'     => $request->program_studi,
+                'jenjang'           => $request->jenjang,
+                'judul_magang'      => $request->judul_magang,
+                'bidang_magang'     => $request->bidang_magang,
+                'tanggal_mulai'     => $request->tanggal_mulai,
+                'tanggal_selesai'   => $request->tanggal_selesai,
+                'tujuan_magang'     => $request->tujuan_magang,
+                'surat_pengantar'   => $suratPengantarPaths,
+                'status'            => 'pending',
+            ]);
+
+            return redirect()->route('dashboard')->with('success', 'Pendaftaran magang berhasil diperbarui.');
+        }
+    }
+
+    public function destroyMagangUser($id)
+    {
+        $magang = PendaftaranMagang::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($magang->status === 'disetujui') {
+            return redirect()->route('dashboard')->with('error', 'Pendaftaran yang sudah disetujui tidak dapat dibatalkan.');
+        }
+
+        $existingPaths = json_decode($magang->surat_pengantar, true);
+        if (is_array($existingPaths)) {
+            if (!empty($existingPaths['surat_izin'])) {
+                Storage::disk('public')->delete($existingPaths['surat_izin']);
+            }
+            if (!empty($existingPaths['cv'])) {
+                Storage::disk('public')->delete($existingPaths['cv']);
+            }
+        }
+
+        $magang->delete();
+        return redirect()->route('dashboard')->with('success', 'Pendaftaran magang berhasil dibatalkan.');
     }
 }

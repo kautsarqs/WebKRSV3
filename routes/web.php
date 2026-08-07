@@ -46,6 +46,9 @@ Route::get('/api/pendaftaran/status', [PendaftaranController::class, 'getStatus'
 Route::get('/pendaftaran/peneliti', [PendaftaranController::class, 'createPeneliti'])->name('pendaftaran.peneliti');
 Route::post('/pendaftaran/peneliti', [PendaftaranController::class, 'storePeneliti'])->name('pendaftaran.peneliti.store');
 
+Route::get('/pendaftaran/magang', [PendaftaranController::class, 'createMagang'])->name('pendaftaran.magang');
+Route::post('/pendaftaran/magang', [PendaftaranController::class, 'storeMagang'])->name('pendaftaran.magang.store');
+
 Route::middleware('guest')->group(function () {
 
     Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -91,8 +94,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         $pengunjungRegistrations = \App\Models\PendaftaranPengunjung::with('editedVersion')->where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
         $penelitiRegistrations = \App\Models\PendaftaranPeneliti::with('editedVersion')->where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
+        $magangRegistrations = \App\Models\PendaftaranMagang::with('editedVersion')->where('user_id', Illuminate\Support\Facades\Auth::id())->latest()->get();
 
-        return view('dashboard.index', compact('pengunjungRegistrations', 'penelitiRegistrations'));
+        return view('dashboard.index', compact('pengunjungRegistrations', 'penelitiRegistrations', 'magangRegistrations'));
     })->name('dashboard');
 
     Route::get('/dashboard/pengunjung/{id}/edit', [PendaftaranController::class, 'editPengunjung'])->name('dashboard.pengunjung.edit');
@@ -103,6 +107,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/dashboard/peneliti/{id}', [PendaftaranController::class, 'updatePeneliti'])->name('dashboard.peneliti.update');
     Route::delete('/dashboard/peneliti/{id}', [PendaftaranController::class, 'destroyPenelitiUser'])->name('dashboard.peneliti.destroy');
 
+    Route::get('/dashboard/magang/{id}/edit', [PendaftaranController::class, 'editMagang'])->name('dashboard.magang.edit');
+    Route::patch('/dashboard/magang/{id}', [PendaftaranController::class, 'updateMagang'])->name('dashboard.magang.update');
+    Route::delete('/dashboard/magang/{id}', [PendaftaranController::class, 'destroyMagangUser'])->name('dashboard.magang.destroy');
+
     Route::middleware('admin')->prefix('admin')->group(function () {
 
         Route::get('/dashboard', function () {
@@ -112,6 +120,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             $totalPengunjung = \App\Models\PendaftaranPengunjung::where('status', 'disetujui')->sum('jumlah_rombongan') ?? 0;
             $totalPeneliti = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->count();
+            $totalMagang = \App\Models\PendaftaranMagang::where('status', 'disetujui')->count();
 
             $pengunjungTotal = \App\Models\PendaftaranPengunjung::count();
             $pendaftaranKunjunganOpen = \App\Models\Setting::isPendaftaranPengunjungOpen();
@@ -121,10 +130,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             $penelitiSelesai = \App\Models\PendaftaranPeneliti::where('status', 'disetujui')->where('status_penelitian', 'selesai')->count();
             $penelitiTolak = \App\Models\PendaftaranPeneliti::where('status', 'ditolak')->count();
 
+            $magangPending = \App\Models\PendaftaranMagang::where('status', 'pending')->count();
+            $magangSedang = \App\Models\PendaftaranMagang::where('status', 'disetujui')->where('status_magang', 'sedang')->count();
+            $magangSelesai = \App\Models\PendaftaranMagang::where('status', 'disetujui')->where('status_magang', 'selesai')->count();
+            $magangTolak = \App\Models\PendaftaranMagang::where('status', 'ditolak')->count();
+
             return view('admin.dashboard', compact(
-                'totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti',
+                'totalUsers', 'totalKoleksi', 'totalMapMarkers', 'totalPengunjung', 'totalPeneliti', 'totalMagang',
                 'pengunjungTotal', 'pendaftaranKunjunganOpen',
-                'penelitiPending', 'penelitiSedang', 'penelitiSelesai', 'penelitiTolak'
+                'penelitiPending', 'penelitiSedang', 'penelitiSelesai', 'penelitiTolak',
+                'magangPending', 'magangSedang', 'magangSelesai', 'magangTolak'
             ));
         })->name('admin.dashboard');
 
@@ -147,6 +162,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/peneliti/{id}/status', [PendaftaranManageController::class, 'updatePenelitiStatus'])->name('admin.peneliti.status');
         Route::patch('/peneliti/{id}/status-penelitian', [PendaftaranManageController::class, 'updatePenelitiStatusPenelitian'])->name('admin.peneliti.status-penelitian');
         Route::delete('/peneliti/{id}', [PendaftaranManageController::class, 'destroyPeneliti'])->name('admin.peneliti.destroy');
+
+        Route::get('/magang', [PendaftaranManageController::class, 'indexMagang'])->name('admin.magang.index');
+        Route::post('/magang/bulk-delete', [PendaftaranManageController::class, 'bulkDestroyMagang'])->name('admin.magang.bulk-delete');
+        Route::get('/magang/export/{format}', [PendaftaranManageController::class, 'exportMagang'])->name('admin.magang.export');
+        Route::patch('/magang/{id}/status', [PendaftaranManageController::class, 'updateMagangStatus'])->name('admin.magang.status');
+        Route::patch('/magang/{id}/status-magang', [PendaftaranManageController::class, 'updateMagangStatusMagang'])->name('admin.magang.status-magang');
+        Route::delete('/magang/{id}', [PendaftaranManageController::class, 'destroyMagang'])->name('admin.magang.destroy');
     });
 });
 
