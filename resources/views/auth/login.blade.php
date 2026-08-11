@@ -29,18 +29,42 @@
                 <p class="text-zinc-300 mt-2 text-sm">Masuk ke akun Kebun Raya Sambas</p>
             </div>
 
+            @if (session('status'))
+                <div class="mb-6 p-4 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl text-emerald-300 text-sm shadow-md">
+                    <div class="flex items-center gap-2 font-semibold mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-emerald-400 flex-shrink-0">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Informasi</span>
+                    </div>
+                    <p class="text-xs opacity-95 pl-1 leading-relaxed">{{ session('status') }}</p>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-6 p-4 bg-red-500/20 border border-red-500/40 rounded-2xl text-red-300 text-sm shadow-md">
+                    <div class="flex items-center gap-2 font-semibold mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                        </svg>
+                        <span>Perhatian</span>
+                    </div>
+                    <p class="text-xs opacity-95 pl-1 leading-relaxed">{{ session('error') }}</p>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('login.store') }}" class="space-y-6" novalidate>
                 @csrf
 
                 @if ($errors->any())
-                    <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
-                        <div class="flex items-center gap-2 font-semibold mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
+                    <div class="p-4 bg-red-500/20 border border-red-500/40 rounded-2xl text-red-300 text-sm shadow-md">
+                        <div class="flex items-center gap-2 font-bold mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                             </svg>
                             <span>Gagal Masuk</span>
                         </div>
-                        <ul class="list-disc list-inside space-y-0.5 text-xs opacity-90 pl-1">
+                        <ul class="list-disc list-inside space-y-1 text-xs opacity-95 pl-1">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach

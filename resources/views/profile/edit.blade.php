@@ -99,15 +99,17 @@
                     @csrf
                     @method('put')
 
-                    @if(!is_null($user->password))
+                    @if(!$user->google_id)
                     <div class="space-y-2">
                         <label for="current_password" class="block text-sm font-bold text-zinc-700 font-space ml-1">Password Saat Ini</label>
                         <input id="current_password" name="current_password" type="password" autocomplete="current-password"
                             class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm" />
-                        @error('current_password') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
+                        @error('current_password') <span class="text-red-500 text-xs ml-1 font-medium block">{{ $message }}</span> @enderror
                     </div>
                     @else
-                        <input type="hidden" name="current_password" value="password_acak">
+                        <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-800 text-xs font-medium">
+                            💡 Akun ini terhubung dengan Google. Anda dapat menetapkan password di bawah ini agar dapat login manual dengan email & password (selain tombol Google).
+                        </div>
                     @endif
 
                     <div class="space-y-2">

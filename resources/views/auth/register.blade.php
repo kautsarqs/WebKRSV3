@@ -91,6 +91,7 @@
                             </svg>
                         </button>
                     </div>
+                    <p class="text-[11px] text-zinc-400 mt-1 pl-1">Minimal 8 karakter, harus mengandung kombinasi huruf dan angka.</p>
                     @error('password')
                         <p class="text-xs text-red-400 mt-1 pl-1 font-medium font-inter">{{ $message }}</p>
                     @enderror

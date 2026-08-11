@@ -68,15 +68,31 @@ class ProfileController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+        $user = $request->user();
+
+        $rules = [
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/[a-zA-Z]/', 'regex:/[0-9]/'],
+        ];
+
+        if (!$user->google_id) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+
+        $messages = [
+            'current_password.required' => 'Password saat ini wajib diisi.',
+            'current_password.current_password' => 'Password saat ini tidak sesuai.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password minimal terdiri dari 8 karakter.',
+            'password.regex' => 'Password harus berupa kombinasi huruf dan angka.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $user->update([
+            'password' => Hash::make($request->password),
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        return back()->with('status', 'password-updated');
+        return back()->with('success', 'Password Anda berhasil diperbarui! Anda kini juga dapat login secara manual menggunakan email dan password baru ini.');
     }
 }

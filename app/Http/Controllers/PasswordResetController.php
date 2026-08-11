@@ -11,7 +11,6 @@ use App\Models\User;
 
 class PasswordResetController extends Controller
 {
-
     public function create()
     {
         return view('auth.forgot-password');
@@ -19,17 +18,31 @@ class PasswordResetController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
+
         $request->validate([
             'email' => ['required', 'email'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = User::whereRaw('LOWER(email) = ?', [strtolower(trim($request->email))])->first();
 
-        return $status === Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withErrors(['email' => __($status)]);
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tersebut tidak terdaftar dalam sistem.'])->withInput();
+        }
+
+        // Pass exact case of email in DB to Password broker
+        $status = Password::sendResetLink(['email' => $user->email]);
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Tautan atur ulang kata sandi telah dikirim ke email Anda! Silakan cek kotak masuk (atau folder Spam) Anda.');
+        }
+
+        return back()->withErrors(['email' => 'Gagal mengirim tautan atur ulang kata sandi. Silakan coba lagi nanti.'])->withInput();
     }
 
     public function edit(Request $request, $token)
@@ -39,11 +52,27 @@ class PasswordResetController extends Controller
 
     public function update(Request $request)
     {
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
+
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'email' => ['required', 'email'],
+            'password' => ['required', 'min:8', 'confirmed', 'regex:/[a-zA-Z]/', 'regex:/[0-9]/'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password minimal terdiri dari 8 karakter.',
+            'password.regex' => 'Password harus berupa kombinasi huruf dan angka.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
         ]);
+
+        $user = User::whereRaw('LOWER(email) = ?', [strtolower(trim($request->email))])->first();
+        if ($user) {
+            $request->merge(['email' => $user->email]);
+        }
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -58,8 +87,17 @@ class PasswordResetController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withErrors(['email' => [__($status)]]);
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('status', 'Kata sandi Anda berhasil diperbarui! Anda kini dapat masuk menggunakan kata sandi baru Anda.');
+        }
+
+        $errorMsg = 'Gagal memperbarui kata sandi.';
+        if ($status === Password::INVALID_TOKEN) {
+            $errorMsg = 'Tautan atur ulang kata sandi tidak valid atau telah kedaluwarsa. Silakan minta tautan baru.';
+        } elseif ($status === Password::INVALID_USER) {
+            $errorMsg = 'Pengguna dengan email tersebut tidak ditemukan.';
+        }
+
+        return back()->withErrors(['email' => $errorMsg])->withInput();
     }
 }

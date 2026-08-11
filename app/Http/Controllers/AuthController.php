@@ -64,7 +64,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'password' => ['required', 'min:8', 'confirmed', 'regex:/[a-zA-Z]/', 'regex:/[0-9]/'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.string' => 'Nama harus berupa teks.',
@@ -75,8 +75,9 @@ class AuthController extends Controller
             'email.max' => 'Email maksimal 150 karakter.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'password.required' => 'Password wajib diisi.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'password.min' => 'Password minimal terdiri dari 8 karakter.',
+            'password.regex' => 'Password harus berupa kombinasi huruf dan angka.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         $user = User::create([
