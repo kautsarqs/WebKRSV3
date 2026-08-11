@@ -18,6 +18,9 @@ class AuthController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
 
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -28,10 +31,14 @@ class AuthController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $email = strtolower(trim($credentials['email']));
+        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
+            if ($user->role === 'admin') {
                 return redirect()->intended('/admin/dashboard');
             }
 
@@ -50,6 +57,10 @@ class AuthController extends Controller
 
     public function storeRegister(Request $request)
     {
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
@@ -68,12 +79,12 @@ class AuthController extends Controller
             'password.min' => 'Password minimal terdiri dari 8 karakter.',
         ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'role' => 'user',
-        'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-    ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => strtolower(trim($request->email)),
+            'role' => 'user',
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
 
     \Illuminate\Support\Facades\Auth::login($user);
 

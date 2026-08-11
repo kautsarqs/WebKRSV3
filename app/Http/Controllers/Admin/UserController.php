@@ -36,6 +36,10 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:150', 'unique:'.User::class],
@@ -45,7 +49,7 @@ class UserController extends Controller
 
         User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower(trim($request->email)),
             'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
@@ -64,6 +68,10 @@ class UserController extends Controller
             return redirect()->back()->withInput()->with('error', 'Anda tidak dapat mengubah role akun Anda sendiri.');
         }
 
+        if ($request->has('email')) {
+            $request->merge(['email' => strtolower(trim($request->email))]);
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email,'.$user->id],
@@ -73,7 +81,7 @@ class UserController extends Controller
 
         $data = [
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower(trim($request->email)),
             'role' => $request->role,
         ];
 
