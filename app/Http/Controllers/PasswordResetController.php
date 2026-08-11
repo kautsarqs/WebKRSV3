@@ -22,27 +22,31 @@ class PasswordResetController extends Controller
             $request->merge(['email' => strtolower(trim($request->email))]);
         }
 
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'email' => ['required', 'email'],
         ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->route('password.request')->withErrors($validator)->withInput();
+        }
+
         $user = User::whereRaw('LOWER(email) = ?', [strtolower(trim($request->email))])->first();
 
         if (!$user) {
-            return back()->withErrors(['email' => 'Email tersebut tidak terdaftar dalam sistem.'])->withInput();
+            return redirect()->route('password.request')->withErrors(['email' => 'Email tersebut tidak terdaftar dalam sistem.'])->withInput();
         }
 
         // Pass exact case of email in DB to Password broker
         $status = Password::sendResetLink(['email' => $user->email]);
 
         if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', 'Tautan atur ulang kata sandi telah dikirim ke email Anda! Silakan cek kotak masuk (atau folder Spam) Anda.');
+            return redirect()->route('password.request')->with('status', 'Tautan atur ulang kata sandi telah dikirim ke email Anda! Silakan cek kotak masuk (atau folder Spam) Anda.');
         }
 
-        return back()->withErrors(['email' => 'Gagal mengirim tautan atur ulang kata sandi. Silakan coba lagi nanti.'])->withInput();
+        return redirect()->route('password.request')->withErrors(['email' => 'Gagal mengirim tautan atur ulang kata sandi. Silakan coba lagi nanti.'])->withInput();
     }
 
     public function edit(Request $request, $token)
@@ -56,7 +60,7 @@ class PasswordResetController extends Controller
             $request->merge(['email' => strtolower(trim($request->email))]);
         }
 
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'token' => 'required',
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8', 'confirmed', 'regex:/[a-zA-Z]/', 'regex:/[0-9]/'],
@@ -68,6 +72,10 @@ class PasswordResetController extends Controller
             'password.regex' => 'Password harus berupa kombinasi huruf dan angka.',
             'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('password.reset', ['token' => $request->token])->withErrors($validator)->withInput();
+        }
 
         $user = User::whereRaw('LOWER(email) = ?', [strtolower(trim($request->email))])->first();
         if ($user) {
@@ -98,6 +106,6 @@ class PasswordResetController extends Controller
             $errorMsg = 'Pengguna dengan email tersebut tidak ditemukan.';
         }
 
-        return back()->withErrors(['email' => $errorMsg])->withInput();
+        return redirect()->route('password.reset', ['token' => $request->token])->withErrors(['email' => $errorMsg])->withInput();
     }
 }

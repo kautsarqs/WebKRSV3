@@ -22,7 +22,7 @@ class AuthController extends Controller
             $request->merge(['email' => strtolower(trim($request->email))]);
         }
 
-        $credentials = $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'email' => ['required', 'email'],
             'password' => ['required'],
         ], [
@@ -31,10 +31,14 @@ class AuthController extends Controller
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        $email = strtolower(trim($credentials['email']));
+        if ($validator->fails()) {
+            return redirect()->route('login')->withErrors($validator)->withInput($request->only('email'));
+        }
+
+        $email = strtolower(trim($request->email));
         $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+        if ($user && Hash::check($request->password, $user->password)) {
             Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
@@ -45,9 +49,9 @@ class AuthController extends Controller
             return redirect()->intended('/dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ])->onlyInput('email');
+        return redirect()->route('login')->withErrors([
+            'email' => 'Email atau password yang Anda masukkan salah.',
+        ])->withInput($request->only('email'));
     }
 
     public function register()
@@ -61,7 +65,7 @@ class AuthController extends Controller
             $request->merge(['email' => strtolower(trim($request->email))]);
         }
 
-        $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users'],
             'password' => ['required', 'min:8', 'confirmed', 'regex:/[a-zA-Z]/', 'regex:/[0-9]/'],
@@ -79,6 +83,10 @@ class AuthController extends Controller
             'password.regex' => 'Password harus berupa kombinasi huruf dan angka.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('register')->withErrors($validator)->withInput();
+        }
 
         $user = User::create([
             'name' => $request->name,
