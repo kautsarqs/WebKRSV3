@@ -207,14 +207,15 @@
                             <img src="{{ \Illuminate\Support\Facades\Storage::url($map->photo) }}" alt="{{ $map->name }}" class="w-full h-full object-cover">
                         </div>
                     @endif
-                    <input id="photo" type="file" name="photo" accept="image/*"
+                    <input id="photo" type="file" name="photo" accept="image/jpeg,image/png,image/jpg,image/webp,image/avif"
+                        onchange="validateAndDisplayFileSize(this, 'map-photo-info', 10)"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
-                    @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF, WEBP, AVIF (maks. 10MB)</p>
+                    @error('photo') <span class="text-xs text-red-500 font-medium ml-1 block">{{ $message }}</span> @enderror
+                    <p id="map-photo-info" class="text-xs text-zinc-400 ml-1 transition-colors">Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. 10MB)</p>
                 </div>
 
                 <div class="pt-6 flex justify-end">
-                    <button type="submit" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
+                    <button type="submit" id="submit-btn" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
                         Perbarui Marker
                     </button>
                 </div>
@@ -237,6 +238,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="{{ asset('js/offline-maps.js') }}"></script>
     <script>
+        function validateAndDisplayFileSize(inputEl, infoElId, maxMb = 10) {
+            const file = inputEl.files[0];
+            const infoEl = document.getElementById(infoElId);
+            const submitBtn = document.getElementById('submit-btn');
+            if (!infoEl) return;
+
+            const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+            if (!file) {
+                infoEl.innerHTML = `Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. ${maxMb}MB)`;
+                infoEl.className = "text-xs text-zinc-400 ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            const isSizeExceeded = parseFloat(sizeMb) > maxMb;
+            const isInvalidExt = !allowedExts.includes(ext) || ext === 'gif' || ext === 'svg';
+
+            if (isInvalidExt) {
+                infoEl.innerHTML = `<span class="font-bold">❌ Format .${ext.toUpperCase()} tidak didukung!</span> Hanya foto: JPG, JPEG, PNG, WEBP, AVIF (tidak boleh GIF/SVG).`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+                inputEl.value = "";
+                if (submitBtn) submitBtn.disabled = false;
+            } else if (isSizeExceeded) {
+                infoEl.innerHTML = `<span class="font-bold">⚠️ Ukuran file Anda: ${sizeMb} MB (Melebihi batas maksimal ${maxMb} MB!)</span>`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = true;
+            } else {
+                infoEl.innerHTML = `✅ Ukuran file: <span class="font-bold">${sizeMb} MB</span> / Maks. ${maxMb} MB (${file.name})`;
+                infoEl.className = "text-xs text-emerald-600 font-bold ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+
         document.getElementById('color').addEventListener('input', function(e) {
             document.getElementById('color-text').value = e.target.value;
         });

@@ -31,7 +31,17 @@ class KoleksiController extends Controller
             ->where('name', 'not ilike', '%batas%')
             ->orderBy('name', 'asc')
             ->get();
-        return view('admin.koleksi.create', compact('categories', 'vaks'));
+
+        $taxonomySuggestions = [
+            'famili' => Koleksi::whereNotNull('famili')->where('famili', '!=', '')->distinct()->orderBy('famili')->pluck('famili'),
+            'genus' => Koleksi::whereNotNull('genus')->where('genus', '!=', '')->distinct()->orderBy('genus')->pluck('genus'),
+            'order' => Koleksi::whereNotNull('order')->where('order', '!=', '')->distinct()->orderBy('order')->pluck('order'),
+            'kelas' => Koleksi::whereNotNull('kelas')->where('kelas', '!=', '')->distinct()->orderBy('kelas')->pluck('kelas'),
+            'divisi' => Koleksi::whereNotNull('divisi')->where('divisi', '!=', '')->distinct()->orderBy('divisi')->pluck('divisi'),
+            'kerajaan' => Koleksi::whereNotNull('kerajaan')->where('kerajaan', '!=', '')->distinct()->orderBy('kerajaan')->pluck('kerajaan'),
+        ];
+
+        return view('admin.koleksi.create', compact('categories', 'vaks', 'taxonomySuggestions'));
     }
 
     public function store(Request $request)
@@ -39,7 +49,7 @@ class KoleksiController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:150',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'map_marker_id' => 'nullable|exists:map_markers,id',
             'kerajaan' => 'nullable|string|max:50',
             'divisi' => 'nullable|string|max:50',
@@ -50,6 +60,9 @@ class KoleksiController extends Controller
             'spesies' => 'nullable|string|max:100',
             'otoritas_1' => 'nullable|string|max:100',
             'otoritas_2' => 'nullable|string|max:100',
+        ], [
+            'photo.mimes' => 'Format foto harus berupa JPEG, PNG, JPG, WEBP, atau AVIF (GIF dan SVG tidak diperbolehkan).',
+            'photo.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         DB::beginTransaction();
@@ -98,7 +111,17 @@ class KoleksiController extends Controller
             ->where('name', 'not ilike', '%batas%')
             ->orderBy('name', 'asc')
             ->get();
-        return view('admin.koleksi.edit', compact('koleksi', 'vaks'));
+
+        $taxonomySuggestions = [
+            'famili' => Koleksi::whereNotNull('famili')->where('famili', '!=', '')->distinct()->orderBy('famili')->pluck('famili'),
+            'genus' => Koleksi::whereNotNull('genus')->where('genus', '!=', '')->distinct()->orderBy('genus')->pluck('genus'),
+            'order' => Koleksi::whereNotNull('order')->where('order', '!=', '')->distinct()->orderBy('order')->pluck('order'),
+            'kelas' => Koleksi::whereNotNull('kelas')->where('kelas', '!=', '')->distinct()->orderBy('kelas')->pluck('kelas'),
+            'divisi' => Koleksi::whereNotNull('divisi')->where('divisi', '!=', '')->distinct()->orderBy('divisi')->pluck('divisi'),
+            'kerajaan' => Koleksi::whereNotNull('kerajaan')->where('kerajaan', '!=', '')->distinct()->orderBy('kerajaan')->pluck('kerajaan'),
+        ];
+
+        return view('admin.koleksi.edit', compact('koleksi', 'vaks', 'taxonomySuggestions'));
     }
 
     public function update(Request $request, Koleksi $koleksi)
@@ -106,7 +129,7 @@ class KoleksiController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:150',
             'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:10240',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp,avif|max:10240',
             'map_marker_id' => 'nullable|exists:map_markers,id',
             'kerajaan' => 'nullable|string|max:50',
             'divisi' => 'nullable|string|max:50',
@@ -117,6 +140,9 @@ class KoleksiController extends Controller
             'spesies' => 'nullable|string|max:100',
             'otoritas_1' => 'nullable|string|max:100',
             'otoritas_2' => 'nullable|string|max:100',
+        ], [
+            'photo.mimes' => 'Format foto harus berupa JPEG, PNG, JPG, WEBP, atau AVIF (GIF dan SVG tidak diperbolehkan).',
+            'photo.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         DB::beginTransaction();

@@ -38,13 +38,21 @@
                 <div class="space-y-2">
                     <label for="role" class="block text-sm font-bold text-zinc-700 font-space ml-1">Role Pengguna</label>
                     <div class="relative">
-                        <select name="role" id="role" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
-                            <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User Biasa</option>
-                            <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrator</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
+                        @if($user->id === auth()->id())
+                            <input type="hidden" name="role" value="{{ $user->role }}" />
+                            <select disabled id="role" class="w-full px-4 py-3 bg-zinc-100 border border-zinc-300 rounded-xl text-zinc-500 shadow-sm appearance-none cursor-not-allowed">
+                                <option value="admin" selected>Administrator (Akun Anda)</option>
+                            </select>
+                            <p class="text-xs text-amber-600 font-medium ml-1 mt-1">Anda tidak dapat mengubah role akun Anda sendiri.</p>
+                        @else
+                            <select name="role" id="role" class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm appearance-none cursor-pointer">
+                                <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User Biasa</option>
+                                <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrator</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-zinc-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

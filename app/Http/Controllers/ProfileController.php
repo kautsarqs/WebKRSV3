@@ -21,10 +21,10 @@ class ProfileController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email,' . $request->user()->id],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,avif', 'max:2048'],
         ], [
             'avatar.image' => 'File harus berupa gambar.',
-            'avatar.mimes' => 'Format gambar harus jpeg, png, jpg, gif, atau webp.',
+            'avatar.mimes' => 'Format gambar harus jpeg, png, jpg, webp, atau avif (GIF dan SVG tidak diperbolehkan).',
             'avatar.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 

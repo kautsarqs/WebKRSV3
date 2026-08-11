@@ -48,47 +48,81 @@
                 </div>
 
                 <div class="p-6 border border-zinc-200 rounded-2xl bg-zinc-50/50 space-y-4">
-                    <h4 class="text-sm font-bold text-zinc-800 font-space border-b border-zinc-200 pb-2">Klasifikasi Taksonomi Tumbuhan</h4>
+                    <div class="flex items-center justify-between border-b border-zinc-200 pb-2">
+                        <h4 class="text-sm font-bold text-zinc-800 font-space">Klasifikasi Taksonomi Tumbuhan</h4>
+                        <span class="text-[10px] text-zinc-400 font-inter">Ketik atau pilih dari daftar yang pernah dibuat</span>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="space-y-1">
                             <label for="kerajaan" class="block text-xs font-bold text-zinc-600 font-space ml-1">Kerajaan (Kingdom)</label>
-                            <input id="kerajaan" type="text" name="kerajaan" value="{{ old('kerajaan', $koleksi->kerajaan) }}"
+                            <input id="kerajaan" type="text" name="kerajaan" value="{{ old('kerajaan', $koleksi->kerajaan) }}" list="list-kerajaan"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Plantae" />
+                            <datalist id="list-kerajaan">
+                                @foreach($taxonomySuggestions['kerajaan'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('kerajaan') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-1">
                             <label for="divisi" class="block text-xs font-bold text-zinc-600 font-space ml-1">Divisi</label>
-                            <input id="divisi" type="text" name="divisi" value="{{ old('divisi', $koleksi->divisi) }}"
+                            <input id="divisi" type="text" name="divisi" value="{{ old('divisi', $koleksi->divisi) }}" list="list-divisi"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Streptophyta" />
+                            <datalist id="list-divisi">
+                                @foreach($taxonomySuggestions['divisi'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('divisi') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-1">
                             <label for="kelas" class="block text-xs font-bold text-zinc-600 font-space ml-1">Kelas</label>
-                            <input id="kelas" type="text" name="kelas" value="{{ old('kelas', $koleksi->kelas) }}"
+                            <input id="kelas" type="text" name="kelas" value="{{ old('kelas', $koleksi->kelas) }}" list="list-kelas"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Equisetopsida" />
+                            <datalist id="list-kelas">
+                                @foreach($taxonomySuggestions['kelas'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('kelas') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-1">
                             <label for="order" class="block text-xs font-bold text-zinc-600 font-space ml-1">Order / Ordo</label>
-                            <input id="order" type="text" name="order" value="{{ old('order', $koleksi->order) }}"
+                            <input id="order" type="text" name="order" value="{{ old('order', $koleksi->order) }}" list="list-order"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Fagales" />
+                            <datalist id="list-order">
+                                @foreach($taxonomySuggestions['order'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('order') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-1">
                             <label for="famili" class="block text-xs font-bold text-zinc-600 font-space ml-1">Famili</label>
-                            <input id="famili" type="text" name="famili" value="{{ old('famili', $koleksi->famili) }}"
+                            <input id="famili" type="text" name="famili" value="{{ old('famili', $koleksi->famili) }}" list="list-famili"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Casuarinaceae" />
+                            <datalist id="list-famili">
+                                @foreach($taxonomySuggestions['famili'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('famili') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="space-y-1">
                             <label for="genus" class="block text-xs font-bold text-zinc-600 font-space ml-1">Genus</label>
-                            <input id="genus" type="text" name="genus" value="{{ old('genus', $koleksi->genus) }}"
+                            <input id="genus" type="text" name="genus" value="{{ old('genus', $koleksi->genus) }}" list="list-genus"
                                 class="taxonomy-input w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: Gymnostoma" />
+                            <datalist id="list-genus">
+                                @foreach($taxonomySuggestions['genus'] ?? [] as $item)
+                                    <option value="{{ $item }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('genus') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
@@ -108,7 +142,7 @@
                             @error('otoritas_1') <span class="text-[10px] text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
                         </div>
 
-                        <div class="space-y-1">
+                        <div class="space-y-1 md:col-span-2">
                             <label for="otoritas_2" class="block text-xs font-bold text-zinc-600 font-space ml-1">Otoritas 2 (Di Luar Kurung)</label>
                             <input id="otoritas_2" type="text" name="otoritas_2" value="{{ old('otoritas_2', $koleksi->otoritas_2) }}"
                                 class="w-full px-3 py-2.5 bg-white border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm" placeholder="Contoh: L.A.S. Johnson" />
@@ -139,14 +173,15 @@
                             <img src="{{ \Illuminate\Support\Facades\Storage::url($koleksi->photo) }}" alt="{{ $koleksi->title }}" class="w-full h-full object-cover">
                         </div>
                     @endif
-                    <input id="photo" type="file" name="photo" accept="image/*"
+                    <input id="photo" type="file" name="photo" accept="image/jpeg,image/png,image/jpg,image/webp,image/avif"
+                        onchange="validateAndDisplayFileSize(this, 'photo-size-info', 10)"
                         class="w-full px-4 py-3 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer" />
-                    @error('photo') <span class="text-xs text-red-500 font-medium ml-1">{{ $message }}</span> @enderror
-                    <p class="text-xs text-zinc-400 ml-1">Format: JPEG, PNG, JPG, GIF, WEBP, AVIF (maks. 10MB)</p>
+                    @error('photo') <span class="text-xs text-red-500 font-medium ml-1 block">{{ $message }}</span> @enderror
+                    <p id="photo-size-info" class="text-xs text-zinc-400 ml-1 transition-colors">Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. 10MB)</p>
                 </div>
 
                 <div class="pt-6 flex justify-end">
-                    <button type="submit" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
+                    <button type="submit" id="submit-btn" class="px-8 py-3.5 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] font-space shadow-lg shadow-zinc-900/20">
                         Perbarui Koleksi
                     </button>
                 </div>
@@ -155,6 +190,43 @@
     </div>
 
     <script>
+        function validateAndDisplayFileSize(inputEl, infoElId, maxMb = 10) {
+            const file = inputEl.files[0];
+            const infoEl = document.getElementById(infoElId);
+            const submitBtn = document.getElementById('submit-btn');
+            if (!infoEl) return;
+
+            const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+            if (!file) {
+                infoEl.innerHTML = `Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. ${maxMb}MB)`;
+                infoEl.className = "text-xs text-zinc-400 ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            const isSizeExceeded = parseFloat(sizeMb) > maxMb;
+            const isInvalidExt = !allowedExts.includes(ext) || ext === 'gif' || ext === 'svg';
+
+            if (isInvalidExt) {
+                infoEl.innerHTML = `<span class="font-bold">❌ Format .${ext.toUpperCase()} tidak didukung!</span> Hanya foto: JPG, JPEG, PNG, WEBP, AVIF (tidak boleh GIF/SVG).`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+                inputEl.value = "";
+                if (submitBtn) submitBtn.disabled = false;
+            } else if (isSizeExceeded) {
+                infoEl.innerHTML = `<span class="font-bold">⚠️ Ukuran file Anda: ${sizeMb} MB (Melebihi batas maksimal ${maxMb} MB!)</span>`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = true;
+            } else {
+                infoEl.innerHTML = `✅ Ukuran file: <span class="font-bold">${sizeMb} MB</span> / Maks. ${maxMb} MB (${file.name})`;
+                infoEl.className = "text-xs text-emerald-600 font-bold ml-1 transition-colors";
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+
         document.querySelectorAll('.taxonomy-input').forEach(input => {
             input.addEventListener('input', function(e) {
                 const start = this.selectionStart;

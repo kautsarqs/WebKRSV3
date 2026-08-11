@@ -50,7 +50,7 @@ class MapController extends Controller
             'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:10240'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,avif', 'max:10240'],
         ]);
 
         $data = $request->all();
@@ -87,7 +87,7 @@ class MapController extends Controller
             'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:10240'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,avif', 'max:10240'],
         ]);
 
         $data = $request->except(['photo']);
@@ -140,7 +140,7 @@ class MapController extends Controller
             'type' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
             'color' => ['required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp,avif', 'max:10240'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,avif', 'max:10240'],
         ]);
 
         $data = $request->all();

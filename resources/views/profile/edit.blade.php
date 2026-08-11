@@ -47,9 +47,11 @@
 
                     <div class="space-y-2">
                         <label for="avatar" class="block text-sm font-bold text-zinc-700 font-space ml-1">Foto Profil</label>
-                        <input id="avatar" name="avatar" type="file" accept="image/*"
+                        <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/jpg,image/webp,image/avif"
+                            onchange="validateAndDisplayFileSize(this, 'avatar-size-info', 2)"
                             class="w-full px-4 py-2 bg-white/50 border border-zinc-300 rounded-xl focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all outline-none text-zinc-800 shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 cursor-pointer" />
-                        @error('avatar') <span class="text-red-500 text-xs ml-1 font-medium">{{ $message }}</span> @enderror
+                        @error('avatar') <span class="text-red-500 text-xs ml-1 font-medium block">{{ $message }}</span> @enderror
+                        <p id="avatar-size-info" class="text-xs text-zinc-400 ml-1 transition-colors">Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. 2MB)</p>
                     </div>
 
                     <div class="space-y-2">
@@ -131,4 +133,38 @@
 
         </div>
     </div>
+
+    <script>
+        function validateAndDisplayFileSize(inputEl, infoElId, maxMb = 2) {
+            const file = inputEl.files[0];
+            const infoEl = document.getElementById(infoElId);
+            if (!infoEl) return;
+
+            const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+
+            if (!file) {
+                infoEl.innerHTML = `Format: JPG, JPEG, PNG, WEBP, AVIF (Maks. ${maxMb}MB)`;
+                infoEl.className = "text-xs text-zinc-400 ml-1 transition-colors";
+                return;
+            }
+
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            const ext = file.name.split('.').pop().toLowerCase();
+
+            const isSizeExceeded = parseFloat(sizeMb) > maxMb;
+            const isInvalidExt = !allowedExts.includes(ext) || ext === 'gif' || ext === 'svg';
+
+            if (isInvalidExt) {
+                infoEl.innerHTML = `<span class="font-bold">❌ Format .${ext.toUpperCase()} tidak didukung!</span> Hanya foto: JPG, JPEG, PNG, WEBP, AVIF (tidak boleh GIF/SVG).`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+                inputEl.value = "";
+            } else if (isSizeExceeded) {
+                infoEl.innerHTML = `<span class="font-bold">⚠️ Ukuran file Anda: ${sizeMb} MB (Melebihi batas maksimal ${maxMb} MB!)</span>`;
+                infoEl.className = "text-xs text-red-600 font-bold ml-1 transition-colors";
+            } else {
+                infoEl.innerHTML = `✅ Ukuran file: <span class="font-bold">${sizeMb} MB</span> / Maks. ${maxMb} MB (${file.name})`;
+                infoEl.className = "text-xs text-emerald-600 font-bold ml-1 transition-colors";
+            }
+        }
+    </script>
 </x-dashboard-layout>

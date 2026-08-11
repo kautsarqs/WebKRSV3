@@ -60,6 +60,10 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if ($user->id === auth()->id() && $request->role !== $user->role) {
+            return redirect()->back()->withInput()->with('error', 'Anda tidak dapat mengubah role akun Anda sendiri.');
+        }
+
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email,'.$user->id],
@@ -84,9 +88,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+            return redirect()->route('admin.users.index')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         $user->delete();
