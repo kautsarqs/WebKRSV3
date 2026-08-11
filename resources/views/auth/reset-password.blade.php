@@ -34,33 +34,23 @@
                 @csrf
                 <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-                @if ($errors->any())
-                    <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm mb-4">
-                        <div class="flex items-center gap-2 font-semibold mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                            </svg>
-                            <span>Terdapat Kesalahan</span>
-                        </div>
-                        <ul class="list-disc list-inside space-y-0.5 text-xs opacity-90 pl-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <div class="space-y-2">
                     <label for="email" class="block text-sm font-bold text-zinc-300 font-space pl-1">Email</label>
                     <input id="email" type="email" name="email" value="{{ old('email', $request->email) }}" required readonly
-                        class="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl outline-none text-white/70 shadow-inner cursor-not-allowed" />
+                        class="w-full px-5 py-3.5 bg-white/5 border @error('email') border-red-500 ring-1 ring-red-500 @else border-white/10 @enderror rounded-2xl outline-none text-white/70 shadow-inner cursor-not-allowed" />
+                    @error('email')
+                        <div class="flex items-center gap-1.5 text-xs text-red-400 font-medium pl-1 mt-1 font-inter">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="space-y-2" x-data="{ show: false }">
                     <label for="password" class="block text-sm font-bold text-zinc-300 font-space pl-1">Kata Sandi Baru</label>
                     <div class="relative">
                         <input id="password" x-bind:type="show ? 'text' : 'password'" name="password" required
-                            class="w-full px-5 py-3.5 bg-white/5 border @error('password') border-red-500/80 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
+                            class="w-full px-5 py-3.5 bg-white/5 border @error('password') border-red-500 ring-1 ring-red-500 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
 
                         <button type="button" @click="show = !show" class="absolute right-4 top-3.5 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -72,13 +62,20 @@
                             </svg>
                         </button>
                     </div>
+                    <p class="text-[11px] text-zinc-400 mt-1 pl-1">Minimal 8 karakter, harus mengandung kombinasi huruf dan angka.</p>
+                    @error('password')
+                        <div class="flex items-center gap-1.5 text-xs text-red-400 font-medium pl-1 mt-1.5 font-inter">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="space-y-2" x-data="{ show: false }">
                     <label for="password_confirmation" class="block text-sm font-bold text-zinc-300 font-space pl-1">Konfirmasi Sandi Baru</label>
                     <div class="relative">
                         <input id="password_confirmation" x-bind:type="show ? 'text' : 'password'" name="password_confirmation" required
-                            class="w-full px-5 py-3.5 bg-white/5 border border-white/10 focus:ring-emerald-500 focus:border-emerald-500 rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
+                            class="w-full px-5 py-3.5 bg-white/5 border @error('password_confirmation') border-red-500 ring-1 ring-red-500 focus:ring-red-500 focus:border-red-500 @else border-white/10 focus:ring-emerald-500 focus:border-emerald-500 @enderror rounded-2xl transition-all outline-none text-white shadow-inner pr-12" />
 
                         <button type="button" @click="show = !show" class="absolute right-4 top-3.5 text-zinc-400 hover:text-zinc-200 transition-colors focus:outline-none">
                             <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -90,6 +87,12 @@
                             </svg>
                         </button>
                     </div>
+                    @error('password_confirmation')
+                        <div class="flex items-center gap-1.5 text-xs text-red-400 font-medium pl-1 mt-1.5 font-inter">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="pt-2">
