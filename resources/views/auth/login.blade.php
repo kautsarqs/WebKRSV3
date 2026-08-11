@@ -30,6 +30,26 @@
             </div>
 
             @if (session('status'))
+                <!-- Modal Popup Status Success -->
+                <div x-data="{ open: true }" x-show="open" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+                    <div @click.away="open = false" class="bg-zinc-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl space-y-4">
+                        <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold font-space text-white">Informasi Status</h3>
+                        <p class="text-xs text-zinc-300 font-inter leading-relaxed">
+                            {{ session('status') }}
+                        </p>
+                        <div class="pt-2">
+                            <button type="button" @click="open = false" class="w-full py-3 px-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all font-space shadow-lg shadow-emerald-950/40">
+                                Oke, Mengerti
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mb-6 p-4 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl text-emerald-300 text-sm shadow-md">
                     <div class="flex items-center gap-2 font-semibold mb-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-emerald-400 flex-shrink-0">

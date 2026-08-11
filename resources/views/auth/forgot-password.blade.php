@@ -32,14 +32,34 @@
             </div>
 
             @if (session('status'))
-                <div class="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-400 text-sm">
+                <!-- Popup Modal Cek Email -->
+                <div x-data="{ open: true }" x-show="open" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+                    <div @click.away="open = false" class="bg-zinc-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl space-y-4">
+                        <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold font-space text-white">Silakan Cek Email Anda</h3>
+                        <p class="text-xs text-zinc-300 font-inter leading-relaxed">
+                            {{ session('status') }}
+                        </p>
+                        <div class="pt-2">
+                            <button type="button" @click="open = false" class="w-full py-3 px-4 bg-emerald-800 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all font-space shadow-lg shadow-emerald-950/40">
+                                Saya Mengerti
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6 p-4 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl text-emerald-300 text-sm shadow-md">
                     <div class="flex items-center gap-2 font-semibold">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 flex-shrink-0">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>Berhasil Terkirim</span>
                     </div>
-                    <p class="mt-1 opacity-90 pl-1">{{ session('status') }}</p>
+                    <p class="mt-1 opacity-90 pl-1 text-xs">{{ session('status') }}</p>
                 </div>
             @endif
 
@@ -47,14 +67,14 @@
                 @csrf
 
                 @if ($errors->any())
-                    <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
-                        <div class="flex items-center gap-2 font-semibold mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
+                    <div class="p-4 bg-red-500/20 border border-red-500/40 rounded-2xl text-red-300 text-sm shadow-md">
+                        <div class="flex items-center gap-2 font-bold mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-400 flex-shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                             </svg>
                             <span>Terdapat Kesalahan</span>
                         </div>
-                        <ul class="list-disc list-inside space-y-0.5 text-xs opacity-90 pl-1">
+                        <ul class="list-disc list-inside space-y-1 text-xs opacity-95 pl-1">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
