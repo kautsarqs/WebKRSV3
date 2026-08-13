@@ -385,10 +385,10 @@
         adminMap.on('zoom zoomend move moveend viewreset zoomlevelschange', updateScaleDisplay);
         setTimeout(updateScaleDisplay, 100);
 
-        var adminRoadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
-        var adminSatelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
+        var adminRoadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap' });
+        var adminSatelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite' });
         var adminTerrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxNativeZoom: 17, maxZoom: 17, attribution: 'Map data: &copy; OpenStreetMap', subdomains: 'abc', crossOrigin: true
+            maxNativeZoom: 17, maxZoom: 17, attribution: 'Map data: &copy; OpenStreetMap', subdomains: 'abc'
         });
 
         var currentAdminLayer = adminRoadLayer.addTo(adminMap);

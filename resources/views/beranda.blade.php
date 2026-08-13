@@ -948,14 +948,13 @@ document.addEventListener("DOMContentLoaded", function () {
     map.on('zoom zoomend move moveend viewreset zoomlevelschange', updateScaleDisplay);
     setTimeout(updateScaleDisplay, 100);
 
-    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap', crossOrigin: true });
-    var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite', crossOrigin: true });
+    var roadLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxNativeZoom: 19, maxZoom: 20, attribution: '&copy; OpenStreetMap' });
+    var satelliteLayer = L.tileLayer.offline('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxNativeZoom: 20, maxZoom: 20, attribution: '&copy; Google Satellite' });
     var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxNativeZoom: 17,
         maxZoom: 17,
         attribution: 'Map data: &copy; OpenStreetMap contributors',
-        subdomains: 'abc',
-        crossOrigin: true
+        subdomains: 'abc'
     });
 
     var currentLayer = roadLayer.addTo(map);

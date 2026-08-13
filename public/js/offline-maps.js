@@ -60,12 +60,14 @@ if (typeof L === 'undefined' || typeof localforage === 'undefined') {
                             tile.src = URL.createObjectURL(blob);
                         })
                         .catch(function(err) {
-                            // Fallback jika fetch blob gagal, gunakan src biasa
+                            // Fallback jika fetch blob gagal, gunakan src biasa tanpa pembatasan CORS
+                            tile.removeAttribute('crossOrigin');
                             tile.src = url;
                         });
                 }
             }).catch(function(err) {
                 console.error("LocalForage error:", err);
+                tile.removeAttribute('crossOrigin');
                 tile.src = url;
             });
 
