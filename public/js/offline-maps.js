@@ -253,8 +253,9 @@ if (typeof L === 'undefined' || typeof localforage === 'undefined') {
         var masterTileQueue = [];
         
         layers.forEach(function(layer) {
+            if (!layer || typeof layer.getTileKey !== 'function') return;
             zoomRanges.forEach(function(z) {
-                if (z >= layer.options.minZoom && z <= (layer.options.maxZoom || 19)) {
+                if (z >= (layer.options.minZoom || 0) && z <= (layer.options.maxZoom || 19)) {
                     var tileCoords = getTileCoordsForBounds(map, bounds, z);
                     tileCoords.forEach(function(t) {
                         masterTileQueue.push({ layer: layer, tile: t });
