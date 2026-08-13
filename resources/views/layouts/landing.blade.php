@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; img-src 'self' data: blob: https: http:;">
     <title>@yield('title', 'Kebun Raya Sambas')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logoKRS_square.png') }}" />
     <meta name="description" content="Kebun Raya Sambas - Kawasan Konservasi & Pusat Penelitian Flora di Sambas, Kalimantan Barat. Pelestarian keanekaragaman hayati tumbuhan lokal Kalimantan." />
